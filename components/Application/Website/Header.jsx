@@ -57,8 +57,8 @@ const Header = () => {
                 <Link href={WEBSITE_HOME} className="group">
                     <Image
                         src={logo}
-                        width={432}
-                        height={74}
+                        width={1100}
+                        height={300}
                         alt='logo'
                         className='lg:w-28 w-24 transition-all duration-300 group-hover:scale-105'
                     />
@@ -80,8 +80,8 @@ const Header = () => {
                             <div className='flex justify-between items-center bg-white/10 backdrop-blur-sm py-4 px-6 border-b border-white/10'>
                                 <Image
                                     src={logo}
-                                    width={432}
-                                    height={74}
+                                    width={1100}
+                                    height={300}
                                     alt='logo'
                                     className='w-28'
                                 />

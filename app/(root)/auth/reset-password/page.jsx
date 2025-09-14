@@ -75,7 +75,7 @@ const ResetPassword = () => {
         <Card className="w-[400px]">
             <CardContent>
                 <div className='flex justify-center'>
-                    <Image src={Logo.src} width={432} height={74} alt='logo' className='max-w-[150px]' />
+                    <Image src={Logo.src} width={1100} height={300} alt='logo' className='max-w-[150px]' />
                 </div>
 
                 {!isIdentifierVerified

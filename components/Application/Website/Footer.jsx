@@ -23,8 +23,8 @@ const Footer = () => {
                 <div className='lg:col-span-1 md:col-span-2 col-span-1'>
                     <Image
                         src={logo}
-                        width={432}
-                        height={74}
+                        width={1100}
+                        height={300}
                         alt='logo'
                         className='w-36 mb-2'
                     />

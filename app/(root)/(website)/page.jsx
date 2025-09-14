@@ -2,9 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { Suspense } from 'react'
 import dynamic from 'next/dynamic'
-import banner1 from '@/public/assets/images/banner1.png'
-import banner2 from '@/public/assets/images/banner2.png'
-import advertisingBanner from '@/public/assets/images/advertising-banner.png'
+import banner1 from '@/public/assets/images/banner1.webp'
+import banner2 from '@/public/assets/images/banner2.webp'
+import banner3 from '@/public/assets/images/banner3.webp'
+import banner4 from '@/public/assets/images/banner4.webp'
 
 // Dynamic imports for better code splitting
 const MainSlider = dynamic(() => import('@/components/Application/Website/MainSlider'), {
@@ -103,16 +104,17 @@ const Home = async () => {
                 <MainSlider initialData={homepageData.carousel} />
             </section>
             <section className='lg:px-32 px-4 sm:pt-20 pt-5 pb-10'>
-                <div className='grid grid-cols-2 sm:gap-10 gap-2'>
+                <div className='grid grid-cols-2 lg:grid-cols-4 sm:gap-6 gap-3'>
 
                     <div className='border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300'>
                         <Link href="" >
                             <Image
                                 src={banner1.src}
-                                width={banner1.width}
-                                height={banner1.height}
+                                width={360}
+                                height={360}
                                 alt='banner 1'
-                                className='transition-all hover:scale-110'
+                                className='w-full h-auto transition-all hover:scale-110'
+                                style={{ aspectRatio: '1/1' }}
                             />
                         </Link>
                     </div>
@@ -120,10 +122,35 @@ const Home = async () => {
                         <Link href="" >
                             <Image
                                 src={banner2.src}
-                                width={banner2.width}
-                                height={banner2.height}
+                                width={360}
+                                height={360}
                                 alt='banner 2'
-                                className='transition-all hover:scale-110'
+                                className='w-full h-auto transition-all hover:scale-110'
+                                style={{ aspectRatio: '1/1' }}
+                            />
+                        </Link>
+                    </div>
+                    <div className='border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300'>
+                        <Link href="" >
+                            <Image
+                                src={banner3.src}
+                                width={360}
+                                height={360}
+                                alt='banner 3'
+                                className='w-full h-auto transition-all hover:scale-110'
+                                style={{ aspectRatio: '1/1' }}
+                            />
+                        </Link>
+                    </div>
+                    <div className='border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300'>
+                        <Link href="" >
+                            <Image
+                                src={banner4.src}
+                                width={360}
+                                height={360}
+                                alt='banner 4'
+                                className='w-full h-auto transition-all hover:scale-110'
+                                style={{ aspectRatio: '1/1' }}
                             />
                         </Link>
                     </div>
@@ -133,16 +160,6 @@ const Home = async () => {
 
             <FeaturedProduct initialData={homepageData.featured} />
 
-            <section className='sm:pt-20 pt-5 pb-10'>
-                <Image
-                    src={advertisingBanner.src}
-                    height={advertisingBanner.height}
-                    width={advertisingBanner.width}
-                    alt='Advertisement'
-                    loading="lazy"
-                    sizes="(max-width: 768px) 100vw, 80vw"
-                />
-            </section>
 
             <MainCategoryGrid initialData={homepageData.categories} />
 
@@ -159,8 +176,8 @@ const Home = async () => {
                         <p className='flex justify-center items-center mb-3 text-primary'>
                             <FaShippingFast size={30} />
                         </p>
-                        <h3 className='text-xl font-semibold text-foreground'>Free Shipping</h3>
-                        <p className='text-muted-foreground'>No extra costs, just the price you see.</p>
+                        <h3 className='text-xl font-semibold text-foreground'>Fast Shipping</h3>
+                        <p className='text-muted-foreground'>Fast shipping, no extra costs.</p>
                     </div>
                     <div className='text-center'>
                         <p className='flex justify-center items-center mb-3 text-primary'>
@@ -175,25 +192,6 @@ const Home = async () => {
                         </p>
                         <h3 className='text-xl font-semibold text-foreground'>Member Discounts</h3>
                         <p className='text-muted-foreground'>Special offers for our loyal customers.</p>
-                    </div>
-                </div>
-                
-                {/* Color Demo Section */}
-                <div className='mt-16 text-center'>
-                    <h3 className='text-2xl font-bold text-foreground mb-8'>Button Color Variants</h3>
-                    <div className='flex flex-wrap justify-center gap-4'>
-                        <button className='bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg font-medium transition-colors'>
-                            Primary (Blue)
-                        </button>
-                        <button className='bg-secondary hover:bg-secondary/80 text-secondary-foreground px-6 py-3 rounded-lg font-medium transition-colors'>
-                            Secondary (Yellow)
-                        </button>
-                        <button className='bg-destructive hover:bg-destructive/90 text-white px-6 py-3 rounded-lg font-medium transition-colors'>
-                            Buy Now (Red)
-                        </button>
-                        <button className='border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground px-6 py-3 rounded-lg font-medium transition-colors'>
-                            Outline
-                        </button>
                     </div>
                 </div>
             </section>
