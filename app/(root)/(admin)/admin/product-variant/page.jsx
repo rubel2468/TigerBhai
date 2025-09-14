@@ -11,6 +11,7 @@ import { ADMIN_DASHBOARD, ADMIN_PRODUCT_ADD, ADMIN_PRODUCT_EDIT, ADMIN_PRODUCT_V
 import Link from "next/link"
 import { useCallback, useMemo } from "react"
 import { FiPlus } from "react-icons/fi"
+import { ErrorBoundary } from "@/components/Application/ErrorBoundary"
 
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
@@ -44,17 +45,19 @@ const ShowProductVariant = () => {
                     </div>
                 </CardHeader>
                 <CardContent className="px-0 pt-0">
-                    <DatatableWrapper
-                        queryKey="product-variant-data"
-                        fetchUrl="/api/product-variant"
-                        initialPageSize={10}
-                        columnsConfig={columns}
-                        exportEndpoint="/api/product-variant/export"
-                        deleteEndpoint="/api/product-variant/delete"
-                        deleteType="SD"
-                        trashView={`${ADMIN_TRASH}?trashof=product-variant`}
-                        createAction={action}
-                    />
+                    <ErrorBoundary>
+                        <DatatableWrapper
+                            queryKey="product-variant-data"
+                            fetchUrl="/api/product-variant"
+                            initialPageSize={10}
+                            columnsConfig={columns}
+                            exportEndpoint="/api/product-variant/export"
+                            deleteEndpoint="/api/product-variant/delete"
+                            deleteType="SD"
+                            trashView={`${ADMIN_TRASH}?trashof=product-variant`}
+                            createAction={action}
+                        />
+                    </ErrorBoundary>
                 </CardContent>
             </Card>
         </div>

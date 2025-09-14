@@ -109,7 +109,8 @@ const Datatable = ({
     } = useQuery({
         queryKey: [queryKey, { columnFilters, globalFilter, pagination, sorting }],
         queryFn: async () => {
-            const url = new URL(fetchUrl, process.env.NEXT_PUBLIC_BASE_URL)
+            const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
+            const url = new URL(fetchUrl, baseUrl)
             url.searchParams.set(
                 'start',
                 `${pagination.pageIndex * pagination.pageSize}`,
