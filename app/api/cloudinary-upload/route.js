@@ -11,20 +11,20 @@ if (process.env.CLOUDINARY_URL) {
         secure: true
     });
 } else {
-    // Use individual environment variables
+    // Use individual environment variables (matching your Vercel setup)
     cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
+        cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_SECRET_KEY,
         secure: true
     });
 }
 
 // Debug logging
 console.log('Cloudinary config:', {
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'not set',
-    api_key: process.env.CLOUDINARY_API_KEY ? 'set' : 'not set',
-    api_secret: process.env.CLOUDINARY_API_SECRET ? 'set' : 'not set',
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'not set',
+    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY ? 'set' : 'not set',
+    api_secret: process.env.CLOUDINARY_SECRET_KEY ? 'set' : 'not set',
     cloudinary_url: process.env.CLOUDINARY_URL ? 'set' : 'not set'
 });
 
