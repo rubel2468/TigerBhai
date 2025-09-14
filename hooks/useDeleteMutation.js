@@ -10,8 +10,7 @@ const useDeleteMutation = (queryKey, deleteEndpoint) => {
             const { data: response } = await axios({
                 url: deleteEndpoint,
                 method: deleteType === 'PD' ? "DELETE" : "PUT",
-                data: { ids, deleteType },
-                withCredentials: true
+                data: { ids, deleteType }
             })
             if (!response.success) {
                 throw new Error(response.message)

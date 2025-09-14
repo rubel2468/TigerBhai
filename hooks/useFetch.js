@@ -30,7 +30,6 @@ const useFetch = (url, method = "GET", options = {}, initialData = null) => {
                 const { data: response } = await axios({
                     url,
                     method,
-                    withCredentials: true,
                     ...(requestOptions)
                 })
 

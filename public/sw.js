@@ -70,6 +70,11 @@ self.addEventListener('fetch', (event) => {
         return
     }
 
+    // Skip static assets that should be handled by the browser directly
+    if (url.pathname.startsWith('/_next/static/')) {
+        return
+    }
+
     event.respondWith(
         caches.match(request)
             .then((cachedResponse) => {
@@ -87,13 +92,13 @@ self.addEventListener('fetch', (event) => {
                         // Clone the response
                         const responseToCache = response.clone()
 
-                        // Cache API responses
-                        if (url.pathname.startsWith('/api/')) {
+                        // Cache API responses and page requests only
+                        if (url.pathname.startsWith('/api/') || request.mode === 'navigate') {
                             caches.open(DYNAMIC_CACHE)
                                 .then((cache) => {
                                     cache.put(request, responseToCache)
                                 })
-                                .catch(err => console.warn('Failed to cache API response:', err))
+                                .catch(err => console.warn('Failed to cache response:', err))
                         }
 
                         return response

@@ -57,9 +57,9 @@ const nextConfig = {
                 search: ''
             },
             {
-                protocol: 'http',
-                hostname: 'localhost',
-                port: '3000',
+                protocol: 'https',
+                hostname: 'tigerbhai.online',
+                port: '',
                 pathname: '/uploads/**',
                 search: ''
             }
@@ -88,6 +88,49 @@ const nextConfig = {
                     {
                         key: 'X-XSS-Protection',
                         value: '1; mode=block',
+                    },
+                ],
+            },
+            {
+                source: '/_next/static/css/(.*)',
+                headers: [
+                    {
+                        key: 'Content-Type',
+                        value: 'text/css; charset=utf-8',
+                    },
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=31536000, immutable',
+                    },
+                    {
+                        key: 'X-Content-Type-Options',
+                        value: 'nosniff',
+                    },
+                ],
+            },
+            {
+                source: '/_next/static/js/(.*)',
+                headers: [
+                    {
+                        key: 'Content-Type',
+                        value: 'application/javascript; charset=utf-8',
+                    },
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=31536000, immutable',
+                    },
+                    {
+                        key: 'X-Content-Type-Options',
+                        value: 'nosniff',
+                    },
+                ],
+            },
+            {
+                source: '/_next/static/media/(.*)',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=31536000, immutable',
                     },
                 ],
             },
