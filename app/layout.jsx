@@ -43,21 +43,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Fix for Next.js 15.3.2 CSS loading as script bug
-              window.addEventListener('error', function(e) {
-                if (e.target && e.target.src && e.target.src.includes('.css')) {
-                  console.warn('Prevented CSS file from being executed as script:', e.target.src);
-                  e.preventDefault();
-                  e.stopPropagation();
-                  return false;
-                }
-              }, true);
-            `,
-          }}
-        />
       </head>
       <body
         className={`${assistantFont.className} antialiased`}
