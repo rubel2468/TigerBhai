@@ -49,7 +49,7 @@ const AddProduct = () => {
         formData.append('files', files[i])
       }
 
-      const { data: uploadResponse } = await axios.post('/api/media/create', formData, {
+      const { data: uploadResponse } = await axios.post('/api/cloudinary-upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
 

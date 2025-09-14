@@ -2,9 +2,14 @@ import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunction";
 import MediaModel from "@/models/Media.model";
-import { writeFile, mkdir, unlink } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
+
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(request) {
     try {
@@ -27,23 +32,22 @@ export async function POST(request) {
             return response(false, 400, 'No files provided.');
         }
 
-        const uploadDir = join(process.cwd(), 'public', 'uploads', 'images');
-        
-        // Ensure upload directory exists
-        try {
-            if (!existsSync(uploadDir)) {
-                await mkdir(uploadDir, { recursive: true });
-            }
-        } catch (error) {
-            console.error('Failed to create upload directory:', error);
-            return response(false, 500, 'Failed to create upload directory. Please try again.');
-        }
-
         const uploadedFiles = [];
 
         for (const file of files) {
             if (!file || typeof file === 'string') continue;
 
+            // Basic type and size validation (allow images up to 5MB)
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                return response(false, 400, 'Unsupported file type. Only images are allowed.');
+            }
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                return response(false, 400, 'File too large. Max 5MB allowed.');
+            }
+
+            // Convert file to buffer
             const bytes = await file.arrayBuffer();
             const buffer = Buffer.from(bytes);
 
@@ -51,20 +55,33 @@ export async function POST(request) {
             const timestamp = Date.now();
             const randomString = Math.random().toString(36).substring(2, 15);
             const fileExtension = file.name.split('.').pop();
-            const fileName = `${timestamp}_${randomString}.${fileExtension}`;
+            const fileName = `tigerbhai_${timestamp}_${randomString}`;
             
-            const filePath = join(uploadDir, fileName);
-            
-            // Write file to disk
-            await writeFile(filePath, buffer);
+            // Upload to Cloudinary
+            const uploadResult = await new Promise((resolve, reject) => {
+                cloudinary.uploader.upload_stream(
+                    {
+                        public_id: fileName,
+                        folder: 'tigerbhai/uploads',
+                        resource_type: 'auto',
+                        quality: 'auto',
+                        fetch_format: 'auto'
+                    },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                ).end(buffer);
+            });
             
             // Create media document
             const mediaData = {
-                fileName: fileName,
+                fileName: uploadResult.public_id,
                 originalName: file.name,
-                filePath: `/uploads/images/${fileName}`,
+                filePath: uploadResult.secure_url,
                 size: file.size,
-                type: file.type
+                type: file.type,
+                cloudinaryId: uploadResult.public_id
             };
             
             const newMedia = new MediaModel(mediaData);
@@ -76,6 +93,7 @@ export async function POST(request) {
         return response(true, 200, 'Media uploaded successfully.', uploadedFiles);
 
     } catch (error) {
+        console.error('Cloudinary upload error:', error);
         return catchError(error);
     }
 }

@@ -38,7 +38,7 @@ const ImageUpload = ({
       const formData = new FormData()
       formData.append('files', file)
 
-      const { data: response } = await axios.post('/api/upload', formData, {
+      const { data: response } = await axios.post('/api/cloudinary-upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

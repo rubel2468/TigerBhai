@@ -25,6 +25,10 @@ const mediaSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    cloudinaryId: {
+        type: String,
+        trim: true
+    },
     alt: {
         type: String,
         trim: true
