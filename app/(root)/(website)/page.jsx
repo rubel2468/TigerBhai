@@ -36,8 +36,8 @@ import { TbRosetteDiscountFilled } from "react-icons/tb";
 // Server-side data fetching for better performance with mobile optimization
 async function getHomepageData() {
     try {
-        // Use environment variable for base URL or default to localhost for development
-        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+        // Use environment variable for base URL or default to production URL
+        const baseUrl = process.env.NEXTAUTH_URL || 'https://tigerbhai.online'
         
         // Prioritize critical above-the-fold content with proper caching
         const [carouselRes, featuredRes] = await Promise.all([
