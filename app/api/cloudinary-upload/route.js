@@ -4,28 +4,12 @@ import { catchError, response } from "@/lib/helperFunction";
 import MediaModel from "@/models/Media.model";
 import { v2 as cloudinary } from 'cloudinary';
 
-// Configure Cloudinary
-if (process.env.CLOUDINARY_URL) {
-    // Use the complete URL if provided
-    cloudinary.config({
-        secure: true
-    });
-} else {
-    // Use individual environment variables (matching your Vercel setup)
-    cloudinary.config({
-        cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_SECRET_KEY,
-        secure: true
-    });
-}
-
-// Debug logging
-console.log('Cloudinary config:', {
-    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'not set',
-    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY ? 'set' : 'not set',
-    api_secret: process.env.CLOUDINARY_SECRET_KEY ? 'set' : 'not set',
-    cloudinary_url: process.env.CLOUDINARY_URL ? 'set' : 'not set'
+// Configure Cloudinary - use the CLOUDINARY_URL if available, otherwise use individual variables
+cloudinary.config({
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dwccfnus5',
+    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || '297231592464872',
+    api_secret: process.env.CLOUDINARY_SECRET_KEY || 'A0_zt4C8T1SP4UfWhyHy4C_MvdE',
+    secure: true
 });
 
 export async function POST(request) {
@@ -116,6 +100,11 @@ export async function POST(request) {
 
     } catch (error) {
         console.error('Cloudinary upload error:', error);
-        return catchError(error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+        });
+        return response(false, 500, `Upload failed: ${error.message}`);
     }
 }
