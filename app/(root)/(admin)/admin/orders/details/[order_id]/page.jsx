@@ -164,7 +164,25 @@ const OrderDetails = ({ params }) => {
                                             <td>BDT ${(product.qty * product.sellingPrice).toLocaleString()}</td>
                                         </tr>
                                     `).join('') :
-                                    '<tr><td colspan="4" style="text-align: center; color: #999;">No products found in this order</td></tr>'
+                                    `<tr><td colspan="4" style="text-align: center; color: #999; padding: 20px;">
+                                        <div>
+                                            <p style="font-weight: bold; margin-bottom: 10px;">No products found in this order</p>
+                                            <p style="font-size: 12px; color: #666;">
+                                                ${orderData?.subtotal > 0 ? 
+                                                    'This order has financial data but no product details. This may indicate a data integrity issue.' :
+                                                    'This order may have been created before the product tracking system was implemented.'
+                                                }
+                                            </p>
+                                            ${orderData?.subtotal > 0 ? `
+                                                <div style="margin-top: 15px; padding: 10px; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px;">
+                                                    <p style="font-size: 12px; color: #856404;">
+                                                        <strong>Order Summary:</strong> Subtotal: BDT ${orderData.subtotal.toLocaleString()}, 
+                                                        Total: BDT ${orderData.totalAmount.toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    </td></tr>`
                             })()}
                         </tbody>
                     </table>
@@ -301,7 +319,20 @@ const OrderDetails = ({ params }) => {
                                                 <td colSpan="4" className="text-center py-8 text-gray-500">
                                                     <div className="flex flex-col items-center gap-2">
                                                         <p className="text-lg font-medium">No products found in this order</p>
-                                                        <p className="text-sm">This order may have been created before the product tracking system was implemented.</p>
+                                                        <p className="text-sm">
+                                                            {orderData?.subtotal > 0 ? 
+                                                                "This order has financial data but no product details. This may indicate a data integrity issue." :
+                                                                "This order may have been created before the product tracking system was implemented."
+                                                            }
+                                                        </p>
+                                                        {orderData?.subtotal > 0 && (
+                                                            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                                                <p className="text-sm text-yellow-800">
+                                                                    <strong>Order Summary:</strong> Subtotal: BDT {orderData.subtotal.toLocaleString()}, 
+                                                                    Total: BDT {orderData.totalAmount.toLocaleString()}
+                                                                </p>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </td>
                                             </tr>
