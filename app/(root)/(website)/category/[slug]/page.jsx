@@ -78,7 +78,7 @@ export default function CategoryPage() {
                 {category.image && (
                     <div className="absolute inset-0 z-0">
                         <img
-                            src={`${process.env.NEXT_PUBLIC_BASE_URL}${category.image}`}
+                            src={category.image}
                             alt={category.name}
                             className="w-full h-full object-cover opacity-30"
                         />
@@ -110,7 +110,7 @@ export default function CategoryPage() {
                                     {subcategory.image ? (
                                         <>
                                             <img
-                                                src={`${process.env.NEXT_PUBLIC_BASE_URL}${subcategory.image}`}
+                                                src={subcategory.image}
                                                 alt={subcategory.name}
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                 onLoad={() => {
