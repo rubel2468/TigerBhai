@@ -5,14 +5,12 @@ const nextConfig = {
     poweredByHeader: false,
     
     // Optimize loading performance
-    swcMinify: true,
     reactStrictMode: true,
 
     // Experimental performance features
     experimental: {
         optimizeCss: true,
         optimizePackageImports: ['react-icons'],
-        cssChunking: 'loose', // reduce CSS requests
     },
 
     // Webpack optimization
@@ -79,10 +77,10 @@ const nextConfig = {
                 source: '/(.*)',
                 headers: [
                     { key: 'X-Frame-Options', value: 'DENY' },
-                    {
-                        key: 'Content-Security-Policy',
-                        value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src * blob: data:; object-src 'none'; frame-ancestors 'none';",
-                    },
+                     {
+                         key: 'Content-Security-Policy',
+                         value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src * blob: data:; object-src 'none'; frame-ancestors 'none'; connect-src 'self' https:;",
+                     },
                 ],
             },
             {
