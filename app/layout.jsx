@@ -10,24 +10,24 @@ const assistantFont = Assistant({
 })
 
 export const metadata = {
-  title: "TweestNext - E-commerce Store",
+  title: "Tiger Bhai",
   description: "Your trusted destination for quality and convenience. From fashion to essentials, we bring everything you need right to your doorstep.",
   keywords: "ecommerce, shopping, fashion, clothing, online store",
-  authors: [{ name: "TweestNext Team" }],
+  authors: [{ name: "Tiger Bhai Team" }],
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
     apple: "/favicon.ico",
   },
   openGraph: {
-    title: "TweestNext - E-commerce Store",
+    title: "Tiger Bhai",
     description: "Your trusted destination for quality and convenience",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TweestNext - E-commerce Store",
+    title: "Tiger Bhai",
     description: "Your trusted destination for quality and convenience",
   },
 };

@@ -1,5 +1,5 @@
 // Service Worker for better caching and performance
-const CACHE_NAME = 'tweest-next-v1'
+const CACHE_NAME = 'Tiger-bhai-next-v1'
 const STATIC_CACHE = 'static-v1'
 const DYNAMIC_CACHE = 'dynamic-v1'
 
