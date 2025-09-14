@@ -33,19 +33,17 @@ import { GiReturnArrow } from "react-icons/gi";
 import { FaShippingFast } from "react-icons/fa";
 import { BiSupport } from "react-icons/bi";
 import { TbRosetteDiscountFilled } from "react-icons/tb";
-import { headers } from 'next/headers'
-
 // Server-side data fetching for better performance with mobile optimization
 async function getHomepageData() {
     try {
-        const requestHeaders = await headers()
-        const host = requestHeaders.get('x-forwarded-host') || requestHeaders.get('host')
-        const protocol = requestHeaders.get('x-forwarded-proto') || 'http'
-        const baseUrl = `${protocol}://${host}`
-        // Prioritize critical above-the-fold content
+        // Use environment variable for base URL or default to localhost for development
+        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+        
+        // Prioritize critical above-the-fold content with proper caching
         const [carouselRes, featuredRes] = await Promise.all([
             fetch(`${baseUrl}/api/carousel`, { 
-                cache: 'no-store',
+                cache: 'force-cache',
+                next: { revalidate: 3600 },
                 headers: { 'Accept': 'application/json' }
             }),
             fetch(`${baseUrl}/api/product/get-featured-product`, { 
