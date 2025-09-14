@@ -43,29 +43,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Fix for Next.js 15.3.2 CSS loading as script bug */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              // Remove any CSS files that are incorrectly loaded as scripts
-              (function() {
-                function removeCSSScripts() {
-                  const scripts = document.querySelectorAll('script[src*=".css"]');
-                  scripts.forEach(script => {
-                    console.warn('Removing CSS file incorrectly loaded as script:', script.src);
-                    script.remove();
-                  });
+              // Fix for Next.js 15.3.2 CSS loading as script bug
+              window.addEventListener('error', function(e) {
+                if (e.target && e.target.src && e.target.src.includes('.css')) {
+                  console.warn('Prevented CSS file from being executed as script:', e.target.src);
+                  e.preventDefault();
+                  e.stopPropagation();
+                  return false;
                 }
-                
-                // Run immediately and on DOM ready
-                removeCSSScripts();
-                if (document.readyState === 'loading') {
-                  document.addEventListener('DOMContentLoaded', removeCSSScripts);
-                }
-                
-                // Also run after a short delay to catch dynamically added scripts
-                setTimeout(removeCSSScripts, 100);
-              })();
+              }, true);
             `,
           }}
         />
