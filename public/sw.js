@@ -6,7 +6,7 @@ const DYNAMIC_CACHE = 'dynamic-v1'
 // Assets to cache immediately
 const STATIC_ASSETS = [
     '/',
-    '/offline',
+    '/offline.html',
     '/manifest.json'
 ]
 
@@ -16,6 +16,17 @@ self.addEventListener('install', (event) => {
         caches.open(STATIC_CACHE)
             .then((cache) => {
                 return cache.addAll(STATIC_ASSETS)
+                    .catch((error) => {
+                        console.warn('Failed to cache some static assets:', error);
+                        // Cache individual assets that are available
+                        return Promise.allSettled(
+                            STATIC_ASSETS.map(asset => 
+                                cache.add(asset).catch(err => 
+                                    console.warn(`Failed to cache ${asset}:`, err)
+                                )
+                            )
+                        );
+                    });
             })
             .then(() => {
                 return self.skipWaiting()
@@ -82,15 +93,19 @@ self.addEventListener('fetch', (event) => {
                                 .then((cache) => {
                                     cache.put(request, responseToCache)
                                 })
+                                .catch(err => console.warn('Failed to cache API response:', err))
                         }
 
                         return response
                     })
-                    .catch(() => {
+                    .catch((error) => {
+                        console.warn('Fetch failed:', error);
                         // Return offline page for navigation requests
                         if (request.mode === 'navigate') {
-                            return caches.match('/offline')
+                            return caches.match('/offline.html')
                         }
+                        // For other requests, return a basic error response
+                        return new Response('Network error', { status: 408, statusText: 'Request Timeout' })
                     })
             })
     )
