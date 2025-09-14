@@ -109,34 +109,22 @@ const Datatable = ({
     } = useQuery({
         queryKey: [queryKey, { columnFilters, globalFilter, pagination, sorting }],
         queryFn: async () => {
-            try {
-                const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '')
-                if (!baseUrl) {
-                    throw new Error('Base URL not available')
-                }
-                
-                const url = new URL(fetchUrl, baseUrl)
-                url.searchParams.set(
-                    'start',
-                    `${pagination.pageIndex * pagination.pageSize}`,
-                );
-                url.searchParams.set('size', `${pagination.pageSize}`);
-                url.searchParams.set('filters', JSON.stringify(columnFilters ?? []));
-                url.searchParams.set('globalFilter', globalFilter ?? '');
-                url.searchParams.set('sorting', JSON.stringify(sorting ?? []));
-                url.searchParams.set('deleteType', deleteType);
+            const url = new URL(fetchUrl, process.env.NEXT_PUBLIC_BASE_URL)
+            url.searchParams.set(
+                'start',
+                `${pagination.pageIndex * pagination.pageSize}`,
+            );
+            url.searchParams.set('size', `${pagination.pageSize}`);
+            url.searchParams.set('filters', JSON.stringify(columnFilters ?? []));
+            url.searchParams.set('globalFilter', globalFilter ?? '');
+            url.searchParams.set('sorting', JSON.stringify(sorting ?? []));
+            url.searchParams.set('deleteType', deleteType);
 
-                const { data: response } = await axios.get(url.href)
-                return response
-            } catch (error) {
-                console.error('Data fetching error:', error)
-                throw error
-            }
+            const { data: response } = await axios.get(url.href)
+            return response
         },
 
         placeholderData: keepPreviousData,
-        retry: 1,
-        retryDelay: 1000,
     })
 
 
@@ -144,8 +132,8 @@ const Datatable = ({
     // init table  
 
     const table = useMaterialReactTable({
-        columns: columnsConfig || [],
-        data: Array.isArray(data) ? data : [],
+        columns: columnsConfig,
+        data,
         enableRowSelection: true,
         columnFilterDisplayMode: 'popover',
         paginationDisplayMode: 'pages',
@@ -254,33 +242,6 @@ const Datatable = ({
         )
 
     })
-
-    // Show loading state
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                <span className="ml-2">Loading data...</span>
-            </div>
-        )
-    }
-
-    // Show error state
-    if (isError) {
-        return (
-            <div className="flex items-center justify-center p-8">
-                <div className="text-red-600">
-                    <p>Error loading data. Please try again.</p>
-                    <button 
-                        onClick={() => window.location.reload()} 
-                        className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-                    >
-                        Reload Page
-                    </button>
-                </div>
-            </div>
-        )
-    }
 
     return (
         <MaterialReactTable table={table} />

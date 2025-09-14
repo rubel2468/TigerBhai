@@ -175,7 +175,13 @@ export async function GET(request) {
                     status: 1,
                     createdAt: 1,
                     updatedAt: 1,
-                    deletedAt: 1
+                    deletedAt: {
+                        $cond: {
+                            if: { $eq: ["$deletedAt", null] },
+                            then: null,
+                            else: "$deletedAt"
+                        }
+                    }
                 }
             }
         ]

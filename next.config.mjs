@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     // Performance optimizations
-    compress: false, // Temporarily disable compression to fix CSS issues
+    compress: true,
     poweredByHeader: false,
     
     // Experimental features for better performance
@@ -12,8 +12,6 @@ const nextConfig = {
         cssChunking: 'strict',
         // Disable CSS optimization completely
         optimizeServerReact: false,
-        // Disable CSS minification
-        cssMinify: false,
     },
     
     // Webpack configuration to fix CSS loading issue and optimizations
@@ -29,8 +27,6 @@ const nextConfig = {
                                 use.options = {
                                     ...use.options,
                                     modules: false,
-                                    minimize: false,
-                                    sourceMap: false,
                                 };
                             }
                         });
@@ -38,15 +34,6 @@ const nextConfig = {
                 }
             });
         }
-        
-        // Disable CSS optimization in webpack
-        config.optimization = {
-            ...config.optimization,
-            minimize: false,
-            minimizer: config.optimization.minimizer?.filter(plugin => 
-                !plugin.constructor.name.includes('CssMinimizer')
-            ),
-        };
         // Production optimizations
         if (!dev && !isServer) {
             config.optimization = {

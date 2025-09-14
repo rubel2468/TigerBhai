@@ -25,14 +25,7 @@ const DatatableWrapper = ({
         setMounted(true)
     }, [])
 
-    // Prevent hydration mismatch by not rendering until mounted
-    if (!mounted) {
-        return (
-            <div className="flex items-center justify-center p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            </div>
-        )
-    }
+    if (!mounted) return null
 
     return (
         <ThemeProvider theme={resolvedTheme === 'dark' ? darkTheme : lightTheme}>
