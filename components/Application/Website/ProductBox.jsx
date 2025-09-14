@@ -12,7 +12,11 @@ const ProductBox = memo(({ product }) => {
 
     return (
         <div className='group relative bg-card dark:bg-card rounded-xl md:rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 ease-out border border-border/50 hover:border-primary/30 hover:-translate-y-1'>
-            <Link href={WEBSITE_PRODUCT_DETAILS(product.slug)} className='block'>
+            <Link 
+                href={WEBSITE_PRODUCT_DETAILS(product.slug)} 
+                className='block'
+                prefetch={true}
+            >
                 {/* Image Container with 4:5 aspect ratio */}
                 <div className='relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-muted to-background dark:from-gray-800 dark:to-gray-900'>
                     <Image

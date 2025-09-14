@@ -10,8 +10,8 @@ const MainCategoryGrid = ({ initialData }) => {
     const router = useRouter()
 
     const handleCategoryClick = (category) => {
-        // Navigate to the category page
-        router.push(`/category/${category.slug}`)
+        // Navigate to the category page - instant navigation
+        router.push(`/category/${category.slug}`, { scroll: false })
     }
 
 

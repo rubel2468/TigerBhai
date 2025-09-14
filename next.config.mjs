@@ -3,6 +3,10 @@ const nextConfig = {
     // Performance defaults
     compress: true,
     poweredByHeader: false,
+    
+    // Optimize loading performance
+    swcMinify: true,
+    reactStrictMode: true,
 
     // Experimental performance features
     experimental: {
@@ -40,6 +44,15 @@ const nextConfig = {
                 sideEffects: true, // safer + smaller bundles
             };
         }
+        
+        // Enable prefetching for better navigation performance
+        if (!isServer) {
+            config.resolve.fallback = {
+                ...config.resolve.fallback,
+                fs: false,
+            };
+        }
+        
         return config;
     },
 

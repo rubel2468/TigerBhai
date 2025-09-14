@@ -36,8 +36,8 @@ export default function CategoryPage() {
     }, [subcategoryData])
 
     const handleSubcategoryClick = (subcategory) => {
-        // Navigate to products page with subcategory filter
-        router.push(`/shop?category=${subcategory.slug}`)
+        // Navigate to products page with subcategory filter - instant navigation
+        router.push(`/shop?category=${subcategory.slug}`, { scroll: false })
     }
 
     if (loading) {
