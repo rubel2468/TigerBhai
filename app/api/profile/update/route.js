@@ -2,9 +2,15 @@ import { isAuthenticated } from "@/lib/authentication";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunction";
 import UserModel from "@/models/User.model";
-import { writeFile, mkdir, unlink } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
+
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dwccfnus5',
+    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || '297231592464872',
+    api_secret: process.env.CLOUDINARY_SECRET_KEY || 'A0_zt4C8T1SP4UfWhyHy4C_MvdE',
+    secure: true
+});
 
 export async function PUT(request) {
     try {
@@ -30,20 +36,21 @@ export async function PUT(request) {
         user.address = formData.get('address')
 
         if (file) {
-            const uploadDir = join(process.cwd(), 'public', 'uploads', 'avatars');
-            
-            // Ensure upload directory exists
-            if (!existsSync(uploadDir)) {
-                await mkdir(uploadDir, { recursive: true });
+            // Basic type and size validation (allow images only)
+            if (!file.type.startsWith('image/')) {
+                return response(false, 400, 'Unsupported file type. Only images are allowed.');
+            }
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                return response(false, 400, 'File too large. Max 5MB allowed.');
             }
 
-            // Remove old avatar file if exists
-            if (user?.avatar?.filePath) {
+            // Delete old avatar from Cloudinary if exists
+            if (user?.avatar?.public_id) {
                 try {
-                    const oldFilePath = join(process.cwd(), 'public', user.avatar.filePath);
-                    await unlink(oldFilePath);
+                    await cloudinary.uploader.destroy(user.avatar.public_id);
                 } catch (error) {
-                    console.error('Failed to delete old avatar:', error);
+                    console.error('Failed to delete old avatar from Cloudinary:', error);
                 }
             }
 
@@ -53,20 +60,33 @@ export async function PUT(request) {
             // Generate unique filename
             const timestamp = Date.now();
             const randomString = Math.random().toString(36).substring(2, 15);
-            const fileExtension = file.name.split('.').pop();
-            const fileName = `${timestamp}_${randomString}.${fileExtension}`;
+            const fileName = `tigerbhai_avatar_${timestamp}_${randomString}`;
             
-            const filePath = join(uploadDir, fileName);
-            
-            // Write file to disk
-            await writeFile(filePath, buffer);
+            // Upload to Cloudinary
+            const uploadResult = await new Promise((resolve, reject) => {
+                cloudinary.uploader.upload_stream(
+                    {
+                        public_id: fileName,
+                        folder: 'tigerbhai/avatars',
+                        resource_type: 'auto',
+                        quality: 'auto',
+                        fetch_format: 'auto'
+                    },
+                    (error, result) => {
+                        if (error) {
+                            console.error('Cloudinary upload error:', error);
+                            reject(error);
+                        } else {
+                            console.log('Cloudinary upload success:', result.public_id);
+                            resolve(result);
+                        }
+                    }
+                ).end(buffer);
+            });
 
             user.avatar = {
-                fileName: fileName,
-                filePath: `/uploads/avatars/${fileName}`,
-                originalName: file.name,
-                size: file.size,
-                type: file.type
+                url: uploadResult.secure_url,
+                public_id: uploadResult.public_id
             };
         }
 
