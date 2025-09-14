@@ -137,17 +137,35 @@ const OrderDetails = ({ params }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            ${orderData?.products?.length > 0 ? 
-                                orderData.products.map(product => `
-                                    <tr>
-                                        <td>${product.name}</td>
-                                        <td>BDT ${product.sellingPrice.toLocaleString()}</td>
-                                        <td>${product.qty}</td>
-                                        <td>BDT ${(product.qty * product.sellingPrice).toLocaleString()}</td>
-                                    </tr>
-                                `).join('') :
-                                '<tr><td colspan="4" style="text-align: center; color: #999;">No products found in this order</td></tr>'
-                            }
+                            ${(() => {
+                                // Get products from either products field (legacy) or orderItems field (new)
+                                const allProducts = []
+                                
+                                // Add products from legacy products field
+                                if (orderData?.products?.length > 0) {
+                                    allProducts.push(...orderData.products)
+                                }
+                                
+                                // Add products from orderItems field (new multivendor structure)
+                                if (orderData?.orderItems?.length > 0) {
+                                    orderData.orderItems.forEach(orderItem => {
+                                        if (orderItem.products?.length > 0) {
+                                            allProducts.push(...orderItem.products)
+                                        }
+                                    })
+                                }
+                                
+                                return allProducts.length > 0 ? 
+                                    allProducts.map(product => `
+                                        <tr>
+                                            <td>${product.name}</td>
+                                            <td>BDT ${product.sellingPrice.toLocaleString()}</td>
+                                            <td>${product.qty}</td>
+                                            <td>BDT ${(product.qty * product.sellingPrice).toLocaleString()}</td>
+                                        </tr>
+                                    `).join('') :
+                                    '<tr><td colspan="4" style="text-align: center; color: #999;">No products found in this order</td></tr>'
+                            })()}
                         </tbody>
                     </table>
                 </div>
@@ -231,45 +249,64 @@ const OrderDetails = ({ params }) => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {orderData && orderData?.products?.length > 0 ? (
-                                        orderData.products.map((product) => (
-                                            <tr key={product.variantId?._id || product.productId} className="md:table-row block border-b">
-                                                <td className="md:table-cell p-3">
-                                                    <div className="flex items-center gap-5">
-                                                        <Image src={product?.variantId?.media?.filePath || placeholderImg.src} width={60} height={60} alt="product" className="rounded" />
-                                                        <div>
-                                                            <h4 className="text-lg">
-                                                                <Link href={WEBSITE_PRODUCT_DETAILS(product?.productId?.slug)}>{product?.productId?.name || product.name}</Link>
-                                                                {product?.variantId?.color && <p>Color: {product.variantId.color}</p>}
-                                                                {product?.variantId?.size && <p>Size: {product.variantId.size}</p>}
-                                                            </h4>
+                                    {(() => {
+                                        // Get products from either products field (legacy) or orderItems field (new)
+                                        const allProducts = []
+                                        
+                                        // Add products from legacy products field
+                                        if (orderData?.products?.length > 0) {
+                                            allProducts.push(...orderData.products)
+                                        }
+                                        
+                                        // Add products from orderItems field (new multivendor structure)
+                                        if (orderData?.orderItems?.length > 0) {
+                                            orderData.orderItems.forEach(orderItem => {
+                                                if (orderItem.products?.length > 0) {
+                                                    allProducts.push(...orderItem.products)
+                                                }
+                                            })
+                                        }
+                                        
+                                        return allProducts.length > 0 ? (
+                                            allProducts.map((product, index) => (
+                                                <tr key={product.variantId?._id || product.productId || index} className="md:table-row block border-b">
+                                                    <td className="md:table-cell p-3">
+                                                        <div className="flex items-center gap-5">
+                                                            <Image src={product?.variantId?.media?.filePath || placeholderImg.src} width={60} height={60} alt="product" className="rounded" />
+                                                            <div>
+                                                                <h4 className="text-lg">
+                                                                    <Link href={WEBSITE_PRODUCT_DETAILS(product?.productId?.slug)}>{product?.productId?.name || product.name}</Link>
+                                                                    {product?.variantId?.color && <p>Color: {product.variantId.color}</p>}
+                                                                    {product?.variantId?.size && <p>Size: {product.variantId.size}</p>}
+                                                                </h4>
+                                                            </div>
                                                         </div>
+                                                    </td>
+                                                    <td className="md:table-cell flex justify-between md:p-3 px-3 pb-2 text-center">
+                                                        <span className="md:hidden font-medium">Price</span>
+                                                        <span>BDT {product.sellingPrice.toLocaleString()}</span>
+                                                    </td>
+                                                    <td className="md:table-cell flex justify-between md:p-3 px-3 pb-2 text-center">
+                                                        <span className="md:hidden font-medium">Quantity</span>
+                                                        <span>{product.qty}</span>
+                                                    </td>
+                                                    <td className="md:table-cell flex justify-between md:p-3 px-3 pb-2 text-center">
+                                                        <span className="md:hidden font-medium">Total</span>
+                                                        <span>BDT {(product.qty * product.sellingPrice).toLocaleString()}</span>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="4" className="text-center py-8 text-gray-500">
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <p className="text-lg font-medium">No products found in this order</p>
+                                                        <p className="text-sm">This order may have been created before the product tracking system was implemented.</p>
                                                     </div>
                                                 </td>
-                                                <td className="md:table-cell flex justify-between md:p-3 px-3 pb-2 text-center">
-                                                    <span className="md:hidden font-medium">Price</span>
-                                                    <span>BDT {product.sellingPrice.toLocaleString()}</span>
-                                                </td>
-                                                <td className="md:table-cell flex justify-between md:p-3 px-3 pb-2 text-center">
-                                                    <span className="md:hidden font-medium">Quantity</span>
-                                                    <span>{product.qty}</span>
-                                                </td>
-                                                <td className="md:table-cell flex justify-between md:p-3 px-3 pb-2 text-center">
-                                                    <span className="md:hidden font-medium">Total</span>
-                                                    <span>BDT {(product.qty * product.sellingPrice).toLocaleString()}</span>
-                                                </td>
                                             </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="4" className="text-center py-8 text-gray-500">
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <p className="text-lg font-medium">No products found in this order</p>
-                                                    <p className="text-sm">This order may have been created before the product tracking system was implemented.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )}
+                                        )
+                                    })()}
                                 </tbody>
                             </table>
 

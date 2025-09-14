@@ -338,8 +338,6 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                         </div>
                     )}
 
-                    <div className="line-clamp-3 text-muted-foreground" dangerouslySetInnerHTML={{ __html: decode(product.description) }}></div>
-
 
                     {Array.isArray(variantsByColor) && variantsByColor.length > 0 && (
                         <div className="mt-6 space-y-4">
