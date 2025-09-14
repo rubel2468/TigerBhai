@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "rm -rf .next && rm -rf node_modules/.cache",
+    "build:clean": "npm run clean && npm run build",
+    "dev:clean": "npm run clean && npm run dev"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-react": "^9.5.0",
