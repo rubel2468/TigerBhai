@@ -12,6 +12,7 @@ import Link from "next/link"
 import { useCallback, useMemo, useState } from "react"
 import { FiPlus } from "react-icons/fi"
 import { ErrorBoundary } from "@/components/Application/ErrorBoundary"
+import ClientOnly from "@/components/Application/ClientOnly"
 
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
@@ -76,17 +77,24 @@ const ShowProductVariant = () => {
                 </CardHeader>
                 <CardContent className="px-0 pt-0">
                     <ErrorBoundary>
-                        <DatatableWrapper
-                            queryKey="product-variant-data"
-                            fetchUrl="/api/product-variant"
-                            initialPageSize={10}
-                            columnsConfig={columns}
-                            exportEndpoint="/api/product-variant/export"
-                            deleteEndpoint="/api/product-variant/delete"
-                            deleteType="SD"
-                            trashView={`${ADMIN_TRASH}?trashof=product-variant`}
-                            createAction={action}
-                        />
+                        <ClientOnly fallback={
+                            <div className="flex items-center justify-center p-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                                <span className="ml-2">Loading...</span>
+                            </div>
+                        }>
+                            <DatatableWrapper
+                                queryKey="product-variant-data"
+                                fetchUrl="/api/product-variant"
+                                initialPageSize={10}
+                                columnsConfig={columns}
+                                exportEndpoint="/api/product-variant/export"
+                                deleteEndpoint="/api/product-variant/delete"
+                                deleteType="SD"
+                                trashView={`${ADMIN_TRASH}?trashof=product-variant`}
+                                createAction={action}
+                            />
+                        </ClientOnly>
                     </ErrorBoundary>
                 </CardContent>
             </Card>
