@@ -82,7 +82,7 @@ export default function VendorRegistration() {
             const formData = new FormData()
             formData.append('file', file)
             
-            const { data } = await axios.post('/api/upload', formData, {
+            const { data } = await axios.post('/api/cloudinary-upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
             if (data.success && Array.isArray(data.data) && data.data.length > 0) {

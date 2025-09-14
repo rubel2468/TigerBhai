@@ -47,13 +47,13 @@ const EditProductVariant = ({ params }) => {
       const formData = new FormData()
       formData.append('files', files[0])
 
-      const { data: uploadResponse } = await axios.post('/api/media/create', formData, {
+      const { data: uploadResponse } = await axios.post('/api/cloudinary-upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
 
       if (uploadResponse.success) {
         const media = uploadResponse.data[0]
-        setSelectedMedia([{ _id: media._id, url: media.secure_url }])
+        setSelectedMedia([{ _id: media._id, url: media.filePath }])
         showToast('success', 'Image uploaded successfully')
       }
     } catch (error) {

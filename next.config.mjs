@@ -76,13 +76,6 @@ const nextConfig = {
                 port: '',
                 pathname: '/**',
                 search: ''
-            },
-            {
-                protocol: 'https',
-                hostname: 'tigerbhai.online',
-                port: '',
-                pathname: '/uploads/**',
-                search: ''
             }
         ],
         unoptimized: false,
