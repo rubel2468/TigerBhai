@@ -20,6 +20,14 @@ if (process.env.CLOUDINARY_URL) {
     });
 }
 
+// Debug logging
+console.log('Cloudinary config:', {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'not set',
+    api_key: process.env.CLOUDINARY_API_KEY ? 'set' : 'not set',
+    api_secret: process.env.CLOUDINARY_API_SECRET ? 'set' : 'not set',
+    cloudinary_url: process.env.CLOUDINARY_URL ? 'set' : 'not set'
+});
+
 export async function POST(request) {
     try {
         // Allow both admin and vendor access
@@ -77,8 +85,13 @@ export async function POST(request) {
                         fetch_format: 'auto'
                     },
                     (error, result) => {
-                        if (error) reject(error);
-                        else resolve(result);
+                        if (error) {
+                            console.error('Cloudinary upload error:', error);
+                            reject(error);
+                        } else {
+                            console.log('Cloudinary upload success:', result.public_id);
+                            resolve(result);
+                        }
                     }
                 ).end(buffer);
             });
