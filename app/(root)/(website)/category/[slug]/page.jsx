@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import useFetch from '@/hooks/useFetch'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function CategoryPage() {
     const params = useParams()
@@ -67,10 +68,13 @@ export default function CategoryPage() {
                 {/* Background Image with Parallax Effect */}
                 {category.image && (
                     <div className="absolute inset-0 z-0">
-                        <img
+                        <Image
                             src={category.image}
                             alt={category.name}
-                            className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
+                            fill
+                            className="object-cover scale-105 group-hover:scale-110 transition-transform duration-300"
+                            priority
+                            sizes="100vw"
                         />
                         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60"></div>
                     </div>
@@ -146,23 +150,21 @@ export default function CategoryPage() {
                                 <div 
                                     key={subcategory._id} 
                                     onClick={() => handleSubcategoryClick(subcategory)}
-                                    className="group relative overflow-hidden rounded-3xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-3 hover:scale-105"
+                                    className="group relative overflow-hidden rounded-3xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
                                     style={{ animationDelay: `${index * 100}ms` }}
                                 >
                                     {/* Image Container */}
                                     <div className="relative h-64 overflow-hidden">
                                         {subcategory.image ? (
                                             <>
-                                                <img
+                                                <Image
                                                     src={subcategory.image}
                                                     alt={subcategory.name}
-                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                                    onLoad={() => {
-                                                        console.log('Subcategory image loaded successfully:', subcategory.name)
-                                                    }}
-                                                    onError={(e) => {
-                                                        console.error('Subcategory image failed to load:', subcategory.name, e)
-                                                    }}
+                                                    width={400}
+                                                    height={256}
+                                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                    loading="lazy"
+                                                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                                                 />
                                                 {/* Gradient Overlay */}
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>

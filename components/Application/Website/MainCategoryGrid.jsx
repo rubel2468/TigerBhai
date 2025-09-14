@@ -1,6 +1,7 @@
 'use client'
 import React, { memo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import useFetch from '@/hooks/useFetch'
 import { useRouter } from 'next/navigation'
 
@@ -46,7 +47,7 @@ const MainCategoryGrid = ({ initialData }) => {
                         <div 
                             key={category._id} 
                             onClick={() => handleCategoryClick(category)}
-                            className='group relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2'
+                            className='group relative overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1'
                         >
                             <div 
                                 className='w-full bg-gradient-to-br from-gray-50 to-gray-100'
@@ -56,11 +57,13 @@ const MainCategoryGrid = ({ initialData }) => {
                             >
                                 {category.image ? (
                                     <>
-                                        <img
+                                        <Image
                                             src={category.image}
                                             alt={category.name}
-                                            className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-110'
+                                            fill
+                                            className='object-cover transition-transform duration-300 group-hover:scale-105'
                                             loading="lazy"
+                                            sizes="(max-width: 768px) 50vw, 50vw"
                                         />
 
                                         {/* Modern gradient overlay */}

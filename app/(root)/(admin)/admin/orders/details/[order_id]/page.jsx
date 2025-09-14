@@ -141,18 +141,16 @@ const OrderDetails = ({ params }) => {
                                 // Get products from either products field (legacy) or orderItems field (new)
                                 const allProducts = []
                                 
-                                // Add products from legacy products field
-                                if (orderData?.products?.length > 0) {
-                                    allProducts.push(...orderData.products)
-                                }
-                                
-                                // Add products from orderItems field (new multivendor structure)
+                                // Prioritize orderItems field (new multivendor structure) over legacy products field
                                 if (orderData?.orderItems?.length > 0) {
                                     orderData.orderItems.forEach(orderItem => {
                                         if (orderItem.products?.length > 0) {
                                             allProducts.push(...orderItem.products)
                                         }
                                     })
+                                } else if (orderData?.products?.length > 0) {
+                                    // Fallback to legacy products field only if orderItems is empty
+                                    allProducts.push(...orderData.products)
                                 }
                                 
                                 return allProducts.length > 0 ? 
@@ -271,18 +269,16 @@ const OrderDetails = ({ params }) => {
                                         // Get products from either products field (legacy) or orderItems field (new)
                                         const allProducts = []
                                         
-                                        // Add products from legacy products field
-                                        if (orderData?.products?.length > 0) {
-                                            allProducts.push(...orderData.products)
-                                        }
-                                        
-                                        // Add products from orderItems field (new multivendor structure)
+                                        // Prioritize orderItems field (new multivendor structure) over legacy products field
                                         if (orderData?.orderItems?.length > 0) {
                                             orderData.orderItems.forEach(orderItem => {
                                                 if (orderItem.products?.length > 0) {
                                                     allProducts.push(...orderItem.products)
                                                 }
                                             })
+                                        } else if (orderData?.products?.length > 0) {
+                                            // Fallback to legacy products field only if orderItems is empty
+                                            allProducts.push(...orderData.products)
                                         }
                                         
                                         return allProducts.length > 0 ? (
