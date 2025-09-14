@@ -555,7 +555,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                         <h2 className="font-semibold text-2xl text-card-foreground">Product Description</h2>
                     </div>
                     <div className="p-3">
-                        <div className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: encode(product.description) }}></div>
+                        <div className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: decode(product.description) }}></div>
                     </div>
                 </div>
             </div>
@@ -568,7 +568,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                             <h2 className="font-semibold text-2xl text-card-foreground">Company Details</h2>
                         </div>
                         <div className="p-3">
-                            <div className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: encode(product.companyDetails) }}></div>
+                            <div className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: decode(product.companyDetails) }}></div>
                         </div>
                     </div>
                 </div>

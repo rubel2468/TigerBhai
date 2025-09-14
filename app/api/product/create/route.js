@@ -48,6 +48,9 @@ export async function POST(request) {
             sellingPrice: true,
             discountPercentage: true,
             description: true,
+            whatsappLink: true,
+            offer: true,
+            companyDetails: true,
             media: true
         })
 
@@ -67,6 +70,9 @@ export async function POST(request) {
             sellingPrice: productData.sellingPrice,
             discountPercentage: productData.discountPercentage,
             description: encode(productData.description),
+            whatsappLink: productData.whatsappLink || '',
+            offer: productData.offer || '',
+            companyDetails: productData.companyDetails || '',
             media: productData.media,
             vendor: isVendor ? vendorId : null, // null for admin products
             vendorSettings: {

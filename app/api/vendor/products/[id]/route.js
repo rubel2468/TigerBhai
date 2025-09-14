@@ -1,9 +1,11 @@
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunction";
 import { handleTokenVerification } from "@/lib/authentication";
+import { zSchema } from "@/lib/zodSchema";
 import VendorModel from "@/models/Vendor.model";
 import ProductModel from "@/models/Product.model";
 import { cookies } from "next/headers";
+import { encode } from "entities";
 
 export async function GET(request, { params }) {
     try {
@@ -83,6 +85,28 @@ export async function PUT(request, { params }) {
         const { id } = await params
         const payload = await request.json()
 
+        // Validate the payload
+        const schema = zSchema.pick({
+            name: true,
+            slug: true,
+            category: true,
+            mrp: true,
+            sellingPrice: true,
+            discountPercentage: true,
+            description: true,
+            whatsappLink: true,
+            offer: true,
+            companyDetails: true,
+            media: true
+        })
+
+        const validate = schema.safeParse(payload)
+        if (!validate.success) {
+            return response(false, 400, 'Invalid or missing fields.', validate.error)
+        }
+
+        const validatedData = validate.data
+
         // Verify product ownership before updating
         const existingProduct = await ProductModel.findOne({
             _id: id,
@@ -94,11 +118,21 @@ export async function PUT(request, { params }) {
             return response(false, 404, 'Product not found or does not belong to you')
         }
 
-        // Update product
+        // Update product with validated data
         const updatedProduct = await ProductModel.findByIdAndUpdate(
             id,
             {
-                ...payload,
+                name: validatedData.name,
+                slug: validatedData.slug,
+                category: validatedData.category,
+                mrp: validatedData.mrp,
+                sellingPrice: validatedData.sellingPrice,
+                discountPercentage: validatedData.discountPercentage,
+                description: encode(validatedData.description),
+                whatsappLink: validatedData.whatsappLink || '',
+                offer: validatedData.offer || '',
+                companyDetails: validatedData.companyDetails || '',
+                media: validatedData.media,
                 vendor: vendorId // Ensure vendor is set
             },
             { new: true }
