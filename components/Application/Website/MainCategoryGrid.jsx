@@ -57,7 +57,7 @@ const MainCategoryGrid = ({ initialData }) => {
                                 {category.image ? (
                                     <>
                                         <img
-                                            src={`${process.env.NEXT_PUBLIC_BASE_URL}${category.image}`}
+                                            src={category.image}
                                             alt={category.name}
                                             className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-110'
                                             loading="lazy"
