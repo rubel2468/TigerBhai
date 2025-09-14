@@ -8,10 +8,32 @@ const nextConfig = {
     experimental: {
         optimizeCss: false,
         optimizePackageImports: ['react-icons'],
+        // Disable CSS optimization that causes script loading bug
+        cssChunking: 'strict',
+        // Disable CSS optimization completely
+        optimizeServerReact: false,
     },
     
-    // Webpack optimizations
+    // Webpack configuration to fix CSS loading issue and optimizations
     webpack: (config, { dev, isServer }) => {
+        // Fix CSS loading as script issue in Next.js 15.3.2
+        if (!isServer) {
+            // Ensure CSS files are not treated as scripts
+            config.module.rules.forEach((rule) => {
+                if (rule.test && rule.test.toString().includes('css')) {
+                    if (rule.use && Array.isArray(rule.use)) {
+                        rule.use.forEach((use) => {
+                            if (use.loader && use.loader.includes('css-loader')) {
+                                use.options = {
+                                    ...use.options,
+                                    modules: false,
+                                };
+                            }
+                        });
+                    }
+                }
+            });
+        }
         // Production optimizations
         if (!dev && !isServer) {
             config.optimization = {
