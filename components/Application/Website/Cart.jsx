@@ -45,8 +45,8 @@ const Cart = () => {
 
     return (
         <Sheet open={open} onOpenChange={setOpen} >
-            <SheetTrigger className="relative p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-200 group">
-                <BsCart2 size={20} className="text-gray-600 group-hover:text-primary transition-colors duration-200" />
+            <SheetTrigger className="relative p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 group">
+                <BsCart2 size={20} className="text-white transition-colors duration-200" />
                 <span className="absolute bg-red-500 text-white text-xs rounded-full w-4 h-4 flex justify-center items-center -right-1 -top-1 font-semibold shadow-lg">{cart.count}</span>
             </SheetTrigger>
             <SheetContent className="sm:max-w-[450px] w-full">

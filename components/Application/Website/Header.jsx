@@ -50,13 +50,13 @@ const Header = () => {
     return (
         <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-primary border-b border-primary/70 shadow-lg shadow-black/10`}>
             <div className='flex justify-between items-center h-20 lg:px-32 px-6'>
-                <Link href={WEBSITE_HOME} className="group">
+                <Link href={WEBSITE_HOME} className="group ml-0">
                     <Image
                         src={logo}
                         width={1100}
                         height={300}
                         alt='logo'
-                        className='h-16 lg:h-20 w-auto transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] object-contain'
+                        className='h-[85%] lg:h-[85%] w-auto transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] object-contain'
                     />
                 </Link>
 
