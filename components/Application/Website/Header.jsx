@@ -56,7 +56,7 @@ const Header = () => {
                         width={1100}
                         height={300}
                         alt='logo'
-                        className='lg:w-28 w-24 transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]'
+                        className='h-16 lg:h-20 w-auto transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] object-contain'
                     />
                 </Link>
 
@@ -179,10 +179,10 @@ const Header = () => {
                         <button 
                             type='button' 
                             onClick={() => setShowSearch(!showSearch)}
-                            className='p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 group'
+                            className='p-2 rounded-full bg-white hover:bg-white/90 transition-all duration-200 group'
                         >
                             <IoIosSearch
-                                className='text-white transition-colors duration-200'
+                                className='text-primary transition-colors duration-200'
                                 size={20}
                             />
                         </button>
@@ -196,10 +196,10 @@ const Header = () => {
                         {!auth ? (
                             <Link 
                                 href={WEBSITE_LOGIN}
-                                className='p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 group'
+                                className='p-2 rounded-full bg-white hover:bg-white/90 transition-all duration-200 group'
                             >
                                 <VscAccount
-                                    className='text-white transition-colors duration-200'
+                                    className='text-primary transition-colors duration-200'
                                     size={20}
                                 />
                             </Link>
@@ -208,7 +208,7 @@ const Header = () => {
                                 <button 
                                     type='button'
                                     onClick={() => setIsAccountOpen(prev => !prev)}
-                                    className='p-1 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 group'
+                                    className='p-1 rounded-full bg-white hover:bg-white/90 transition-all duration-200 group'
                                 >
                                     <Avatar className='w-7 h-7 ring-2 ring-white/20 transition-all duration-200'>
                                         <AvatarImage src={auth?.avatar?.url || userIcon.src} />
@@ -233,12 +233,12 @@ const Header = () => {
                         {/* Mobile Menu Button */}
                         <button 
                             type='button' 
-                            className='lg:hidden p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 group' 
+                            className='lg:hidden p-2 rounded-full bg-white hover:bg-white/90 transition-all duration-200 group' 
                             onClick={() => setIsMobileMenu(true)}
                         >
                             <HiMiniBars3 
                                 size={20} 
-                                className='text-white transition-colors duration-200' 
+                                className='text-primary transition-colors duration-200' 
                             />
                         </button>
                     </div>

@@ -24,7 +24,6 @@ import { showToast } from "@/lib/showToast";
 import { Button } from "@/components/ui/button";
 import loadingSvg from '@/public/assets/images/loading.svg'
 import ProductReveiw from "@/components/Application/Website/ProductReveiw";
-import CartConfirmationPopup from "@/components/Application/Website/CartConfirmationPopup";
 import WhatsAppChat from "@/components/Application/Website/WhatsAppChat";
 const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variantsByColor = [] }) => {
 
@@ -45,8 +44,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     const [qtyByColor, setQtyByColor] = useState({})
     const [isProductLoading, setIsProductLoading] = useState(false)
     const [allImages, setAllImages] = useState([])
-    const [showCartPopup, setShowCartPopup] = useState(false)
-    const [popupData, setPopupData] = useState(null)
+    
     
     useEffect(() => {
         // Build gallery with images and YouTube videos
@@ -159,22 +157,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
         dispatch(addIntoCart(cartProduct))
         setIsAddedIntoCart(true)
         
-        // Show popup with selected item
-        setPopupData({
-            selectedItems: [{
-                name: product.name,
-                color: variant.color,
-                size: variant.size,
-                qty: qty,
-                price: variant.sellingPrice,
-                media: variant?.media?.filePath,
-                stock: variant.stock || 0
-            }],
-            totalQty: qty,
-            totalPrice: variant.sellingPrice * qty,
-            actionType: 'add'
-        })
-        setShowCartPopup(true)
+        // Popup removed; action works directly
     }
 
     const handleBuyNow = () => {
@@ -196,22 +179,8 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
             setIsAddedIntoCart(true)
         }
         
-        // Show popup with selected item
-        setPopupData({
-            selectedItems: [{
-                name: product.name,
-                color: variant.color,
-                size: variant.size,
-                qty: qty,
-                price: variant.sellingPrice,
-                media: variant?.media?.filePath,
-                stock: variant.stock || 0
-            }],
-            totalQty: qty,
-            totalPrice: variant.sellingPrice * qty,
-            actionType: 'buy'
-        })
-        setShowCartPopup(true)
+        // Popup removed; redirect directly
+        window.location.href = WEBSITE_CHECKOUT
     }
 
     const handleEntryQty = (variantId, actionType) => {
@@ -271,22 +240,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
         }
         dispatch(addIntoCart(cartProduct))
         
-        // Show popup for single variant
-        setPopupData({
-            selectedItems: [{
-                name: product.name,
-                color: color,
-                size: entry.size,
-                qty: desiredQty,
-                price: entry.sellingPrice,
-                media: entry?.media?.filePath,
-                stock: entry.stock || 0
-            }],
-            totalQty: desiredQty,
-            totalPrice: entry.sellingPrice * desiredQty,
-            actionType: 'add'
-        })
-        setShowCartPopup(true)
+        // Popup removed; action works directly
     }
 
     const buyNowVariant = (color) => {
@@ -294,20 +248,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
         window.location.href = WEBSITE_CHECKOUT
     }
 
-    const handleProceedToCart = () => {
-        setShowCartPopup(false)
-        window.location.href = WEBSITE_CART
-    }
-
-    const handleProceedToCheckout = () => {
-        setShowCartPopup(false)
-        window.location.href = WEBSITE_CHECKOUT
-    }
-
-    const handleClosePopup = () => {
-        setShowCartPopup(false)
-        setPopupData(null)
-    }
+    
 
     return (
         <div className="lg:px-32 px-4">
@@ -609,26 +550,9 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                         }
                                                         dispatch(addIntoCart(cartProduct))
                                                     })
-                                                    
-                                                    // Show popup with all selected items
-                                                    setPopupData({
-                                                        selectedItems: selections.map(sel => ({
-                                                            name: product.name,
-                                                            color: sel.color,
-                                                            size: sel.size,
-                                                            qty: sel.qty,
-                                                            price: sel.price,
-                                                            media: sel.media,
-                                                            stock: sel.stock
-                                                        })),
-                                                        totalQty: totalQty,
-                                                        totalPrice: totalPrice,
-                                                        actionType: 'add'
-                                                    })
-                                                    setShowCartPopup(true)
                                                 }}
                                             >
-                                                Add Selected To Cart
+                                                Add Selected To Cart (কার্টে যোগ করুন)
                                             </Button>
                                             <Button 
                                                 variant="destructive"
@@ -652,26 +576,11 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                         }
                                                         dispatch(addIntoCart(cartProduct))
                                                     })
-                                                    
-                                                    // Show popup with all selected items
-                                                    setPopupData({
-                                                        selectedItems: selections.map(sel => ({
-                                                            name: product.name,
-                                                            color: sel.color,
-                                                            size: sel.size,
-                                                            qty: sel.qty,
-                                                            price: sel.price,
-                                                            media: sel.media,
-                                                            stock: sel.stock
-                                                        })),
-                                                        totalQty: totalQty,
-                                                        totalPrice: totalPrice,
-                                                        actionType: 'buy'
-                                                    })
-                                                    setShowCartPopup(true)
+                                                    // Redirect directly to checkout
+                                                    window.location.href = WEBSITE_CHECKOUT
                                                 }}
                                             >
-                                                Buy Now
+                                                Buy Now (এখনই কিনুন)
                                             </Button>
                                         </div>
                                     </>
@@ -720,19 +629,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
             
             <ProductReveiw productId={product._id} />
 
-            {/* Cart Confirmation Popup */}
-            {popupData && (
-                <CartConfirmationPopup
-                    isOpen={showCartPopup}
-                    onClose={handleClosePopup}
-                    selectedItems={popupData.selectedItems}
-                    totalQty={popupData.totalQty}
-                    totalPrice={popupData.totalPrice}
-                    onProceedToCart={handleProceedToCart}
-                    onProceedToCheckout={handleProceedToCheckout}
-                    actionType={popupData.actionType}
-                />
-            )}
+            
 
         </div>
     )
