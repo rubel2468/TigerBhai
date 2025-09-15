@@ -62,6 +62,16 @@ const nextConfig = {
                 hostname: 'res.cloudinary.com',
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'img.youtube.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'i.ytimg.com',
+                pathname: '/**',
+            },
         ],
         formats: ['image/webp', 'image/avif'],
         minimumCacheTTL: 31536000, // 1 year cache
@@ -76,10 +86,10 @@ const nextConfig = {
             {
                 source: '/(.*)',
                 headers: [
-                    { key: 'X-Frame-Options', value: 'DENY' },
+                    { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
                      {
                          key: 'Content-Security-Policy',
-                         value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src * blob: data:; object-src 'none'; frame-ancestors 'none'; connect-src 'self' https:;",
+                         value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src * blob: data:; object-src 'none'; frame-ancestors 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https:;",
                      },
                 ],
             },
