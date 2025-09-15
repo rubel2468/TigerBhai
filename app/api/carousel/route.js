@@ -8,13 +8,40 @@ export async function GET() {
     try {
         await connectDB();
         
+        // Fetch as plain objects so we can safely transform
         const carousels = await Carousel.find({ isActive: true })
             .sort({ order: 1, createdAt: -1 })
-            .select("-createdBy -__v");
+            .select("-createdBy -__v")
+            .lean();
+
+        // Normalize image URLs to ensure absolute https URLs (fixes mixed content / invalid src)
+        const normalizeUrl = (url) => {
+            if (!url || typeof url !== 'string') return url;
+            try {
+                // Allow protocol-relative or path-only to resolve against Cloudinary host
+                const candidate = url.startsWith('http') || url.startsWith('https') || url.startsWith('http:')
+                    ? url
+                    : `https://res.cloudinary.com${url.startsWith('/') ? '' : '/'}${url}`;
+
+                const u = new URL(candidate);
+                if (u.protocol === 'http:') u.protocol = 'https:';
+                return u.toString();
+            } catch {
+                return url;
+            }
+        };
+
+        const normalized = carousels.map(item => ({
+            ...item,
+            image: {
+                ...item.image,
+                url: normalizeUrl(item?.image?.url)
+            }
+        }));
 
         const response = NextResponse.json({
             success: true,
-            data: carousels
+            data: normalized
         });
 
         // Add caching headers
