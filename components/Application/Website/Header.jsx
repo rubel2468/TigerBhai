@@ -48,19 +48,15 @@ const Header = () => {
     }, [])
 
     return (
-        <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-            isScrolled 
-                ? 'bg-primary/80 backdrop-blur-xl border-b border-primary/30 shadow-lg shadow-black/5' 
-                : 'bg-primary/10 backdrop-blur-md border-b border-primary/20'
-        }`}>
-            <div className='flex justify-between items-center lg:py-3 py-2 lg:px-32 px-6'>
+        <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-primary border-b border-primary/70 shadow-lg shadow-black/10`}>
+            <div className='flex justify-between items-center h-20 lg:px-32 px-6'>
                 <Link href={WEBSITE_HOME} className="group">
                     <Image
                         src={logo}
                         width={1100}
                         height={300}
                         alt='logo'
-                        className='lg:w-28 w-24 transition-all duration-300 group-hover:scale-105'
+                        className='lg:w-28 w-24 transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]'
                     />
                 </Link>
 
@@ -139,10 +135,10 @@ const Header = () => {
                                 <li key={`d-static-${index}`}>
                                     <Link 
                                         href={item.href} 
-                                        className='relative text-gray-700 hover:text-primary font-medium transition-all duration-300 group'
+                                        className='relative text-white hover:text-white font-medium transition-all duration-300 group'
                                     >
                                         {item.label}
-                                        <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full'></span>
+                                        <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full'></span>
                                     </Link>
                                 </li>
                             ))}
@@ -151,9 +147,9 @@ const Header = () => {
                                 const children = subCategories.filter(sc => sc.parent === mc._id)
                                 return (
                                     <li key={`d-m-${mc._id}`} className='relative group'>
-                                        <span className='relative text-gray-700 hover:text-primary font-medium transition-all duration-300 cursor-default'>
+                                        <span className='relative text-white hover:text-white font-medium transition-all duration-300 cursor-default'>
                                             {mc.name}
-                                            <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full'></span>
+                                            <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full'></span>
                                         </span>
                                         {children.length > 0 && (
                                             <div className='absolute left-0 mt-3 w-56 bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl rounded-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200'>
@@ -183,10 +179,10 @@ const Header = () => {
                         <button 
                             type='button' 
                             onClick={() => setShowSearch(!showSearch)}
-                            className='p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-200 group'
+                            className='p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 group'
                         >
                             <IoIosSearch
-                                className='text-gray-600 group-hover:text-primary transition-colors duration-200'
+                                className='text-white transition-colors duration-200'
                                 size={20}
                             />
                         </button>
@@ -200,10 +196,10 @@ const Header = () => {
                         {!auth ? (
                             <Link 
                                 href={WEBSITE_LOGIN}
-                                className='p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-200 group'
+                                className='p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 group'
                             >
                                 <VscAccount
-                                    className='text-gray-600 group-hover:text-primary transition-colors duration-200'
+                                    className='text-white transition-colors duration-200'
                                     size={20}
                                 />
                             </Link>
@@ -212,9 +208,9 @@ const Header = () => {
                                 <button 
                                     type='button'
                                     onClick={() => setIsAccountOpen(prev => !prev)}
-                                    className='p-1 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-200 group'
+                                    className='p-1 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 group'
                                 >
-                                    <Avatar className='w-7 h-7 ring-2 ring-white/20 group-hover:ring-primary/30 transition-all duration-200'>
+                                    <Avatar className='w-7 h-7 ring-2 ring-white/20 transition-all duration-200'>
                                         <AvatarImage src={auth?.avatar?.url || userIcon.src} />
                                     </Avatar>
                                 </button>
@@ -237,12 +233,12 @@ const Header = () => {
                         {/* Mobile Menu Button */}
                         <button 
                             type='button' 
-                            className='lg:hidden p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all duration-200 group' 
+                            className='lg:hidden p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200 group' 
                             onClick={() => setIsMobileMenu(true)}
                         >
                             <HiMiniBars3 
                                 size={20} 
-                                className='text-gray-600 group-hover:text-primary transition-colors duration-200' 
+                                className='text-white transition-colors duration-200' 
                             />
                         </button>
                     </div>

@@ -88,7 +88,7 @@ const MainSlider = ({ initialData }) => {
 
     if (loading) {
         return (
-            <div className="h-[calc(100vh-4rem)] w-full relative flex items-center justify-center bg-background">
+            <div className="h-[calc(100vh-5rem)] w-full relative flex items-center justify-center bg-background">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                     <p className="text-foreground text-sm">Loading...</p>
@@ -99,7 +99,7 @@ const MainSlider = ({ initialData }) => {
 
     if (carouselData.length === 0) {
         return (
-            <div className="h-[calc(100vh-4rem)] w-full relative flex items-center justify-center bg-background">
+            <div className="h-[calc(100vh-5rem)] w-full relative flex items-center justify-center bg-background">
                 <div className="text-center">
                     <h2 className="text-2xl font-bold text-foreground mb-2">Welcome to Our Store</h2>
                     <p className="text-muted-foreground">No carousel slides available at the moment</p>
@@ -109,10 +109,10 @@ const MainSlider = ({ initialData }) => {
     }
 
     return (
-        <div className="h-[calc(100vh-4rem)] w-full relative">
+        <div className="h-[calc(100vh-5rem)] w-full relative">
             <Slider {...settings}>
                 {carouselData.map((slide, index) => (
-                    <div key={slide._id} className="h-[calc(100vh-4rem)] w-full relative">
+                    <div key={slide._id} className="h-[calc(100vh-5rem)] w-full relative">
                         <Image 
                             src={slide.image.url} 
                             fill

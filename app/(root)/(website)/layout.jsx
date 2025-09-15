@@ -17,7 +17,7 @@ const layout = ({ children }) => {
         <ErrorBoundary>
             <div className={kumbh.className}>
                 <Header />
-                <main className="pt-20">
+                <main className="pt-20 lg:pt-20">
                     {children}
                 </main>
                 <Footer />
