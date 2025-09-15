@@ -82,7 +82,7 @@ export async function GET(request, { params }) {
 
         // group variants by color with size entries
         const allVariants = await ProductVariantModel.find({ product: getProduct._id })
-            .select('color size sku mrp sellingPrice discountPercentage media stock')
+            .select('color size sku mrp sellingPrice discountPercentage media stock recommendedFor')
             .populate('media', 'filePath')
             .lean()
 
@@ -98,7 +98,8 @@ export async function GET(request, { params }) {
                 mrp: v.mrp,
                 sellingPrice: v.sellingPrice,
                 discountPercentage: v.discountPercentage,
-                media: v.media // single populated Media doc
+                media: v.media, // single populated Media doc
+                recommendedFor: v.recommendedFor || ''
             })
         }
         const variantsByColor = Array.from(variantsByColorMap.entries()).map(([color, entries]) => ({ color, entries }))

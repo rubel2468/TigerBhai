@@ -27,7 +27,8 @@ export async function PUT(request) {
             whatsappLink: true,
             offer: true,
             companyDetails: true,
-            media: true
+            media: true,
+            videos: true
         })
         const validate = schema.safeParse(payload)
         if (!validate.success) {
@@ -52,6 +53,7 @@ export async function PUT(request) {
         getProduct.offer = validatedData.offer || ''
         getProduct.companyDetails = validatedData.companyDetails || ''
         getProduct.media = validatedData.media
+        getProduct.videos = validatedData.videos || []
         await getProduct.save()
 
         return response(true, 200, 'Product updated successfully.')

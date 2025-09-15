@@ -34,6 +34,10 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     const cartStore = useSelector(store => store.cartStore)
     
     const [activeThumb, setActiveThumb] = useState()
+    const [activeIsVideo, setActiveIsVideo] = useState(false)
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const [touchStartX, setTouchStartX] = useState(null)
+    const [touchEndX, setTouchEndX] = useState(null)
     const [qty, setQty] = useState(1)
     const [isAddedIntoCart, setIsAddedIntoCart] = useState(false)
     const [qtyByVariant, setQtyByVariant] = useState({})
@@ -45,17 +49,25 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     const [popupData, setPopupData] = useState(null)
     
     useEffect(() => {
-        // Show only product images in thumbnails
-        const productImages = product?.media?.map(img => ({
-            src: img.filePath,
-            type: 'product'
-        })) || []
-        
-        setAllImages(productImages)
-        
-        // Set initial active thumbnail to first product image
-        if (productImages.length > 0) {
-            setActiveThumb(productImages[0].src)
+        // Build gallery with images and YouTube videos
+        const productImages = product?.media?.map(img => ({ src: img.filePath, kind: 'image' })) || []
+        const productVideos = (product?.videos || [])
+            .filter(v => v.platform === 'youtube' && (v.videoId || v.url))
+            .map(v => ({
+                kind: 'video',
+                videoId: v.videoId || (() => { try { const u = new URL(v.url); if (u.hostname.includes('youtu.be')) return u.pathname.replace('/', ''); if (u.hostname.includes('youtube.com')) return new URLSearchParams(u.search).get('v') || ''; } catch(_){} return '' })(),
+                url: v.url,
+                thumb: v.thumbnail || (v.videoId ? `https://img.youtube.com/vi/${v.videoId}/hqdefault.jpg` : ''),
+            }))
+            .filter(v => v.videoId)
+
+        const gallery = [...productImages, ...productVideos]
+        setAllImages(gallery)
+        if (gallery.length > 0) {
+            const first = gallery[0]
+            setCurrentIndex(0)
+            setActiveThumb(first.kind === 'image' ? first.src : first.videoId)
+            setActiveIsVideo(first.kind === 'video')
         }
     }, [product, variant])
 
@@ -74,8 +86,49 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
 
     }, [variant])
 
-    const handleThumb = (thumbUrl) => {
-        setActiveThumb(thumbUrl)
+    const handleThumb = (item) => {
+        if (item.kind === 'image') {
+            setActiveThumb(item.src)
+            setActiveIsVideo(false)
+        } else {
+            setActiveThumb(item.videoId)
+            setActiveIsVideo(true)
+        }
+    }
+
+    const goToIndex = (idx) => {
+        if (!allImages.length) return
+        const bounded = (idx + allImages.length) % allImages.length
+        const item = allImages[bounded]
+        setCurrentIndex(bounded)
+        if (item.kind === 'image') {
+            setActiveThumb(item.src)
+            setActiveIsVideo(false)
+        } else {
+            setActiveThumb(item.videoId)
+            setActiveIsVideo(true)
+        }
+    }
+
+    const handleTouchStart = (e) => {
+        setTouchStartX(e.changedTouches[0].clientX)
+    }
+    const handleTouchMove = (e) => {
+        setTouchEndX(e.changedTouches[0].clientX)
+    }
+    const handleTouchEnd = () => {
+        if (touchStartX === null || touchEndX === null) return
+        const delta = touchEndX - touchStartX
+        const threshold = 40
+        if (Math.abs(delta) > threshold) {
+            if (delta < 0) {
+                goToIndex(currentIndex + 1)
+            } else {
+                goToIndex(currentIndex - 1)
+            }
+        }
+        setTouchStartX(null)
+        setTouchEndX(null)
     }
 
     const handleQty = (actionType) => {
@@ -287,26 +340,45 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
 
             <div className="md:flex justify-between items-start lg:gap-10 gap-5 mb-20">
                 <div className="md:w-1/2 xl:flex xl:justify-center xl:gap-5 md:sticky md:top-0">
-                    <div className="xl:order-last xl:mb-0 mb-5 xl:w-[calc(100%-144px)]">
-                        <Image
-                            src={activeThumb || imgPlaceholder.src}
-                            width={650}
-                            height={650}
-                            alt="product"
-                            className="border rounded max-w-full"
-                        />
+                    <div className="xl:order-last xl:mb-0 mb-5 xl:w-[calc(100%-144px)]" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+                        {activeIsVideo ? (
+                            <div className="aspect-video w-full border rounded overflow-hidden">
+                                <iframe
+                                    src={`https://www.youtube.com/embed/${activeThumb}`}
+                                    title="Product video"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    className="h-full w-full"
+                                />
+                            </div>
+                        ) : (
+                            <Image
+                                src={activeThumb || imgPlaceholder.src}
+                                width={650}
+                                height={650}
+                                alt="product"
+                                className="border rounded max-w-full"
+                            />
+                        )}
                     </div>
                     <div className="flex xl:flex-col items-center xl:gap-5 gap-3 xl:w-36 overflow-auto xl:pb-0 pb-2 max-h-[600px]">
-                        {allImages.map((image, index) => (
-                            <Image
-                                key={index}
-                                src={image.src || imgPlaceholder.src}
-                                width={100}
-                                height={100}
-                                alt={`product thumbnail ${index + 1}`}
-                                className={`md:max-w-full max-w-16 rounded cursor-pointer ${image.src === activeThumb ? 'border-2 border-primary' : 'border'}`}
-                                onClick={() => handleThumb(image.src)}
-                            />
+                        {allImages.map((item, index) => (
+                            <div key={index} className="md:max-w-full max-w-16 rounded cursor-pointer border" onClick={() => handleThumb(item)}>
+                                {item.kind === 'image' ? (
+                                    <Image
+                                        src={item.src || imgPlaceholder.src}
+                                        width={100}
+                                        height={100}
+                                        alt={`product thumbnail ${index + 1}`}
+                                        className={`rounded ${(!activeIsVideo && item.src === activeThumb) ? 'ring-2 ring-primary' : ''}`}
+                                    />
+                                ) : (
+                                    <div className={`relative w-[100px] h-[56px] overflow-hidden rounded ${activeIsVideo && item.videoId === activeThumb ? 'ring-2 ring-primary' : ''}`}>
+                                        <Image src={item.thumb || imgPlaceholder.src} alt="video thumb" fill className="object-cover" />
+                                        <div className="absolute inset-0 grid place-items-center bg-black/30 text-white text-xs">▶</div>
+                                    </div>
+                                )}
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -365,7 +437,14 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                             
                                             {/* Content and right-side controls */}
                                             <div className="flex-1 p-3 flex flex-col gap-2">
-                                                <div className="font-medium text-card-foreground mb-1">{group.color}</div>
+                                                {/* Line 1: Title and Recommended */}
+                                                <div className="flex items-start justify-between">
+                                                    <div className="font-medium text-card-foreground">{group.color}</div>
+                                                    {(() => {
+                                                        const rec = (group.entries.find(e => e.recommendedFor)?.recommendedFor) || ''
+                                                        return rec ? <span className="text-xs px-2 py-0.5 rounded-full bg-secondary/30 text-secondary-foreground">Recommended: {rec}</span> : null
+                                                    })()}
+                                                </div>
                                                 {!isMultiSize && (
                                                     <div className="space-y-2">
                                                         {group.entries.map(e => {
@@ -373,10 +452,22 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                             const qtyVal = qtyByVariant[e.variantId] || 0
                                                             return (
                                                                 <div key={e.variantId} className={`flex items-center justify-between gap-3 border border-border rounded-md px-3 py-2 ${isOut ? 'opacity-60' : ''}`}>
-                                                                    <div className="flex items-center gap-3">
-                                                                        <span className="text-sm text-card-foreground">Size: {e.size}</span>
-                                                                        <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
-                                                                        <span className="text-xs text-muted-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
+                                                                    <div className="flex flex-col gap-0.5">
+                                                                        {/* Line 2: Size and Stock */}
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span className="text-sm text-card-foreground">Size: {e.size}</span>
+                                                                            <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
+                                                                        </div>
+                                                                        {/* Line 3: Prices */}
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span className="text-sm font-semibold text-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
+                                                                            {(Number(e.mrp) > Number(e.sellingPrice)) && (
+                                                                                <span className="text-xs text-muted-foreground line-through">BDT {Number(e.mrp || 0).toLocaleString()}</span>
+                                                                            )}
+                                                                            {(Number(e.mrp) > Number(e.sellingPrice)) && (
+                                                                                <span className="text-xs text-green-600">({Math.round(((Number(e.mrp)-Number(e.sellingPrice))/Number(e.mrp))*100)}% off)</span>
+                                                                            )}
+                                                                        </div>
                                                                     </div>
                                                                     <div className="flex items-center">
                                                                         <div className="flex items-center h-9 border border-border rounded-full bg-background">
@@ -419,8 +510,15 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                 const entry = group.entries.find(en => en.size === selectedSize)
                                                                 if (!entry) return null
                                                                 return (
-                                                                    <div className="text-xs text-muted-foreground">
-                                                                        Stock: {entry.stock ?? 0} · BDT {Number(entry.sellingPrice || 0).toLocaleString()}
+                                                                    <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
+                                                                        <span>Stock: {entry.stock ?? 0}</span>
+                                                                        <span className="text-foreground font-medium">BDT {Number(entry.sellingPrice || 0).toLocaleString()}</span>
+                                                                        {(Number(entry.mrp) > Number(entry.sellingPrice)) && (
+                                                                            <span className="line-through">BDT {Number(entry.mrp || 0).toLocaleString()}</span>
+                                                                        )}
+                                                                        {(Number(entry.mrp) > Number(entry.sellingPrice)) && (
+                                                                            <span className="text-green-600">({Math.round(((Number(entry.mrp)-Number(entry.sellingPrice))/Number(entry.mrp))*100)}% off)</span>
+                                                                        )}
                                                                     </div>
                                                                 )
                                                             })()}

@@ -84,6 +84,7 @@ const AddProductVariant = () => {
     sellingPrice: true,
     discountPercentage: true,
     sizesWithStock: true,
+    recommendedFor: true,
   })
 
   const form = useForm({
@@ -96,6 +97,7 @@ const AddProductVariant = () => {
       mrp: "",
       sellingPrice: "",
       discountPercentage: "",
+      recommendedFor: "",
     },
   })
 
@@ -307,6 +309,22 @@ const AddProductVariant = () => {
                             <span className='text-sm text-gray-500'>Add custom size names with their stock.</span>
                           </div>
                         </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className='md:col-span-2'>
+                  <FormField
+                    control={form.control}
+                    name="recommendedFor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Recommended For (Optional)</FormLabel>
+                        <FormControl>
+                          <Input type="text" maxLength={120} placeholder="e.g., Kids, Runners, Heavy duty" {...field} />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

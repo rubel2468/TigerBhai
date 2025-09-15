@@ -35,6 +35,11 @@ const ProductVariantSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    recommendedFor: {
+        type: String,
+        trim: true,
+        default: ''
+    },
     sku: {
         type: String,
         required: true,

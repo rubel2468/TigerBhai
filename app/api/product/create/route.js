@@ -51,7 +51,8 @@ export async function POST(request) {
             whatsappLink: true,
             offer: true,
             companyDetails: true,
-            media: true
+            media: true,
+            videos: true
         })
 
 
@@ -74,6 +75,7 @@ export async function POST(request) {
             offer: productData.offer || '',
             companyDetails: productData.companyDetails || '',
             media: productData.media,
+            videos: productData.videos || [],
             vendor: isVendor ? vendorId : null, // null for admin products
             vendorSettings: {
                 isActive: true,

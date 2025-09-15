@@ -48,7 +48,8 @@ export async function PUT(request) {
             mrp: true,
             sellingPrice: true,
             discountPercentage: true,
-            media: true
+            media: true,
+            recommendedFor: true,
         })
 
         const validate = schema.safeParse(payload)
@@ -80,6 +81,7 @@ export async function PUT(request) {
         getProductVariant.sellingPrice = validatedData.sellingPrice
         getProductVariant.discountPercentage = validatedData.discountPercentage
         getProductVariant.media = singleMediaId
+        getProductVariant.recommendedFor = validatedData.recommendedFor || ''
         await getProductVariant.save()
 
         return response(true, 200, 'Product variant updated successfully.')

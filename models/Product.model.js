@@ -30,6 +30,32 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    videos: [
+        {
+            platform: {
+                type: String,
+                enum: ['youtube'],
+                default: 'youtube'
+            },
+            url: {
+                type: String,
+                trim: true
+            },
+            videoId: {
+                type: String,
+                trim: true
+            },
+            title: {
+                type: String,
+                trim: true
+            },
+            thumbnail:
+            {
+                type: String,
+                trim: true
+            }
+        }
+    ],
     media: [
         {
             type: mongoose.Schema.Types.ObjectId,

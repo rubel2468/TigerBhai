@@ -49,6 +49,7 @@ export async function POST(request) {
             discountPercentage: true,
             media: true,
             sizesWithStock: true,
+            recommendedFor: true,
         })
 
 
@@ -94,6 +95,7 @@ export async function POST(request) {
                 discountPercentage: variantData.discountPercentage,
                 media: singleMediaId,
                 stock: safeStock,
+                recommendedFor: variantData.recommendedFor || ''
             })
             await newProductVariant.save()
         }

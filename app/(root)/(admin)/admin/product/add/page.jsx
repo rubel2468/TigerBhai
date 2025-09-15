@@ -33,6 +33,8 @@ const AddProduct = () => {
   // image upload states  
   const [open, setOpen] = useState(false)
   const [selectedMedia, setSelectedMedia] = useState([])
+  const [videos, setVideos] = useState([])
+  const [videoInput, setVideoInput] = useState('')
   const fileInputRef = useRef(null)
 
   const handleUploadClick = () => {
@@ -169,6 +171,7 @@ const AddProduct = () => {
 
       const mediaIds = selectedMedia.map(media => media._id)
       values.media = mediaIds
+      values.videos = videos
 
       const { data: response } = await axios.post('/api/product/create', values)
       if (!response.success) {
@@ -176,6 +179,8 @@ const AddProduct = () => {
       }
 
       form.reset()
+      setSelectedMedia([])
+      setVideos([])
       showToast('success', response.message)
     } catch (error) {
       showToast('error', error.message)
@@ -390,6 +395,64 @@ const AddProduct = () => {
                   Upload Images
                 </Button>
 
+              </div>
+
+              <div className='md:col-span-2 border border-dashed rounded p-5'>
+                <FormLabel className='mb-2 block'>YouTube Videos (Optional)</FormLabel>
+                <div className='flex gap-2 mb-3'>
+                  <Input
+                    type='url'
+                    placeholder='https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID'
+                    value={videoInput}
+                    onChange={(e) => setVideoInput(e.target.value)}
+                  />
+                  <Button type='button' onClick={() => {
+                    const url = videoInput.trim()
+                    if (!url) return
+                    try {
+                      const { id, thumb } = (function extractYouTubeId(u){
+                        try {
+                          const parsed = new URL(u)
+                          if (parsed.hostname.includes('youtu.be')) {
+                            return { id: parsed.pathname.replace('/', ''), thumb: `https://img.youtube.com/vi/${parsed.pathname.replace('/', '')}/hqdefault.jpg` }
+                          }
+                          if (parsed.hostname.includes('youtube.com')) {
+                            const v = new URLSearchParams(parsed.search).get('v')
+                            if (v) return { id: v, thumb: `https://img.youtube.com/vi/${v}/hqdefault.jpg` }
+                          }
+                        } catch (_) {}
+                        return { id: '', thumb: '' }
+                      })(url)
+                      if (!id) {
+                        return showToast('error', 'Invalid YouTube URL')
+                      }
+                      const newItem = { platform: 'youtube', url, videoId: id, thumbnail: thumb }
+                      setVideos(prev => [...prev, newItem])
+                      setVideoInput('')
+                      showToast('success', 'Video added')
+                    } catch (e) {
+                      showToast('error', 'Invalid YouTube URL')
+                    }
+                  }}>Add</Button>
+                </div>
+                {videos.length > 0 && (
+                  <div className='flex flex-wrap gap-3'>
+                    {videos.map((v, idx) => (
+                      <div key={`${v.videoId}-${idx}`} className='relative w-32'>
+                        <Image src={v.thumbnail || `/assets/images/img-placeholder.webp`} width={128} height={72} alt='' className='w-full h-auto rounded border' />
+                        <div className='text-xs mt-1 truncate'>youtube.com/{v.videoId}</div>
+                        <button
+                          type='button'
+                          className='absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold'
+                          onClick={() => setVideos(prev => prev.filter((_, i) => i !== idx))}
+                          title='Remove video'
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className='mb-3 mt-5'>
