@@ -36,8 +36,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     const [activeThumb, setActiveThumb] = useState()
     const [qty, setQty] = useState(1)
     const [isAddedIntoCart, setIsAddedIntoCart] = useState(false)
-    const [selectedSizeByColor, setSelectedSizeByColor] = useState({})
-    const [qtyByColor, setQtyByColor] = useState({})
+    const [qtyByVariant, setQtyByVariant] = useState({})
     const [isProductLoading, setIsProductLoading] = useState(false)
     const [allImages, setAllImages] = useState([])
     const [showCartPopup, setShowCartPopup] = useState(false)
@@ -160,23 +159,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
         setShowCartPopup(true)
     }
 
-    const handleVariantSizeSelect = (color, size) => {
-        setSelectedSizeByColor(prev => {
-            const current = prev[color]
-            if (current === size) {
-                const { [color]: _omit, ...rest } = prev
-                return rest
-            }
-            return { ...prev, [color]: size }
-        })
-    }
-
-    const handleVariantQty = (color, actionType) => {
-        setQtyByColor(prev => {
-            const current = prev[color] || 1
-            if (actionType === 'inc') return { ...prev, [color]: current + 1 }
-            if (current === 1) return prev
-            return { ...prev, [color]: current - 1 }
+    const handleEntryQty = (variantId, actionType) => {
+        setQtyByVariant(prev => {
+            const current = prev[variantId] || 0
+            if (actionType === 'inc') return { ...prev, [variantId]: current + 1 }
+            const next = Math.max(0, current - 1)
+            return { ...prev, [variantId]: next }
         })
     }
 
@@ -342,7 +330,6 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                     {Array.isArray(variantsByColor) && variantsByColor.length > 0 && (
                         <div className="mt-6 space-y-4">
                             {variantsByColor.map(group => {
-                                const selected = selectedSizeByColor[group.color]
                                 return (
                                     <div key={group.color} className="border border-border rounded overflow-hidden bg-card">
                                         <div className="flex min-h-[120px]">
@@ -359,40 +346,34 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                 </div>
                                             )}
                                             
-                                            {/* Content on the right */}
-                                            <div className="flex-1 p-3 flex flex-col justify-between">
-                                                <div>
-                                                    <div className="font-medium mb-2 text-card-foreground">{group.color}</div>
-                                                    <div className="flex flex-wrap gap-2 mb-3">
-                                                        {group.entries.map(e => {
-                                                            const isSelected = selected === e.size
-                                                            const isOut = (e.stock ?? 0) <= 0
-                                                            return (
-                                                                <button
-                                                                    key={e.variantId}
-                                                                    type="button"
-                                                                    disabled={isOut}
-                                                                    onClick={() => handleVariantSizeSelect(group.color, e.size)}
-                                                                    className={`border border-border py-1 px-2 rounded text-sm flex items-center gap-2 ${isSelected ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-accent hover:text-accent-foreground'} ${isOut ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                                >
-                                                                    <span>{e.size}</span>
-                                                                    <span className="text-xs text-muted-foreground">(Stock: {e.stock ?? 0})</span>
-                                                                    <span className={`text-xs ${isSelected ? 'text-primary-foreground/90' : 'text-muted-foreground'}`}>BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
-                                                                </button>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex items-center h-9 border border-border rounded-full bg-background">
-                                                        <button type="button" className="h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent" onClick={() => handleVariantQty(group.color, 'desc')}>
-                                                            <HiMinus />
-                                                        </button>
-                                                        <input type="text" value={qtyByColor[group.color] || 1} className="w-12 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
-                                                        <button type="button" className="h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent" onClick={() => handleVariantQty(group.color, 'inc')}>
-                                                            <HiPlus />
-                                                        </button>
-                                                    </div>
+                                            {/* Content and right-side quantity controls */}
+                                            <div className="flex-1 p-3 flex flex-col gap-2">
+                                                <div className="font-medium text-card-foreground mb-1">{group.color}</div>
+                                                <div className="space-y-2">
+                                                    {group.entries.map(e => {
+                                                        const isOut = (e.stock ?? 0) <= 0
+                                                        const qtyVal = qtyByVariant[e.variantId] || 0
+                                                        return (
+                                                            <div key={e.variantId} className={`flex items-center justify-between gap-3 border border-border rounded-md px-3 py-2 ${isOut ? 'opacity-60' : ''}`}>
+                                                                <div className="flex items-center gap-3">
+                                                                    <span className="text-sm text-card-foreground">Size: {e.size}</span>
+                                                                    <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
+                                                                    <span className="text-xs text-muted-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
+                                                                </div>
+                                                                <div className="flex items-center">
+                                                                    <div className="flex items-center h-9 border border-border rounded-full bg-background">
+                                                                        <button type="button" disabled={isOut} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
+                                                                            <HiMinus />
+                                                                        </button>
+                                                                        <input type="text" value={qtyVal} className="w-12 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
+                                                                        <button type="button" disabled={isOut} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
+                                                                            <HiPlus />
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })}
                                                 </div>
                                             </div>
                                         </div>
@@ -400,14 +381,13 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                 )
                             })}
                             {(() => {
-                                const selections = variantsByColor.map(v => {
-                                    const s = selectedSizeByColor[v.color]
-                                    if (!s) return null
-                                    const e = v.entries.find(en => en.size === s)
-                                    if (!e) return null
-                                    const q = qtyByColor[v.color] || 1
-                                    return { color: v.color, size: s, qty: q, price: e.sellingPrice, stock: e.stock ?? 0 }
-                                }).filter(Boolean)
+                                const selections = variantsByColor.flatMap(v => {
+                                    return v.entries.map(e => {
+                                        const q = qtyByVariant[e.variantId] || 0
+                                        if (q <= 0) return null
+                                        return { color: v.color, size: e.size, qty: q, price: e.sellingPrice, stock: e.stock ?? 0, variantId: e.variantId, media: e?.media?.filePath, mrp: e.mrp }
+                                    }).filter(Boolean)
+                                })
                                 const totalQty = selections.reduce((sum, it) => sum + it.qty, 0)
                                 const totalPrice = selections.reduce((sum, it) => sum + (it.price * it.qty), 0)
                                 return (
@@ -429,30 +409,21 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                 type="button" 
                                                 disabled={selections.length === 0}
                                                 onClick={() => {
-                                                    if (selections.length === 0) {
-                                                        showToast('warning', 'Please select variant and quantity first.')
-                                                        return
-                                                    }
-                                                    
                                                     // Add all selected variants to cart
                                                     selections.forEach(sel => {
-                                                        const variantGroup = variantsByColor.find(v => v.color === sel.color)
-                                                        const entry = variantGroup?.entries?.find(e => e.size === sel.size)
-                                                        if (entry) {
-                                                            const cartProduct = {
-                                                                productId: product._id,
-                                                                variantId: entry.variantId,
-                                                                name: product.name,
-                                                                url: product.slug,
-                                                                size: entry.size,
-                                                                color: sel.color,
-                                                                mrp: entry.mrp,
-                                                                sellingPrice: entry.sellingPrice,
-                                                                media: entry?.media?.filePath,
-                                                                qty: sel.qty
-                                                            }
-                                                            dispatch(addIntoCart(cartProduct))
+                                                        const cartProduct = {
+                                                            productId: product._id,
+                                                            variantId: sel.variantId,
+                                                            name: product.name,
+                                                            url: product.slug,
+                                                            size: sel.size,
+                                                            color: sel.color,
+                                                            mrp: sel.mrp,
+                                                            sellingPrice: sel.price,
+                                                            media: sel.media,
+                                                            qty: sel.qty
                                                         }
+                                                        dispatch(addIntoCart(cartProduct))
                                                     })
                                                     
                                                     // Show popup with all selected items
@@ -463,7 +434,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                             size: sel.size,
                                                             qty: sel.qty,
                                                             price: sel.price,
-                                                            media: variantsByColor.find(v => v.color === sel.color)?.entries?.find(e => e.size === sel.size)?.media?.filePath,
+                                                            media: sel.media,
                                                             stock: sel.stock
                                                         })),
                                                         totalQty: totalQty,
@@ -481,30 +452,21 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                 type="button" 
                                                 disabled={selections.length === 0}
                                                 onClick={() => {
-                                                    if (selections.length === 0) {
-                                                        showToast('warning', 'Please select variant and quantity first.')
-                                                        return
-                                                    }
-                                                    
                                                     // Add all selected variants to cart
                                                     selections.forEach(sel => {
-                                                        const variantGroup = variantsByColor.find(v => v.color === sel.color)
-                                                        const entry = variantGroup?.entries?.find(e => e.size === sel.size)
-                                                        if (entry) {
-                                                            const cartProduct = {
-                                                                productId: product._id,
-                                                                variantId: entry.variantId,
-                                                                name: product.name,
-                                                                url: product.slug,
-                                                                size: entry.size,
-                                                                color: sel.color,
-                                                                mrp: entry.mrp,
-                                                                sellingPrice: entry.sellingPrice,
-                                                                media: entry?.media?.filePath,
-                                                                qty: sel.qty
-                                                            }
-                                                            dispatch(addIntoCart(cartProduct))
+                                                        const cartProduct = {
+                                                            productId: product._id,
+                                                            variantId: sel.variantId,
+                                                            name: product.name,
+                                                            url: product.slug,
+                                                            size: sel.size,
+                                                            color: sel.color,
+                                                            mrp: sel.mrp,
+                                                            sellingPrice: sel.price,
+                                                            media: sel.media,
+                                                            qty: sel.qty
                                                         }
+                                                        dispatch(addIntoCart(cartProduct))
                                                     })
                                                     
                                                     // Show popup with all selected items
@@ -515,7 +477,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                             size: sel.size,
                                                             qty: sel.qty,
                                                             price: sel.price,
-                                                            media: variantsByColor.find(v => v.color === sel.color)?.entries?.find(e => e.size === sel.size)?.media?.filePath,
+                                                            media: sel.media,
                                                             stock: sel.stock
                                                         })),
                                                         totalQty: totalQty,

@@ -46,37 +46,37 @@
 :root {
   --radius: 0.5rem;
   /* Facebook Blue Theme with lighter warmer background and yellow/red accents */
-  --background: oklch(0.995 0.002 60); /* Much lighter warmer white */
+  --background: #F3F4F6; /* Updated background */
   --foreground: oklch(0.15 0.01 220); /* Dark blue-gray for text */
   --card: oklch(0.998 0.001 60); /* Very light warm white for cards */
   --card-foreground: oklch(0.15 0.01 220);
   --popover: oklch(0.998 0.001 60);
   --popover-foreground: oklch(0.15 0.01 220);
-  --primary: oklch(0.55 0.22 220); /* Facebook blue - vibrant and modern */
-  --primary-foreground: oklch(0.98 0.01 220);
-  --secondary: oklch(0.85 0.12 60); /* Light yellow for secondary actions */
-  --secondary-foreground: oklch(0.25 0.05 60);
+  --primary: #1E3A8A; /* Updated blue */
+  --primary-foreground: #ffffff;
+  --secondary: #FBBF24; /* Updated yellow */
+  --secondary-foreground: #1f2937;
   --muted: oklch(0.96 0.004 60); /* Lighter muted warm gray */
   --muted-foreground: oklch(0.55 0.02 220);
-  --accent: oklch(0.85 0.12 60); /* Yellow accent */
-  --accent-foreground: oklch(0.25 0.05 60);
-  --destructive: oklch(0.65 0.22 25); /* Red for destructive actions */
+  --accent: #FBBF24; /* Match yellow accent */
+  --accent-foreground: #1f2937;
+  --destructive: #DC2626; /* Updated red */
   --border: oklch(0.95 0.005 60); /* Lighter warm border */
   --input: oklch(0.95 0.005 60);
-  --ring: oklch(0.55 0.22 220); /* Facebook blue ring */
-  --chart-1: oklch(0.55 0.22 220); /* Facebook blue */
-  --chart-2: oklch(0.85 0.12 60); /* Yellow */
-  --chart-3: oklch(0.65 0.22 25); /* Red */
+  --ring: #1E3A8A; /* Match blue ring */
+  --chart-1: #1E3A8A; /* Blue */
+  --chart-2: #FBBF24; /* Yellow */
+  --chart-3: #DC2626; /* Red */
   --chart-4: oklch(0.60 0.18 140); /* Green accent */
   --chart-5: oklch(0.70 0.15 280); /* Purple accent */
-  --sidebar: oklch(0.98 0.003 60); /* Lighter warmer sidebar */
-  --sidebar-foreground: oklch(0.15 0.01 220);
-  --sidebar-primary: oklch(0.55 0.22 220); /* Facebook blue */
-  --sidebar-primary-foreground: oklch(0.98 0.01 220);
-  --sidebar-accent: oklch(0.96 0.004 60);
-  --sidebar-accent-foreground: oklch(0.25 0.05 60);
-  --sidebar-border: oklch(0.95 0.005 60);
-  --sidebar-ring: oklch(0.55 0.22 220);
+  --sidebar: #F3F4F6; /* Match background */
+  --sidebar-foreground: #111827;
+  --sidebar-primary: #1E3A8A; /* Blue */
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #FBBF24; /* Yellow */
+  --sidebar-accent-foreground: #1f2937;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #1E3A8A;
 }
 
 .dark {
