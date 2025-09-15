@@ -88,7 +88,7 @@ const MainSlider = ({ initialData }) => {
 
     if (loading) {
         return (
-            <div className="h-[calc(100vh-5rem)] w-full relative flex items-center justify-center bg-background">
+            <div className="w-full relative flex items-center justify-center bg-background py-20">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                     <p className="text-foreground text-sm">Loading...</p>
@@ -99,7 +99,7 @@ const MainSlider = ({ initialData }) => {
 
     if (carouselData.length === 0) {
         return (
-            <div className="h-[calc(100vh-5rem)] w-full relative flex items-center justify-center bg-background">
+            <div className="w-full relative flex items-center justify-center bg-background py-20">
                 <div className="text-center">
                     <h2 className="text-2xl font-bold text-foreground mb-2">Welcome to Our Store</h2>
                     <p className="text-muted-foreground">No carousel slides available at the moment</p>
@@ -109,45 +109,48 @@ const MainSlider = ({ initialData }) => {
     }
 
     return (
-        <div className="h-[calc(100vh-5rem)] w-full relative">
+        <div className="w-full relative">
             <Slider {...settings}>
                 {carouselData.map((slide, index) => (
-                    <div key={slide._id} className="h-[calc(100vh-5rem)] w-full relative">
-                        <Image 
-                            src={slide.image.url} 
-                            fill
-                            alt={slide.title} 
-                            className="object-cover"
-                            priority={index === 0}
-                            fetchPriority={index === 0 ? 'high' : 'auto'}
-                            loading={index === 0 ? 'eager' : 'lazy'}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-                            quality={index === 0 ? 80 : 70}
-                        />
-                        
-                        {/* Overlay Content */}
-                        <div className="absolute inset-0 bg-black/30 flex items-center">
-                            <div className="container mx-auto px-6 lg:px-32">
-                                <div className="max-w-2xl">
-                                    <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-                                        {slide.title}
-                                    </h1>
-                                    {slide.description && (
-                                        <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed">
-                                            {slide.description}
-                                        </p>
-                                    )}
-                                    {slide.buttonUrl && (
-                                        <Link href={slide.buttonUrl}>
-                                            <Button 
-                                                variant="default"
-                                                size="lg" 
-                                                className="px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                                            >
-                                                {slide.buttonText}
-                                            </Button>
-                                        </Link>
-                                    )}
+                    <div key={slide._id} className="w-full relative">
+                        <div className="relative">
+                            <Image 
+                                src={slide.image.url} 
+                                width={1920}
+                                height={1080}
+                                alt={slide.title} 
+                                className="w-full h-auto object-contain"
+                                priority={index === 0}
+                                fetchPriority={index === 0 ? 'high' : 'auto'}
+                                loading={index === 0 ? 'eager' : 'lazy'}
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                                quality={index === 0 ? 80 : 70}
+                            />
+                            
+                            {/* Overlay Content */}
+                            <div className="absolute inset-0 bg-black/30 flex items-center">
+                                <div className="container mx-auto px-6 lg:px-32">
+                                    <div className="max-w-2xl">
+                                        <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+                                            {slide.title}
+                                        </h1>
+                                        {slide.description && (
+                                            <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed">
+                                                {slide.description}
+                                            </p>
+                                        )}
+                                        {slide.buttonUrl && (
+                                            <Link href={slide.buttonUrl}>
+                                                <Button 
+                                                    variant="default"
+                                                    size="lg" 
+                                                    className="px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                                                >
+                                                    {slide.buttonText}
+                                                </Button>
+                                            </Link>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

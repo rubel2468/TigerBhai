@@ -50,7 +50,7 @@ const Header = () => {
     return (
         <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-primary border-b border-primary/70 shadow-lg shadow-black/10`}>
             <div className='flex justify-between items-center h-20 lg:pl-0 pl-0 lg:pr-32 pr-6'>
-                <Link href={WEBSITE_HOME} className="group">
+                <Link href={WEBSITE_HOME} className="group lg:pl-[20%]">
                     <Image
                         src={logo}
                         width={1100}

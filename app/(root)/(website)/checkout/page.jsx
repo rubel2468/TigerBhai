@@ -240,7 +240,7 @@ const Checkout = () => {
                 </div>
             }
 
-            <WebsiteBreadcrumb props={breadCrumb} />
+            <WebsiteBreadcrumb props={{...breadCrumb, titleClassName: 'text-4xl font-bold mb-2 text-center'}} />
             {cart.count === 0
                 ?
                 <div className='w-screen h-[500px] flex justify-center items-center py-32'>
@@ -254,11 +254,12 @@ const Checkout = () => {
                     </div>
                 </div>
                 :
-                <div className='my-10 lg:px-32 px-4'>
-                    <div className='w-full'>
-                        <div className='flex font-semibold gap-2 items-center justify-center text-blue-600'>
-                            <FaShippingFast size={25} /> <span className='text-center'>Shipping Address</span>
+                <div className='flex lg:flex-nowrap flex-wrap gap-10 my-10 lg:px-32 px-4'>
+                    <div className='lg:w-[60%] w-full order-2 lg:order-1'>
+                        <div className='flex font-semibold gap-2 items-center justify-center text-blue-600 text-2xl'>
+                            <Image src="/assets/images/delivery.png" width={25} height={25} alt="Delivery" /> <span className='text-center'>Shipping Address</span>
                         </div>
+                        <p className='text-center text-base text-gray-700 mt-2'>আপনার পণ্য ডেলিভারি করার জন্য নিম্নে তথ্যগুলো দিয়ে সহযোগিতা করবেন</p>
                         <div className='mt-5 rounded-2xl border border-gray-200 bg-white shadow-sm p-6'>
 
                             <Form {...orderForm}>
@@ -270,7 +271,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Input placeholder="Full name* (পূর্ণ নাম)" className='h-12 rounded-xl' {...field} />
+                                                        <Input placeholder="Full name* (পূর্ণ নাম লিখুন)" className='h-12 rounded-xl' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -286,7 +287,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Input placeholder="Phone* (ফোন)" className='h-12 rounded-xl' {...field} />
+                                                        <Input placeholder="Phone* (ফোন নাম্বার লিখুন)" className='h-12 rounded-xl' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -302,7 +303,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Textarea placeholder="Full address* (সম্পূর্ণ ঠিকানা)" className='rounded-xl min-h-28' {...field} />
+                                                        <Textarea placeholder="Full address* (সম্পূর্ণ ঠিকানা লিখুন)" className='rounded-xl min-h-28' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -318,7 +319,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Input placeholder="Thana* (থানা)" className='h-12 rounded-xl' {...field} />
+                                                        <Input placeholder="Thana* (থানার নাম লিখুন)" className='h-12 rounded-xl' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -333,7 +334,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Textarea placeholder="Order notes (optional) (অতিরিক্ত নির্দেশনা)" className='rounded-xl min-h-24' {...field} />
+                                                        <Textarea placeholder="Order notes (optional) (অর্ডার সংক্রান্ত অতিরিক্ত নির্দেশনা চাইলে দিতে পারেন)" className='rounded-xl min-h-24' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -352,8 +353,8 @@ const Checkout = () => {
                         </div>
 
                     </div>
-                    <div className='w-full mt-8'>
-                        <div className='rounded bg-gray-50 p-5'>
+                    <div className='lg:w-[40%] w-full order-1 lg:order-2'>
+                        <div className='rounded bg-gray-50 p-5 sticky top-5'>
                             <h4 className='text-lg font-semibold mb-5'>Order Summary</h4>
 
                             <div>

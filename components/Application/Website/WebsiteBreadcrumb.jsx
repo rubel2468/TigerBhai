@@ -7,7 +7,7 @@ const WebsiteBreadcrumb = ({ props }) => {
         <div className="py-10 flex justify-center items-center bg-[url('/assets/images/page-title.png')] bg-cover bg-center">
 
             <div>
-                <h1 className='text-2xl font-semibold mb-2 text-center'>{props.title}</h1>
+                <h1 className={props.titleClassName || 'text-2xl font-semibold mb-2 text-center'}>{props.title}</h1>
                 <ul className='flex gap-2 justify-center'>
                     <li><Link href={WEBSITE_HOME} className='font-semibold'>Home</Link></li>
 

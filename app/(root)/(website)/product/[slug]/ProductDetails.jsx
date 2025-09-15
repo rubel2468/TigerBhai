@@ -343,14 +343,14 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                         const hasDiscount = (minMrp && minMrp > minSelling) || (maxMrp && maxMrp > maxSelling)
                         return (
                             <div className="flex items-center gap-3 mb-3">
-                                <span className="text-2xl font-semibold text-foreground">
-                                    BDT {minSelling.toLocaleString()}{maxSelling !== minSelling ? ` - ${maxSelling.toLocaleString()}` : ''}
-                                </span>
                                 {hasDiscount && (
                                     <span className="text-lg text-muted-foreground line-through">
                                         BDT {minMrp.toLocaleString()}{maxMrp !== minMrp ? ` - ${maxMrp.toLocaleString()}` : ''}
                                     </span>
                                 )}
+                                <span className="text-2xl font-semibold text-foreground">
+                                    BDT {minSelling.toLocaleString()}{maxSelling !== minSelling ? ` - ${maxSelling.toLocaleString()}` : ''}
+                                </span>
                             </div>
                         )
                     })()}
@@ -392,7 +392,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                     <div className="font-medium text-card-foreground">{group.color}</div>
                                                     {(() => {
                                                         const rec = (group.entries.find(e => e.recommendedFor)?.recommendedFor) || ''
-                                                        return rec ? <span className="text-xs px-2 py-0.5 rounded-full bg-secondary/30 text-secondary-foreground">Recommended: {rec}</span> : null
+                                                        return rec ? (
+                                                            <div className="px-3 py-2 bg-blue-100/20 border border-blue-300/30 rounded-lg">
+                                                                <h4 className="font-semibold text-blue-800 mb-1">Recommended</h4>
+                                                                <div className="text-sm text-blue-700">{rec}</div>
+                                                            </div>
+                                                        ) : null
                                                     })()}
                                                 </div>
                                                 {!isMultiSize && (
@@ -410,10 +415,10 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                         </div>
                                                                         {/* Line 3: Prices */}
                                                                         <div className="flex items-center gap-2">
-                                                                            <span className="text-sm font-semibold text-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
                                                                             {(Number(e.mrp) > Number(e.sellingPrice)) && (
                                                                                 <span className="text-xs text-muted-foreground line-through">BDT {Number(e.mrp || 0).toLocaleString()}</span>
                                                                             )}
+                                                                            <span className="text-sm font-semibold text-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
                                                                             {(Number(e.mrp) > Number(e.sellingPrice)) && (
                                                                                 <span className="text-xs text-green-600">({Math.round(((Number(e.mrp)-Number(e.sellingPrice))/Number(e.mrp))*100)}% off)</span>
                                                                             )}
@@ -462,10 +467,10 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                 return (
                                                                     <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
                                                                         <span>Stock: {entry.stock ?? 0}</span>
-                                                                        <span className="text-foreground font-medium">BDT {Number(entry.sellingPrice || 0).toLocaleString()}</span>
                                                                         {(Number(entry.mrp) > Number(entry.sellingPrice)) && (
                                                                             <span className="line-through">BDT {Number(entry.mrp || 0).toLocaleString()}</span>
                                                                         )}
+                                                                        <span className="text-foreground font-medium">BDT {Number(entry.sellingPrice || 0).toLocaleString()}</span>
                                                                         {(Number(entry.mrp) > Number(entry.sellingPrice)) && (
                                                                             <span className="text-green-600">({Math.round(((Number(entry.mrp)-Number(entry.sellingPrice))/Number(entry.mrp))*100)}% off)</span>
                                                                         )}
@@ -552,7 +557,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                     })
                                                 }}
                                             >
-                                                Add Selected To Cart (কার্টে যোগ করুন)
+                                                Add Selected To Cart
                                             </Button>
                                             <Button 
                                                 variant="destructive"
@@ -580,7 +585,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                     window.location.href = WEBSITE_CHECKOUT
                                                 }}
                                             >
-                                                Buy Now (এখনই কিনুন)
+                                                Order Now (অর্ডার করুন)
                                             </Button>
                                         </div>
                                     </>
