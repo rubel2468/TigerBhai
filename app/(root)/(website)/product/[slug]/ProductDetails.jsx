@@ -394,13 +394,22 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                     {(() => {
                         const allEntries = Array.isArray(variantsByColor) ? variantsByColor.flatMap(g => g.entries || []) : []
                         const sellingPrices = allEntries.map(e => Number(e.sellingPrice)).filter(n => !Number.isNaN(n))
+                        const mrpPrices = allEntries.map(e => Number(e.mrp)).filter(n => !Number.isNaN(n))
                         const minSelling = sellingPrices.length ? Math.min(...sellingPrices) : Number(variant?.sellingPrice ?? 0)
                         const maxSelling = sellingPrices.length ? Math.max(...sellingPrices) : Number(variant?.sellingPrice ?? 0)
+                        const minMrp = mrpPrices.length ? Math.min(...mrpPrices) : Number(variant?.mrp ?? 0)
+                        const maxMrp = mrpPrices.length ? Math.max(...mrpPrices) : Number(variant?.mrp ?? 0)
+                        const hasDiscount = (minMrp && minMrp > minSelling) || (maxMrp && maxMrp > maxSelling)
                         return (
-                            <div className="flex items-center gap-2 mb-3">
-                                <span className="text-xl font-semibold text-foreground">
+                            <div className="flex items-center gap-3 mb-3">
+                                <span className="text-2xl font-semibold text-foreground">
                                     BDT {minSelling.toLocaleString()}{maxSelling !== minSelling ? ` - ${maxSelling.toLocaleString()}` : ''}
                                 </span>
+                                {hasDiscount && (
+                                    <span className="text-lg text-muted-foreground line-through">
+                                        BDT {minMrp.toLocaleString()}{maxMrp !== minMrp ? ` - ${maxMrp.toLocaleString()}` : ''}
+                                    </span>
+                                )}
                             </div>
                         )
                     })()}
