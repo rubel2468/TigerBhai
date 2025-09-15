@@ -145,20 +145,18 @@ const Checkout = () => {
     // place order 
     const orderFormSchema = zSchema.pick({
         name: true,
-        email: true,
         phone: true,
         address: true,
         ordernote: true
     }).extend({
         userId: z.string().optional(),
-        thana: z.string().min(1, "Thana/Upazila is required")
+        thana: z.string().min(1, "Thana is required")
     })
 
     const orderForm = useForm({
         resolver: zodResolver(orderFormSchema),
         defaultValues: {
             name: '',
-            email: '',
             phone: '',
             address: '',
             ordernote: '',
@@ -256,10 +254,10 @@ const Checkout = () => {
                     </div>
                 </div>
                 :
-                <div className='flex lg:flex-nowrap flex-wrap gap-10 my-10 lg:px-32 px-4'>
-                    <div className='lg:w-[60%] w-full order-2 lg:order-1'>
-                        <div className='flex font-semibold gap-2 items-center'>
-                            <FaShippingFast size={25} /> Shipping Address
+                <div className='my-10 lg:px-32 px-4'>
+                    <div className='w-full'>
+                        <div className='flex font-semibold gap-2 items-center justify-center text-blue-600'>
+                            <FaShippingFast size={25} /> <span className='text-center'>Shipping Address</span>
                         </div>
                         <div className='mt-5 rounded-2xl border border-gray-200 bg-white shadow-sm p-6'>
 
@@ -272,7 +270,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Input placeholder="Full name*" className='h-12 rounded-xl' {...field} />
+                                                        <Input placeholder="Full name* (পূর্ণ নাম)" className='h-12 rounded-xl' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -288,23 +286,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Input placeholder="Phone*" className='h-12 rounded-xl' {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        >
-
-                                        </FormField>
-                                    </div>
-                                    <div className='mb-1'>
-                                        <FormField
-                                            control={orderForm.control}
-                                            name='email'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <Input type="email" placeholder="Email (optional)" className='h-12 rounded-xl' {...field} />
+                                                        <Input placeholder="Phone* (ফোন)" className='h-12 rounded-xl' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -320,7 +302,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Textarea placeholder="Full address*" className='rounded-xl min-h-28' {...field} />
+                                                        <Textarea placeholder="Full address* (সম্পূর্ণ ঠিকানা)" className='rounded-xl min-h-28' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -336,7 +318,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Input placeholder="Thana/Upazila*" className='h-12 rounded-xl' {...field} />
+                                                        <Input placeholder="Thana* (থানা)" className='h-12 rounded-xl' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -351,7 +333,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Textarea placeholder="Order notes (optional)" className='rounded-xl min-h-24' {...field} />
+                                                        <Textarea placeholder="Order notes (optional) (অতিরিক্ত নির্দেশনা)" className='rounded-xl min-h-24' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -362,7 +344,7 @@ const Checkout = () => {
                                     </div>
 
                                     <div className='mt-2'>
-                                        <ButtonLoading type="submit" text="Place Order (Cash on Delivery)" loading={placingOrder} className="bg-black rounded-full px-6 h-12 text-base cursor-pointer" />
+                                        <ButtonLoading type="submit" text="Place Order / অর্ডার করুন" loading={placingOrder} className="bg-red-600 hover:bg-red-700 rounded-full px-6 h-12 text-base cursor-pointer" />
                                     </div>
 
                                 </form>
@@ -370,20 +352,9 @@ const Checkout = () => {
                         </div>
 
                     </div>
-                    <div className='lg:w-[40%] w-full order-1 lg:order-2'>
-                        <div className='rounded bg-gray-50 p-5 sticky top-5'>
+                    <div className='w-full mt-8'>
+                        <div className='rounded bg-gray-50 p-5'>
                             <h4 className='text-lg font-semibold mb-5'>Order Summary</h4>
-                            
-                            {/* COD Information */}
-                            <div className='mb-5 p-4 bg-blue-50 border border-blue-200 rounded-lg'>
-                                <div className='flex items-center gap-2 mb-2'>
-                                    <FaShippingFast className='text-blue-600' size={20} />
-                                    <h5 className='font-semibold text-blue-800'>Cash on Delivery</h5>
-                                </div>
-                                <p className='text-sm text-blue-700'>
-                                    Pay when your order is delivered. No advance payment required.
-                                </p>
-                            </div>
 
                             <div>
 
