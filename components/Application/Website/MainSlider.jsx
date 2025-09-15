@@ -148,7 +148,7 @@ const MainSlider = ({ initialData }) => {
                                                 {slide.title}
                                             </h1>
                                         ) : (
-                                            <div className="text-center lg:text-left">
+                                            <div className="text-center">
                                                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-2 leading-tight">
                                                     <span className="block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}>
                                                         Welcome
