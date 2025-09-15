@@ -37,6 +37,8 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     const [qty, setQty] = useState(1)
     const [isAddedIntoCart, setIsAddedIntoCart] = useState(false)
     const [qtyByVariant, setQtyByVariant] = useState({})
+    const [selectedSizeByColor, setSelectedSizeByColor] = useState({})
+    const [qtyByColor, setQtyByColor] = useState({})
     const [isProductLoading, setIsProductLoading] = useState(false)
     const [allImages, setAllImages] = useState([])
     const [showCartPopup, setShowCartPopup] = useState(false)
@@ -165,6 +167,19 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
             if (actionType === 'inc') return { ...prev, [variantId]: current + 1 }
             const next = Math.max(0, current - 1)
             return { ...prev, [variantId]: next }
+        })
+    }
+
+    const handleVariantSizeSelect = (color, size) => {
+        setSelectedSizeByColor(prev => ({ ...prev, [color]: prev[color] === size ? undefined : size }))
+    }
+
+    const handleColorQty = (color, actionType) => {
+        setQtyByColor(prev => {
+            const current = prev[color] || 0
+            if (actionType === 'inc') return { ...prev, [color]: current + 1 }
+            const next = Math.max(0, current - 1)
+            return { ...prev, [color]: next }
         })
     }
 
@@ -330,6 +345,8 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                     {Array.isArray(variantsByColor) && variantsByColor.length > 0 && (
                         <div className="mt-6 space-y-4">
                             {variantsByColor.map(group => {
+                                const isMultiSize = (group.entries?.length || 0) > 1
+                                const selectedSize = selectedSizeByColor[group.color]
                                 return (
                                     <div key={group.color} className="border border-border rounded overflow-hidden bg-card">
                                         <div className="flex min-h-[120px]">
@@ -346,47 +363,107 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                 </div>
                                             )}
                                             
-                                            {/* Content and right-side quantity controls */}
+                                            {/* Content and right-side controls */}
                                             <div className="flex-1 p-3 flex flex-col gap-2">
                                                 <div className="font-medium text-card-foreground mb-1">{group.color}</div>
-                                                <div className="space-y-2">
-                                                    {group.entries.map(e => {
-                                                        const isOut = (e.stock ?? 0) <= 0
-                                                        const qtyVal = qtyByVariant[e.variantId] || 0
-                                                        return (
-                                                            <div key={e.variantId} className={`flex items-center justify-between gap-3 border border-border rounded-md px-3 py-2 ${isOut ? 'opacity-60' : ''}`}>
-                                                                <div className="flex items-center gap-3">
-                                                                    <span className="text-sm text-card-foreground">Size: {e.size}</span>
-                                                                    <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
-                                                                    <span className="text-xs text-muted-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
-                                                                </div>
-                                                                <div className="flex items-center">
-                                                                    <div className="flex items-center h-9 border border-border rounded-full bg-background">
-                                                                        <button type="button" disabled={isOut} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
-                                                                            <HiMinus />
-                                                                        </button>
-                                                                        <input type="text" value={qtyVal} className="w-12 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
-                                                                        <button type="button" disabled={isOut} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
-                                                                            <HiPlus />
-                                                                        </button>
+                                                {!isMultiSize && (
+                                                    <div className="space-y-2">
+                                                        {group.entries.map(e => {
+                                                            const isOut = (e.stock ?? 0) <= 0
+                                                            const qtyVal = qtyByVariant[e.variantId] || 0
+                                                            return (
+                                                                <div key={e.variantId} className={`flex items-center justify-between gap-3 border border-border rounded-md px-3 py-2 ${isOut ? 'opacity-60' : ''}`}>
+                                                                    <div className="flex items-center gap-3">
+                                                                        <span className="text-sm text-card-foreground">Size: {e.size}</span>
+                                                                        <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
+                                                                        <span className="text-xs text-muted-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
+                                                                    </div>
+                                                                    <div className="flex items-center">
+                                                                        <div className="flex items-center h-9 border border-border rounded-full bg-background">
+                                                                            <button type="button" disabled={isOut} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
+                                                                                <HiMinus />
+                                                                            </button>
+                                                                            <input type="text" value={qtyVal} className="w-12 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
+                                                                            <button type="button" disabled={isOut} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
+                                                                                <HiPlus />
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                )}
+                                                {isMultiSize && (
+                                                    <div className="flex items-center justify-between gap-3 border border-border rounded-md px-3 py-2">
+                                                        <div className="flex-1">
+                                                            <div className="flex flex-wrap gap-2 mb-2">
+                                                                {group.entries.map(e => {
+                                                                    const isSelected = selectedSize === e.size
+                                                                    const isOut = (e.stock ?? 0) <= 0
+                                                                    return (
+                                                                        <button
+                                                                            key={e.variantId}
+                                                                            type="button"
+                                                                            disabled={isOut}
+                                                                            onClick={() => handleVariantSizeSelect(group.color, e.size)}
+                                                                            className={`border border-border py-1 px-2 rounded text-sm ${isSelected ? 'bg-primary text-primary-foreground' : 'bg-background hover:bg-accent hover:text-accent-foreground'} ${isOut ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                                        >
+                                                                            {e.size}
+                                                                        </button>
+                                                                    )
+                                                                })}
                                                             </div>
-                                                        )
-                                                    })}
-                                                </div>
+                                                            {/* Selected size summary */}
+                                                            {selectedSize && (() => {
+                                                                const entry = group.entries.find(en => en.size === selectedSize)
+                                                                if (!entry) return null
+                                                                return (
+                                                                    <div className="text-xs text-muted-foreground">
+                                                                        Stock: {entry.stock ?? 0} · BDT {Number(entry.sellingPrice || 0).toLocaleString()}
+                                                                    </div>
+                                                                )
+                                                            })()}
+                                                        </div>
+                                                        <div className="flex items-center">
+                                                            <div className="flex items-center h-9 border border-border rounded-full bg-background">
+                                                                <button type="button" disabled={!selectedSize} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${!selectedSize ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'desc')}>
+                                                                    <HiMinus />
+                                                                </button>
+                                                                <input type="text" value={qtyByColor[group.color] || 0} className="w-12 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
+                                                                <button type="button" disabled={!selectedSize} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${!selectedSize ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'inc')}>
+                                                                    <HiPlus />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
                                 )
                             })}
                             {(() => {
-                                const selections = variantsByColor.flatMap(v => {
-                                    return v.entries.map(e => {
-                                        const q = qtyByVariant[e.variantId] || 0
-                                        if (q <= 0) return null
-                                        return { color: v.color, size: e.size, qty: q, price: e.sellingPrice, stock: e.stock ?? 0, variantId: e.variantId, media: e?.media?.filePath, mrp: e.mrp }
-                                    }).filter(Boolean)
+                                const selections = []
+                                variantsByColor.forEach(v => {
+                                    const isMultiSize = (v.entries?.length || 0) > 1
+                                    if (isMultiSize) {
+                                        const selSize = selectedSizeByColor[v.color]
+                                        const qty = qtyByColor[v.color] || 0
+                                        if (selSize && qty > 0) {
+                                            const entry = v.entries.find(e => e.size === selSize)
+                                            if (entry) {
+                                                selections.push({ color: v.color, size: entry.size, qty, price: entry.sellingPrice, stock: entry.stock ?? 0, variantId: entry.variantId, media: entry?.media?.filePath, mrp: entry.mrp })
+                                            }
+                                        }
+                                    } else {
+                                        v.entries.forEach(e => {
+                                            const q = qtyByVariant[e.variantId] || 0
+                                            if (q > 0) {
+                                                selections.push({ color: v.color, size: e.size, qty: q, price: e.sellingPrice, stock: e.stock ?? 0, variantId: e.variantId, media: e?.media?.filePath, mrp: e.mrp })
+                                            }
+                                        })
+                                    }
                                 })
                                 const totalQty = selections.reduce((sum, it) => sum + it.qty, 0)
                                 const totalPrice = selections.reduce((sum, it) => sum + (it.price * it.qty), 0)
