@@ -52,7 +52,7 @@
   --card-foreground: oklch(0.15 0.01 220);
   --popover: oklch(0.998 0.001 60);
   --popover-foreground: oklch(0.15 0.01 220);
-  --primary: #1E3A8A; /* Updated blue */
+  --primary: #1877F2; /* Updated blue */
   --primary-foreground: #ffffff;
   --secondary: #FBBF24; /* Updated yellow */
   --secondary-foreground: #1f2937;
@@ -63,20 +63,20 @@
   --destructive: #DC2626; /* Updated red */
   --border: oklch(0.95 0.005 60); /* Lighter warm border */
   --input: oklch(0.95 0.005 60);
-  --ring: #1E3A8A; /* Match blue ring */
-  --chart-1: #1E3A8A; /* Blue */
+  --ring: #1877F2; /* Match blue ring */
+  --chart-1: #1877F2; /* Blue */
   --chart-2: #FBBF24; /* Yellow */
   --chart-3: #DC2626; /* Red */
   --chart-4: oklch(0.60 0.18 140); /* Green accent */
   --chart-5: oklch(0.70 0.15 280); /* Purple accent */
   --sidebar: #F3F4F6; /* Match background */
   --sidebar-foreground: #111827;
-  --sidebar-primary: #1E3A8A; /* Blue */
+  --sidebar-primary: #1877F2; /* Blue */
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #FBBF24; /* Yellow */
   --sidebar-accent-foreground: #1f2937;
   --sidebar-border: #e5e7eb;
-  --sidebar-ring: #1E3A8A;
+  --sidebar-ring: #1877F2;
 }
 
 .dark {
@@ -87,7 +87,7 @@
   --card-foreground: oklch(0.95 0.01 60);
   --popover: oklch(0.18 0.015 220);
   --popover-foreground: oklch(0.95 0.01 60);
-  --primary: oklch(0.65 0.25 220); /* Brighter Facebook blue for dark mode */
+  --primary: #1877F2; /* Facebook blue for dark mode */
   --primary-foreground: oklch(0.12 0.01 220);
   --secondary: oklch(0.30 0.08 60); /* Dark yellow for secondary */
   --secondary-foreground: oklch(0.90 0.05 60);
@@ -98,20 +98,20 @@
   --destructive: oklch(0.70 0.25 25); /* Bright red for destructive */
   --border: oklch(0.30 0.01 220); /* Dark border */
   --input: oklch(0.25 0.01 220);
-  --ring: oklch(0.65 0.25 220); /* Facebook blue ring */
-  --chart-1: oklch(0.65 0.25 220); /* Facebook blue */
+  --ring: #1877F2; /* Facebook blue ring */
+  --chart-1: #1877F2; /* Facebook blue */
   --chart-2: oklch(0.75 0.15 60); /* Yellow */
   --chart-3: oklch(0.70 0.25 25); /* Red */
   --chart-4: oklch(0.65 0.20 140); /* Green */
   --chart-5: oklch(0.75 0.18 280); /* Purple */
   --sidebar: oklch(0.15 0.01 220); /* Dark sidebar */
   --sidebar-foreground: oklch(0.95 0.01 60);
-  --sidebar-primary: oklch(0.65 0.25 220); /* Facebook blue */
+  --sidebar-primary: #1877F2; /* Facebook blue */
   --sidebar-primary-foreground: oklch(0.12 0.01 220);
   --sidebar-accent: oklch(0.25 0.01 220);
   --sidebar-accent-foreground: oklch(0.90 0.05 60);
   --sidebar-border: oklch(0.30 0.01 220);
-  --sidebar-ring: oklch(0.65 0.25 220);
+  --sidebar-ring: #1877F2;
 }
 
 @layer base {
