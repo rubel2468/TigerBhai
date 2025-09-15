@@ -57,13 +57,15 @@ const MainSlider = ({ initialData }) => {
 
     const settings = {
         dots: true,
-        infinite: carouselData.length > 1,
+        infinite: true, // Always allow infinite scrolling
         speed: 300, // Faster transitions
-        autoplay: carouselData.length > 1,
+        autoplay: true, // Always enable autoplay
         autoplaySpeed: 5000, // Slower autoplay
         nextArrow: <ArrowNext />,
         prevArrow: <ArrowPrev />,
         lazyLoad: 'ondemand', // Lazy load images
+        slidesToShow: 1,
+        slidesToScroll: 1,
         responsive: [
             {
                 breakpoint: 768,
@@ -128,7 +130,7 @@ const MainSlider = ({ initialData }) => {
                                 src={slide.image.url} 
                                 width={1920}
                                 height={1080}
-                                alt={slide.title} 
+                                alt={slide.title || 'Tiger Bhai Carousel'} 
                                 className="w-full h-auto object-contain"
                                 priority={index === 0}
                                 fetchPriority={index === 0 ? 'high' : 'auto'}

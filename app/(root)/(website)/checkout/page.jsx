@@ -361,7 +361,7 @@ const Checkout = () => {
 
                     </div>
                     <div className='lg:w-[40%] w-full order-2'>
-                        <div className='mt-5 rounded-2xl border border-gray-200 bg-white shadow-sm p-6'>
+                        <div className='lg:mt-0 mt-5 rounded-2xl border border-gray-200 bg-white shadow-sm p-6'>
                             <h4 className='text-lg font-semibold mb-5'>Order Summary</h4>
 
                             <div>

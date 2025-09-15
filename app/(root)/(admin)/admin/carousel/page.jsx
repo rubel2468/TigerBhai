@@ -179,13 +179,12 @@ const CarouselManagement = () => {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label htmlFor="title">Title *</Label>
+                                    <Label htmlFor="title">Title (Optional)</Label>
                                     <Input
                                         id="title"
                                         value={formData.title}
                                         onChange={(e) => handleInputChange('title', e.target.value)}
-                                        placeholder="Enter slide title"
-                                        required
+                                        placeholder="Enter slide title (leave empty for default)"
                                     />
                                 </div>
                                 <div>

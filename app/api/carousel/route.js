@@ -80,10 +80,10 @@ export async function POST(request) {
         const { title, description, image, buttonText, buttonUrl, order } = body;
 
         // Validate required fields
-        if (!title || !image?.url || !image?.publicId) {
+        if (!image?.url || !image?.publicId) {
             return NextResponse.json({
                 success: false,
-                message: "Title and image are required"
+                message: "Image is required"
             }, { status: 400 });
         }
 
