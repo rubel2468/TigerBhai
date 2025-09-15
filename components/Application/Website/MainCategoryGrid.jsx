@@ -18,8 +18,14 @@ const MainCategoryGrid = ({ initialData }) => {
     if (loading) {
         return (
             <section className='lg:px-32 px-4 py-20'>
-                <div className='text-center'>
-                    <h2 className='text-3xl font-bold mb-10'>Shop by Category</h2>
+                <div className='text-center mb-12'>
+                    <div className="inline-block px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-4">
+                        Product Categories
+                    </div>
+                    <h2 className='text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6'>
+                        Shop by <span className="text-blue-600">Category</span>
+                    </h2>
+                    <p className='text-lg text-gray-600 max-w-2xl mx-auto mb-10'>Discover our wide range of products</p>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                         {[1, 2].map((item) => (
                             <div key={item} className='bg-gray-200 animate-pulse rounded-lg h-48'></div>
@@ -38,8 +44,13 @@ const MainCategoryGrid = ({ initialData }) => {
         <>
             <section className='lg:px-32 px-4 py-20'>
                 <div className='text-center mb-12'>
-                    <h2 className='text-3xl font-bold mb-4'>Shop by Category</h2>
-                    <p className='text-gray-600'>Discover our wide range of products</p>
+                    <div className="inline-block px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold mb-4">
+                        Product Categories
+                    </div>
+                    <h2 className='text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6'>
+                        Shop by <span className="text-blue-600">Category</span>
+                    </h2>
+                    <p className='text-lg text-gray-600 max-w-2xl mx-auto'>Discover our wide range of products</p>
                 </div>
                 
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6 w-full'>

@@ -24,6 +24,7 @@ export async function PUT(request) {
             sellingPrice: true,
             discountPercentage: true,
             description: true,
+            shortDescription: true,
             whatsappLink: true,
             offer: true,
             companyDetails: true,
@@ -49,6 +50,7 @@ export async function PUT(request) {
         getProduct.sellingPrice = validatedData.sellingPrice
         getProduct.discountPercentage = validatedData.discountPercentage
         getProduct.description = encode(validatedData.description)
+        getProduct.shortDescription = validatedData.shortDescription || ''
         getProduct.whatsappLink = validatedData.whatsappLink || ''
         getProduct.offer = validatedData.offer || ''
         getProduct.companyDetails = validatedData.companyDetails || ''

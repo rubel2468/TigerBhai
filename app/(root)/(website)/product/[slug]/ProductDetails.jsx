@@ -12,7 +12,7 @@ import { IoStar } from "react-icons/io5";
 import { WEBSITE_CART, WEBSITE_CHECKOUT, WEBSITE_PRODUCT_DETAILS, WEBSITE_SHOP } from "@/routes/WebsiteRoute"
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
 import { decode, encode } from "entities";
@@ -25,6 +25,47 @@ import { Button } from "@/components/ui/button";
 import loadingSvg from '@/public/assets/images/loading.svg'
 import ProductReveiw from "@/components/Application/Website/ProductReveiw";
 import WhatsAppChat from "@/components/Application/Website/WhatsAppChat";
+import { FaYoutube } from "react-icons/fa";
+
+// ShortDescription component with see more functionality
+const ShortDescription = ({ text }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [shouldShowButton, setShouldShowButton] = useState(false);
+    const textRef = useRef(null);
+
+    useEffect(() => {
+        if (textRef.current) {
+            const lineHeight = parseInt(getComputedStyle(textRef.current).lineHeight);
+            const maxHeight = lineHeight * 3; // 3 lines
+            setShouldShowButton(textRef.current.scrollHeight > maxHeight);
+        }
+    }, [text]);
+
+    return (
+        <div className="text-muted-foreground">
+            <div 
+                ref={textRef}
+                className={`transition-all duration-300 ${isExpanded ? '' : 'line-clamp-3'}`}
+                style={{ 
+                    display: '-webkit-box',
+                    WebkitLineClamp: isExpanded ? 'unset' : 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                }}
+            >
+                {text}
+            </div>
+            {shouldShowButton && (
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="text-primary hover:text-primary/80 text-sm font-medium mt-1 transition-colors"
+                >
+                    {isExpanded ? 'See less' : 'See more'}
+                </button>
+            )}
+        </div>
+    );
+};
 const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variantsByColor = [] }) => {
 
     const dispatch = useDispatch()
@@ -316,7 +357,9 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                 ) : (
                                     <div className={`relative w-[100px] h-[56px] overflow-hidden rounded ${activeIsVideo && item.videoId === activeThumb ? 'ring-2 ring-primary' : ''}`}>
                                         <Image src={item.thumb || imgPlaceholder.src} alt="video thumb" fill className="object-cover" />
-                                        <div className="absolute inset-0 grid place-items-center bg-black/30 text-white text-xs">▶</div>
+                                        <div className="absolute inset-0 grid place-items-center bg-black/30">
+                                            <FaYoutube className="text-white text-2xl drop-shadow-lg" />
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -354,6 +397,13 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                             </div>
                         )
                     })()}
+
+                    {/* Short Description Section */}
+                    {product.shortDescription && (
+                        <div className="mb-4">
+                            <ShortDescription text={product.shortDescription} />
+                        </div>
+                    )}
 
                     {/* Offer Section - Show instead of top description */}
                     {product.offer && (

@@ -240,7 +240,14 @@ const Checkout = () => {
                 </div>
             }
 
-            <WebsiteBreadcrumb props={{...breadCrumb, titleClassName: 'text-4xl font-bold mb-2 text-center'}} />
+            <WebsiteBreadcrumb props={{
+                ...breadCrumb,
+                titleClassName: 'text-5xl font-extrabold mb-2 text-center',
+                titleIcons: {
+                    before: '/assets/images/shopping-cart.png',
+                    after: ['/assets/images/delivery.png', '/assets/images/food-delivery_7541708.png']
+                }
+            }} />
             {cart.count === 0
                 ?
                 <div className='w-screen h-[500px] flex justify-center items-center py-32'>
@@ -255,9 +262,9 @@ const Checkout = () => {
                 </div>
                 :
                 <div className='flex lg:flex-nowrap flex-wrap gap-10 my-10 lg:px-32 px-4'>
-                    <div className='lg:w-[60%] w-full order-2 lg:order-1'>
-                        <div className='flex font-semibold gap-2 items-center justify-center text-blue-600 text-2xl'>
-                            <Image src="/assets/images/delivery.png" width={25} height={25} alt="Delivery" /> <span className='text-center'>Shipping Address</span>
+                    <div className='lg:w-[60%] w-full order-1'>
+                        <div className='flex font-semibold gap-2 items-center justify-center text-blue-600 text-3xl'>
+                            <FaShippingFast size={25} /> <span className='text-center'>Shipping Address</span>
                         </div>
                         <p className='text-center text-base text-gray-700 mt-2'>আপনার পণ্য ডেলিভারি করার জন্য নিম্নে তথ্যগুলো দিয়ে সহযোগিতা করবেন</p>
                         <div className='mt-5 rounded-2xl border border-gray-200 bg-white shadow-sm p-6'>
@@ -334,7 +341,7 @@ const Checkout = () => {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormControl>
-                                                        <Textarea placeholder="Order notes (optional) (অর্ডার সংক্রান্ত অতিরিক্ত নির্দেশনা চাইলে দিতে পারেন)" className='rounded-xl min-h-24' {...field} />
+                                                        <Textarea placeholder="Order notes (optional) (অর্ডার সংক্রান্ত নির্দেশনা চাইলে দিতে পারেন)" className='rounded-xl min-h-24' {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -345,7 +352,7 @@ const Checkout = () => {
                                     </div>
 
                                     <div className='mt-2'>
-                                        <ButtonLoading type="submit" text="Place Order / অর্ডার করুন" loading={placingOrder} className="bg-red-600 hover:bg-red-700 rounded-full px-6 h-12 text-base cursor-pointer" />
+                                        <ButtonLoading type="submit" text="Place Order / অর্ডার সম্পন্ন করুন" loading={placingOrder} className="bg-red-600 hover:bg-red-700 rounded-full px-6 h-12 text-base cursor-pointer" />
                                     </div>
 
                                 </form>
@@ -353,8 +360,8 @@ const Checkout = () => {
                         </div>
 
                     </div>
-                    <div className='lg:w-[40%] w-full order-1 lg:order-2'>
-                        <div className='rounded bg-gray-50 p-5 sticky top-5'>
+                    <div className='lg:w-[40%] w-full order-2'>
+                        <div className='mt-5 rounded-2xl border border-gray-200 bg-white shadow-sm p-6'>
                             <h4 className='text-lg font-semibold mb-5'>Order Summary</h4>
 
                             <div>

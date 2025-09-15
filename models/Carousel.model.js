@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const carouselSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, "Title is required"],
+        required: false,
         trim: true,
         maxLength: [100, "Title cannot exceed 100 characters"]
     },

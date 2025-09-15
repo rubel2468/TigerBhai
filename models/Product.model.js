@@ -67,6 +67,11 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    shortDescription: {
+        type: String,
+        required: false,
+        trim: true
+    },
     whatsappLink: {
         type: String,
         required: false,

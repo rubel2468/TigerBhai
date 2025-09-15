@@ -109,6 +109,7 @@ const AddProduct = () => {
     sellingPrice: true,
     discountPercentage: true,
     description: true,
+    shortDescription: true,
     whatsappLink: true,
     offer: true,
     companyDetails: true,
@@ -124,6 +125,7 @@ const AddProduct = () => {
       sellingPrice: 0,
       discountPercentage: 0,
       description: "",
+      shortDescription: "",
       whatsappLink: "",
       offer: "",
       companyDetails: "",
@@ -308,6 +310,25 @@ const AddProduct = () => {
                   <FormLabel className="mb-2">Description <span className='text-red-500'>*</span></FormLabel>
                   <Editor onChange={editor} />
                   <FormMessage></FormMessage>
+                </div>
+                <div className='mb-5 md:col-span-2'>
+                  <FormField
+                    control={form.control}
+                    name="shortDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Short Description (Optional)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="text" 
+                            placeholder="Enter a brief description (2-3 lines)" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <div className='mb-5 md:col-span-2'>
                   <FormLabel className="mb-2">Offer (Optional)</FormLabel>

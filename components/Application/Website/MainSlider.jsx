@@ -99,10 +99,20 @@ const MainSlider = ({ initialData }) => {
 
     if (carouselData.length === 0) {
         return (
-            <div className="w-full relative flex items-center justify-center bg-background py-20">
+            <div className="w-full relative flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 py-20">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold text-foreground mb-2">Welcome to Our Store</h2>
-                    <p className="text-muted-foreground">No carousel slides available at the moment</p>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground mb-2 leading-tight">
+                        <span className="block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)' }}>
+                            Welcome
+                        </span>
+                        <span className="block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)' }}>
+                            To
+                        </span>
+                        <span className="block text-primary" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)' }}>
+                            Tiger Bhai
+                        </span>
+                    </h1>
+                    <p className="text-muted-foreground text-lg">No carousel slides available at the moment</p>
                 </div>
             </div>
         )
@@ -131,9 +141,25 @@ const MainSlider = ({ initialData }) => {
                             <div className="absolute inset-0 bg-black/30 flex items-center">
                                 <div className="container mx-auto px-6 lg:px-32">
                                     <div className="max-w-2xl">
-                                        <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-                                            {slide.title}
-                                        </h1>
+                                        {slide.title ? (
+                                            <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+                                                {slide.title}
+                                            </h1>
+                                        ) : (
+                                            <div className="text-center lg:text-left">
+                                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-2 leading-tight">
+                                                    <span className="block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}>
+                                                        Welcome
+                                                    </span>
+                                                    <span className="block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}>
+                                                        To
+                                                    </span>
+                                                    <span className="block text-primary" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}>
+                                                        Tiger Bhai
+                                                    </span>
+                                                </h1>
+                                            </div>
+                                        )}
                                         {slide.description && (
                                             <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed">
                                                 {slide.description}
