@@ -50,8 +50,8 @@ const Header = () => {
     return (
         <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
             isScrolled 
-                ? 'bg-white/20 backdrop-blur-xl border-b border-white/20 shadow-lg shadow-black/5' 
-                : 'bg-white/10 backdrop-blur-md border-b border-white/10'
+                ? 'bg-primary/80 backdrop-blur-xl border-b border-primary/30 shadow-lg shadow-black/5' 
+                : 'bg-primary/10 backdrop-blur-md border-b border-primary/20'
         }`}>
             <div className='flex justify-between items-center lg:py-3 py-2 lg:px-32 px-6'>
                 <Link href={WEBSITE_HOME} className="group">

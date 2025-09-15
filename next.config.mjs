@@ -63,6 +63,11 @@ const nextConfig = {
                 pathname: '/**',
             },
             {
+                protocol: 'http',
+                hostname: 'res.cloudinary.com',
+                pathname: '/**',
+            },
+            {
                 protocol: 'https',
                 hostname: 'img.youtube.com',
                 pathname: '/**',
