@@ -412,18 +412,20 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
             </div>
 
             {selections.length > 0 && (
-                <div className="fixed z-40 right-3 sm:right-4 md:right-6 lg:right-10 top-16 sm:top-16 md:top-20 max-w-[90vw] sm:max-w-xs shadow-lg rounded border border-border bg-card p-3">
-                    <div className="text-sm">
-                        <div className="text-blue-600 font-semibold mb-1">Selected:</div>
-                        <div className="space-y-0.5">
-                            {selections.map(it => (
-                                <div key={`${it.color}-${it.size}`} className="text-foreground text-xs sm:text-sm">
-                                    {it.color} - {it.size} (qty {it.qty})
-                                </div>
-                            ))}
-                        </div>
-                        <div className="mt-2 text-foreground text-base sm:text-lg font-bold">
-                            Total: {totalQty} item(s), Tk {Number(totalPrice).toLocaleString()}
+                <div className="fixed z-40 left-0 right-0 top-16 sm:top-16 md:top-20 w-full">
+                    <div className="mx-auto w-full shadow-lg border-y border-border bg-card px-3 sm:px-4 md:px-6 py-3">
+                        <div className="text-sm">
+                            <div className="text-blue-600 font-bold text-base sm:text-lg mb-1">Selected</div>
+                            <div className="space-y-0.5">
+                                {selections.map(it => (
+                                    <div key={`${it.color}-${it.size}`} className="text-foreground text-xs sm:text-sm">
+                                        {it.color} - {it.size} (qty {it.qty})
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="mt-2 text-foreground text-base sm:text-lg font-bold">
+                                Total = {totalQty} item(s), Tk {Number(totalPrice).toLocaleString()}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -591,12 +593,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                         </div>
                                                                         <div className="flex flex-col items-center justify-center gap-1">
                                                                             <span className="text-sm font-bold text-muted-foreground">Stock: {e.stock ?? 0}</span>
-                                                                            <div className="flex items-center justify-center h-8 sm:h-9 gap-0 border border-border rounded-full bg-background">
-                                                                                <button type="button" disabled={isOut || qtyVal <= 0} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(isOut || qtyVal <= 0) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
+                                                                            <div className="flex items-center justify-center h-10 sm:h-11 gap-0 border border-border rounded-full bg-background">
+                                                                                <button type="button" disabled={isOut || qtyVal <= 0} className={`sm:h-11 sm:w-10 h-10 w-9 flex justify-center items-center text-foreground hover:bg-accent text-base ${(isOut || qtyVal <= 0) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
                                                                                     <span className="text-lg sm:text-xl font-bold">-</span>
                                                                                 </button>
-                                                                                <input type="text" value={qtyVal} className="sm:w-8 w-6 text-center border-none outline-none bg-transparent text-foreground text-sm" readOnly />
-                                                                                <button type="button" disabled={isOut || qtyVal >= (e.stock ?? 0)} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(isOut || qtyVal >= (e.stock ?? 0)) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
+                                                                                <input type="text" value={qtyVal} className="sm:w-10 w-9 text-center border-none outline-none bg-transparent text-foreground text-base" readOnly />
+                                                                                <button type="button" disabled={isOut || qtyVal >= (e.stock ?? 0)} className={`sm:h-11 sm:w-10 h-10 w-9 flex justify-center items-center text-foreground hover:bg-accent text-base ${(isOut || qtyVal >= (e.stock ?? 0)) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
                                                                                     <span className="text-lg sm:text-xl font-bold">+</span>
                                                                                 </button>
                                                                             </div>
@@ -655,12 +657,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                             </div>
                                                                             <div className="flex flex-col items-center justify-center gap-1">
                                                                                 <span className="text-sm font-bold text-muted-foreground">Stock: {entry.stock ?? 0}</span>
-                                                                                <div className="flex items-center justify-center h-8 sm:h-9 gap-0 border border-border rounded-full bg-background">
-                                                                                    <button type="button" disabled={!selectedSize || (qtyByColor[group.color] || 0) <= 0} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(!selectedSize || (qtyByColor[group.color] || 0) <= 0) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'desc')}>
+                                                                                <div className="flex items-center justify-center h-10 sm:h-11 gap-0 border border-border rounded-full bg-background">
+                                                                                    <button type="button" disabled={!selectedSize || (qtyByColor[group.color] || 0) <= 0} className={`sm:h-11 sm:w-10 h-10 w-9 flex justify-center items-center text-foreground hover:bg-accent text-base ${(!selectedSize || (qtyByColor[group.color] || 0) <= 0) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'desc')}>
                                                                                         <span className="text-lg sm:text-xl font-bold">-</span>
                                                                                     </button>
-                                                                                    <input type="text" value={qtyByColor[group.color] || 0} className="sm:w-8 w-6 text-center border-none outline-none bg-transparent text-foreground text-sm" readOnly />
-                                                                                    <button type="button" disabled={!selectedSize || (qtyByColor[group.color] || 0) >= (entry?.stock ?? 0)} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(!selectedSize || (qtyByColor[group.color] || 0) >= (entry?.stock ?? 0)) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'inc')}>
+                                                                                    <input type="text" value={qtyByColor[group.color] || 0} className="sm:w-10 w-9 text-center border-none outline-none bg-transparent text-foreground text-base" readOnly />
+                                                                                    <button type="button" disabled={!selectedSize || (qtyByColor[group.color] || 0) >= (entry?.stock ?? 0)} className={`sm:h-11 sm:w-10 h-10 w-9 flex justify-center items-center text-foreground hover:bg-accent text-base ${(!selectedSize || (qtyByColor[group.color] || 0) >= (entry?.stock ?? 0)) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'inc')}>
                                                                                         <span className="text-lg sm:text-xl font-bold">+</span>
                                                                                     </button>
                                                                                 </div>
@@ -673,12 +675,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                         {/* When size not selected, show disabled qty on right to keep layout stable on desktop */}
                                                         {!selectedSize && (
                                                             <div className="flex items-center justify-end">
-                                                                <div className="flex items-center h-9 sm:h-9 border border-border rounded-full bg-background opacity-50">
-                                                                    <button type="button" disabled className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center`}>
+                                                                <div className="flex items-center h-10 sm:h-11 border border-border rounded-full bg-background opacity-50">
+                                                                    <button type="button" disabled className={`sm:h-11 sm:w-10 h-10 w-9 flex justify-center items-center`}>
                                                                         <span className="text-lg sm:text-xl font-bold">-</span>
                                                                     </button>
                                                                     <input type="text" value={0} className="sm:w-12 w-10 text-center border-none outline-none bg-transparent" readOnly />
-                                                                    <button type="button" disabled className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center`}>
+                                                                    <button type="button" disabled className={`sm:h-11 sm:w-10 h-10 w-9 flex justify-center items-center`}>
                                                                         <span className="text-lg sm:text-xl font-bold">+</span>
                                                                     </button>
                                                                 </div>
