@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { reportWebVitals } from '@/lib/performance'
+import { monitorForcedReflows } from '@/lib/performanceOptimizations'
 
 export default function WebVitals() {
     useEffect(() => {
@@ -18,6 +19,9 @@ export default function WebVitals() {
         }).catch((error) => {
             console.warn('Failed to load web-vitals:', error)
         })
+
+        // Start monitoring forced reflows
+        monitorForcedReflows()
 
         // Log bundle size metrics
         const logBundleSize = () => {

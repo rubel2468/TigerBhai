@@ -7,7 +7,9 @@ import { ToastContainer } from 'react-toastify';
 const assistantFont = Assistant({
   weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin'],
-  display: 'swap'
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
 })
 
 export const metadata = {
@@ -31,6 +33,9 @@ export const metadata = {
     title: "Tiger Bhai",
     description: "Your trusted destination for quality and convenience",
   },
+  other: {
+    'font-display': 'swap',
+  },
 };
 
 export const viewport = {
@@ -44,6 +49,37 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Critical CSS inlined to prevent render blocking */}
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            /* Critical CSS for above-the-fold content */
+            * { box-sizing: border-box; }
+            html { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; }
+            body { margin: 0; font-family: inherit; line-height: inherit; background-color: #F3F4F6; color: #1F2937; }
+            .container { width: 100%; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
+            .btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: 1px solid transparent; }
+            .btn-primary { background-color: #3B82F6; color: white; }
+            .btn-primary:hover { background-color: #2563EB; }
+            img { max-width: 100%; height: auto; }
+            .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; }
+            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            @media (min-width: 640px) { .container { max-width: 640px; } }
+            @media (min-width: 768px) { .container { max-width: 768px; } }
+            @media (min-width: 1024px) { .container { max-width: 1024px; } }
+            @media (min-width: 1280px) { .container { max-width: 1280px; } }
+          `
+        }} />
+        
+        {/* Preconnect to external domains for faster loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="preconnect" href="https://img.youtube.com" />
+        <link rel="preconnect" href="https://i.ytimg.com" />
+        
+        {/* DNS prefetch for additional performance */}
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//res.cloudinary.com" />
       </head>
       <body
         className={`${assistantFont.className} antialiased`}

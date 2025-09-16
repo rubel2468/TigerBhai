@@ -29,6 +29,6 @@ export async function PUT(request) {
 
         return response(true, 200, 'Password update success.')
     } catch (error) {
-        catchError(error)
+        return catchError(error)
     }
 }

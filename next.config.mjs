@@ -13,10 +13,13 @@ const nextConfig = {
     // Optimize loading performance
     reactStrictMode: true,
 
+    serverExternalPackages: ['mongoose'],
+    
     // Experimental performance features
     experimental: {
         optimizeCss: true,
         optimizePackageImports: ['react-icons'],
+        esmExternals: true,
     },
 
     // Webpack optimization
@@ -48,6 +51,9 @@ const nextConfig = {
                 sideEffects: true, // safer + smaller bundles
             };
         }
+        
+        // Target modern browsers to reduce polyfills
+        config.target = ['web', 'es2020'];
         
         // Enable prefetching for better navigation performance
         if (!isServer) {

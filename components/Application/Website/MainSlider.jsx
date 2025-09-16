@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect, memo } from 'react'
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+// CSS imports moved to dynamic loading to prevent render blocking
 import Slider from "react-slick";
 import { useRef } from 'react'
 import Image from 'next/image';
@@ -64,7 +63,23 @@ const MainSlider = ({ initialData }) => {
     const [carouselData, setCarouselData] = useState(initialData?.data || [])
     const [loading, setLoading] = useState(!initialData?.success)
     const [currentSlide, setCurrentSlide] = useState(0)
+    const [cssLoaded, setCssLoaded] = useState(false)
     const sliderRef = useRef(null)
+
+    // Dynamically load slick CSS to prevent render blocking
+    useEffect(() => {
+        const loadSlickCSS = async () => {
+            try {
+                await import("slick-carousel/slick/slick.css")
+                await import("slick-carousel/slick/slick-theme.css")
+                setCssLoaded(true)
+            } catch (error) {
+                console.warn('Failed to load slick CSS:', error)
+                setCssLoaded(true) // Continue anyway
+            }
+        }
+        loadSlickCSS()
+    }, [])
 
     useEffect(() => {
         // Only fetch if no initial data provided
@@ -144,7 +159,7 @@ const MainSlider = ({ initialData }) => {
         return () => document.removeEventListener('visibilitychange', handleVisibility)
     }, [])
 
-    if (loading) {
+    if (loading || !cssLoaded) {
         return (
             <div className="w-full relative flex items-center justify-center bg-background py-20">
                 <div className="text-center">
