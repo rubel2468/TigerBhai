@@ -657,9 +657,10 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                 return (
                                     <>
                                         {selections.length > 0 && (
-                                            <div className="text-sm text-muted-foreground border-t border-border pt-3">
-                                                Selected: {selections.map((it, idx) => (
-                                                    <span key={`${it.color}-${it.size}`}>
+                                            <div className="text-sm border-t border-border pt-3">
+                                                <span className="text-blue-600 font-semibold">Selected:</span>{' '}
+                                                {selections.map((it, idx) => (
+                                                    <span key={`${it.color}-${it.size}`} className="text-blue-600 font-semibold">
                                                         {it.color} - {it.size} (qty {it.qty}, stock {it.stock}){idx < selections.length - 1 ? ', ' : ''}
                                                     </span>
                                                 ))}
