@@ -454,9 +454,9 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
 
                     {/* Offer Section - Show instead of top description */}
                     {product.offer && (
-                        <div className="mb-2 md:mb-4 p-4 bg-secondary/20 border border-secondary/30 rounded-lg">
-                            <h3 className="font-semibold text-secondary-foreground mb-2">Special Offer</h3>
-                            <div dangerouslySetInnerHTML={{ __html: decode(product.offer) }}></div>
+                        <div className="mb-2 md:mb-3 p-2 bg-secondary/20 border border-secondary/30 rounded">
+                            <h3 className="font-semibold text-secondary-foreground mb-1">Special Offer</h3>
+                            <div className="m-0" dangerouslySetInnerHTML={{ __html: decode(product.offer) }}></div>
                         </div>
                     )}
 
