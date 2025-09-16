@@ -348,7 +348,8 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                 </div>
             }
 
-            <div className="my-10">
+            <div className="my-10 bg-blue-100 p-4 rounded-lg border-2 border-blue-300">
+                <div className="text-sm font-semibold text-blue-800 mb-2">TITLE SECTION</div>
                 <Breadcrumb>
                     <BreadcrumbList>
                         <BreadcrumbItem>
@@ -369,7 +370,8 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
             </div>
 
             <div className="md:flex justify-between items-start lg:gap-10 gap-5 mb-2 md:mb-20">
-                <div className="md:w-1/2 xl:flex xl:justify-center xl:gap-5 md:sticky md:top-0">
+                <div className="md:w-1/2 xl:flex xl:justify-center xl:gap-5 md:sticky md:top-0 bg-green-100 p-4 rounded-lg border-2 border-green-300">
+                    <div className="text-sm font-semibold text-green-800 mb-2">IMAGE GALLERY SECTION</div>
                     <div className="xl:order-last xl:mb-0 mb-2 md:mb-5 xl:w-[calc(100%-144px)]" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
                         {activeIsVideo ? (
                             <div className="aspect-video w-full border rounded overflow-hidden">
