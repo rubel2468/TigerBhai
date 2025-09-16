@@ -275,7 +275,13 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     const handleEntryQty = (variantId, actionType) => {
         setQtyByVariant(prev => {
             const current = prev[variantId] || 0
-            if (actionType === 'inc') return { ...prev, [variantId]: current + 1 }
+            if (actionType === 'inc') {
+                // Find the variant to check stock limit
+                const allEntries = variantsByColor.flatMap(g => g.entries || [])
+                const variant = allEntries.find(e => e.variantId === variantId)
+                const maxStock = variant?.stock ?? 0
+                return { ...prev, [variantId]: Math.min(current + 1, maxStock) }
+            }
             const next = Math.max(0, current - 1)
             return { ...prev, [variantId]: next }
         })
@@ -288,7 +294,15 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     const handleColorQty = (color, actionType) => {
         setQtyByColor(prev => {
             const current = prev[color] || 0
-            if (actionType === 'inc') return { ...prev, [color]: current + 1 }
+            if (actionType === 'inc') {
+                // Find the selected size entry to check stock limit
+                const selectedSize = selectedSizeByColor[color]
+                if (!selectedSize) return prev
+                const variantGroup = variantsByColor.find(v => v.color === color)
+                const entry = variantGroup?.entries?.find(e => e.size === selectedSize)
+                const maxStock = entry?.stock ?? 0
+                return { ...prev, [color]: Math.min(current + 1, maxStock) }
+            }
             const next = Math.max(0, current - 1)
             return { ...prev, [color]: next }
         })
@@ -530,12 +544,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                         </div>
                                                                         <div className="flex flex-col items-center justify-center gap-1">
                                                                             <span className="text-sm font-bold text-muted-foreground">Stock: {e.stock ?? 0}</span>
-                                                                            <div className="flex items-center justify-center h-10 sm:h-11 sm:gap-0 gap-0 border border-border rounded-full bg-background">
-                                                                                <button type="button" disabled={isOut} className={`sm:h-11 sm:w-11 h-10 w-10 flex justify-center items-center text-foreground hover:bg-accent text-base ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
+                                                                            <div className="flex items-center justify-center h-8 sm:h-9 gap-0 border border-border rounded-full bg-background">
+                                                                                <button type="button" disabled={isOut || qtyVal <= 0} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(isOut || qtyVal <= 0) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
                                                                                     <HiMinus />
                                                                                 </button>
-                                                                                <input type="text" value={qtyVal} className="sm:w-12 w-10 text-center border-none outline-none bg-transparent text-foreground text-base" readOnly />
-                                                                                <button type="button" disabled={isOut} className={`sm:h-11 sm:w-11 h-10 w-10 flex justify-center items-center text-foreground hover:bg-accent text-base ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
+                                                                                <input type="text" value={qtyVal} className="sm:w-8 w-6 text-center border-none outline-none bg-transparent text-foreground text-sm" readOnly />
+                                                                                <button type="button" disabled={isOut || qtyVal >= (e.stock ?? 0)} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(isOut || qtyVal >= (e.stock ?? 0)) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
                                                                                     <HiPlus />
                                                                                 </button>
                                                                             </div>
@@ -594,12 +608,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                             </div>
                                                                             <div className="flex flex-col items-center justify-center gap-1">
                                                                                 <span className="text-sm font-bold text-muted-foreground">Stock: {entry.stock ?? 0}</span>
-                                                                                <div className="flex items-center justify-center h-10 sm:h-11 sm:gap-0 gap-0 border border-border rounded-full bg-background">
-                                                                                    <button type="button" className={`sm:h-11 sm:w-11 h-10 w-10 flex justify-center items-center text-foreground hover:bg-accent text-base`} onClick={() => handleColorQty(group.color, 'desc')}>
+                                                                                <div className="flex items-center justify-center h-8 sm:h-9 gap-0 border border-border rounded-full bg-background">
+                                                                                    <button type="button" disabled={!selectedSize || (qtyByColor[group.color] || 0) <= 0} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(!selectedSize || (qtyByColor[group.color] || 0) <= 0) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'desc')}>
                                                                                         <HiMinus />
                                                                                     </button>
-                                                                                    <input type="text" value={qtyByColor[group.color] || 0} className="sm:w-12 w-10 text-center border-none outline-none bg-transparent text-foreground text-base" readOnly />
-                                                                                    <button type="button" className={`sm:h-11 sm:w-11 h-10 w-10 flex justify-center items-center text-foreground hover:bg-accent text-base`} onClick={() => handleColorQty(group.color, 'inc')}>
+                                                                                    <input type="text" value={qtyByColor[group.color] || 0} className="sm:w-8 w-6 text-center border-none outline-none bg-transparent text-foreground text-sm" readOnly />
+                                                                                    <button type="button" disabled={!selectedSize || (qtyByColor[group.color] || 0) >= (entry?.stock ?? 0)} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(!selectedSize || (qtyByColor[group.color] || 0) >= (entry?.stock ?? 0)) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'inc')}>
                                                                                         <HiPlus />
                                                                                     </button>
                                                                                 </div>
