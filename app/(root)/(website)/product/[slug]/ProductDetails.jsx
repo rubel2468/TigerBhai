@@ -42,27 +42,34 @@ const ShortDescription = ({ text }) => {
     }, [text]);
 
     return (
-        <div className="text-muted-foreground">
-            <div 
-                ref={textRef}
-                className={`transition-all duration-300 ${isExpanded ? '' : 'line-clamp-3'}`}
-                style={{ 
-                    display: '-webkit-box',
-                    WebkitLineClamp: isExpanded ? 'unset' : 3,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden'
-                }}
-            >
-                {text}
+        <div className="shadow rounded border border-border bg-card">
+            <div className="p-3 bg-muted border-b border-border">
+                <h2 className="font-semibold text-2xl text-card-foreground">Short Description</h2>
             </div>
-            {shouldShowButton && (
-                <button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="text-primary hover:text-primary/80 text-sm font-medium mt-1 transition-colors"
-                >
-                    {isExpanded ? 'See less' : 'See more'}
-                </button>
-            )}
+            <div className="p-3">
+                <div className="text-muted-foreground">
+                    <div 
+                        ref={textRef}
+                        className={`transition-all duration-300 ${isExpanded ? '' : 'line-clamp-3'}`}
+                        style={{ 
+                            display: '-webkit-box',
+                            WebkitLineClamp: isExpanded ? 'unset' : 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {text}
+                    </div>
+                    {shouldShowButton && (
+                        <button
+                            onClick={() => setIsExpanded(!isExpanded)}
+                            className="text-primary hover:text-primary/80 text-sm font-medium mt-2 transition-colors"
+                        >
+                            {isExpanded ? 'See less' : 'See more'}
+                        </button>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
@@ -90,17 +97,53 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     useEffect(() => {
         // Build gallery with images and YouTube videos
         const productImages = product?.media?.map(img => ({ src: img.filePath, kind: 'image' })) || []
+        
+        // Improved YouTube video ID extraction
+        const extractYouTubeId = (url) => {
+            if (!url) return ''
+            try {
+                const urlObj = new URL(url)
+                // Handle youtu.be format: https://youtu.be/VIDEO_ID
+                if (urlObj.hostname.includes('youtu.be')) {
+                    return urlObj.pathname.replace('/', '')
+                }
+                // Handle youtube.com format: https://www.youtube.com/watch?v=VIDEO_ID
+                if (urlObj.hostname.includes('youtube.com')) {
+                    return urlObj.searchParams.get('v') || ''
+                }
+                // Handle embed format: https://www.youtube.com/embed/VIDEO_ID
+                if (urlObj.pathname.includes('/embed/')) {
+                    return urlObj.pathname.split('/embed/')[1]?.split('?')[0] || ''
+                }
+            } catch (error) {
+                console.warn('Error parsing YouTube URL:', url, error)
+            }
+            return ''
+        }
+
         const productVideos = (product?.videos || [])
             .filter(v => v.platform === 'youtube' && (v.videoId || v.url))
-            .map(v => ({
-                kind: 'video',
-                videoId: v.videoId || (() => { try { const u = new URL(v.url); if (u.hostname.includes('youtu.be')) return u.pathname.replace('/', ''); if (u.hostname.includes('youtube.com')) return new URLSearchParams(u.search).get('v') || ''; } catch(_){} return '' })(),
-                url: v.url,
-                thumb: v.thumbnail || (v.videoId ? `https://img.youtube.com/vi/${v.videoId}/hqdefault.jpg` : ''),
-            }))
-            .filter(v => v.videoId)
+            .map(v => {
+                const videoId = v.videoId || extractYouTubeId(v.url)
+                return {
+                    kind: 'video',
+                    videoId: videoId,
+                    url: v.url,
+                    thumb: v.thumbnail || (videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : ''),
+                }
+            })
+            .filter(v => v.videoId && v.videoId.length > 0)
 
         const gallery = [...productImages, ...productVideos]
+        
+        // Debug logging for video processing
+        if (productVideos.length > 0) {
+            console.log('Product videos found:', productVideos)
+        }
+        if (gallery.length > 0) {
+            console.log('Gallery items:', gallery)
+        }
+        
         setAllImages(gallery)
         if (gallery.length > 0) {
             const first = gallery[0]
@@ -326,11 +369,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                         {activeIsVideo ? (
                             <div className="aspect-video w-full border rounded overflow-hidden">
                                 <iframe
-                                    src={`https://www.youtube.com/embed/${activeThumb}`}
+                                    src={`https://www.youtube.com/embed/${activeThumb}?rel=0&modestbranding=1`}
                                     title="Product video"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     allowFullScreen
                                     className="h-full w-full"
+                                    frameBorder="0"
                                 />
                             </div>
                         ) : (
@@ -356,7 +400,13 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                     />
                                 ) : (
                                     <div className={`relative w-[100px] h-[56px] overflow-hidden rounded ${activeIsVideo && item.videoId === activeThumb ? 'ring-2 ring-primary' : ''}`}>
-                                        <Image src={item.thumb || imgPlaceholder.src} alt="video thumb" fill className="object-cover" />
+                                        <Image 
+                                            src={item.thumb || imgPlaceholder.src} 
+                                            alt="video thumbnail" 
+                                            width={100}
+                                            height={56}
+                                            className="w-full h-full object-cover" 
+                                        />
                                         <div className="absolute inset-0 grid place-items-center bg-black/30">
                                             <FaYoutube className="text-white text-2xl drop-shadow-lg" />
                                         </div>
@@ -400,14 +450,14 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
 
                     {/* Short Description Section */}
                     {product.shortDescription && (
-                        <div className="mb-4">
+                        <div className="mb-2 md:mb-4">
                             <ShortDescription text={product.shortDescription} />
                         </div>
                     )}
 
                     {/* Offer Section - Show instead of top description */}
                     {product.offer && (
-                        <div className="mb-4 p-4 bg-secondary/20 border border-secondary/30 rounded-lg">
+                        <div className="mb-2 md:mb-4 p-4 bg-secondary/20 border border-secondary/30 rounded-lg">
                             <h3 className="font-semibold text-secondary-foreground mb-2">Special Offer</h3>
                             <div dangerouslySetInnerHTML={{ __html: decode(product.offer) }}></div>
                         </div>
@@ -415,7 +465,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
 
 
                     {Array.isArray(variantsByColor) && variantsByColor.length > 0 && (
-                        <div className="mt-6 space-y-4">
+                        <div className="mt-3 md:mt-6 space-y-4">
                             {variantsByColor.map(group => {
                                 const isMultiSize = (group.entries?.length || 0) > 1
                                 const selectedSize = selectedSizeByColor[group.color]
