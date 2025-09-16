@@ -3,6 +3,7 @@ import React, { useState, useEffect, memo } from 'react'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import { useRef } from 'react'
 import Image from 'next/image';
 import Link from 'next/link';
 // Optimized icon imports
@@ -62,6 +63,7 @@ const MainSlider = ({ initialData }) => {
     const [carouselData, setCarouselData] = useState(initialData?.data || [])
     const [loading, setLoading] = useState(!initialData?.success)
     const [currentSlide, setCurrentSlide] = useState(0)
+    const sliderRef = useRef(null)
 
     useEffect(() => {
         // Only fetch if no initial data provided
@@ -93,6 +95,9 @@ const MainSlider = ({ initialData }) => {
         speed: 300, // Faster transitions
         autoplay: true, // Always enable autoplay
         autoplaySpeed: 3000, // 3 seconds as requested
+        pauseOnHover: false,
+        pauseOnFocus: false,
+        pauseOnDotsHover: false,
         nextArrow: <ArrowNext />,
         prevArrow: <ArrowPrev />,
         lazyLoad: 'ondemand', // Lazy load images
@@ -106,6 +111,9 @@ const MainSlider = ({ initialData }) => {
                     dots: false,
                     arrows: false,
                     autoplay: true,
+                    pauseOnHover: false,
+                    pauseOnFocus: false,
+                    pauseOnDotsHover: false,
                     speed: 200
                 }
             },
@@ -115,11 +123,25 @@ const MainSlider = ({ initialData }) => {
                     dots: false,
                     arrows: false,
                     autoplay: true,
+                    pauseOnHover: false,
+                    pauseOnFocus: false,
+                    pauseOnDotsHover: false,
                     speed: 150
                 }
             }
         ]
     }
+
+    // Ensure autoplay resumes if the tab regains visibility or any accidental pause occurs
+    useEffect(() => {
+        const handleVisibility = () => {
+            if (!document.hidden && sliderRef.current && sliderRef.current.slickPlay) {
+                sliderRef.current.slickPlay()
+            }
+        }
+        document.addEventListener('visibilitychange', handleVisibility)
+        return () => document.removeEventListener('visibilitychange', handleVisibility)
+    }, [])
 
     if (loading) {
         return (
@@ -145,7 +167,7 @@ const MainSlider = ({ initialData }) => {
 
     return (
         <div className="w-full relative">
-            <Slider {...settings}>
+            <Slider ref={sliderRef} {...settings}>
                 {carouselData.map((slide, index) => (
                     <div key={slide._id} className="w-full relative">
                         <div className="relative">
