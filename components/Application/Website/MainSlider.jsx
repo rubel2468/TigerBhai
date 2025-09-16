@@ -9,6 +9,37 @@ import Link from 'next/link';
 import { LuChevronRight, LuChevronLeft } from "react-icons/lu";
 import { Button } from '@/components/ui/button';
 
+const WelcomeAnimatedHeading = memo(() => {
+    const [isVisible, setIsVisible] = useState(false)
+    useEffect(() => {
+        const id = requestAnimationFrame(() => setIsVisible(true))
+        return () => cancelAnimationFrame(id)
+    }, [])
+    const baseSpanClass = "block transition-opacity duration-700";
+    return (
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-2 leading-tight">
+            <span
+                className={`${baseSpanClass} ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                style={{ transitionDelay: '0ms', textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}
+            >
+                Welcome
+            </span>
+            <span
+                className={`${baseSpanClass} ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                style={{ transitionDelay: '300ms', textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}
+            >
+                To
+            </span>
+            <span
+                className={`${baseSpanClass} ${isVisible ? 'opacity-100' : 'opacity-0'} text-primary`}
+                style={{ transitionDelay: '600ms', textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}
+            >
+                Tiger Bhai
+            </span>
+        </h1>
+    )
+})
+
 const ArrowNext = memo((props) => {
     const { onClick } = props
     return (
@@ -30,6 +61,7 @@ const ArrowPrev = memo((props) => {
 const MainSlider = ({ initialData }) => {
     const [carouselData, setCarouselData] = useState(initialData?.data || [])
     const [loading, setLoading] = useState(!initialData?.success)
+    const [currentSlide, setCurrentSlide] = useState(0)
 
     useEffect(() => {
         // Only fetch if no initial data provided
@@ -60,19 +92,20 @@ const MainSlider = ({ initialData }) => {
         infinite: true, // Always allow infinite scrolling
         speed: 300, // Faster transitions
         autoplay: true, // Always enable autoplay
-        autoplaySpeed: 5000, // Slower autoplay
+        autoplaySpeed: 3000, // 3 seconds as requested
         nextArrow: <ArrowNext />,
         prevArrow: <ArrowPrev />,
         lazyLoad: 'ondemand', // Lazy load images
         slidesToShow: 1,
         slidesToScroll: 1,
+        afterChange: (index) => setCurrentSlide(index),
         responsive: [
             {
                 breakpoint: 768,
                 settings: {
                     dots: false,
                     arrows: false,
-                    autoplay: false, // Disable autoplay on mobile
+                    autoplay: true,
                     speed: 200
                 }
             },
@@ -81,7 +114,7 @@ const MainSlider = ({ initialData }) => {
                 settings: {
                     dots: false,
                     arrows: false,
-                    autoplay: false,
+                    autoplay: true,
                     speed: 150
                 }
             }
@@ -103,17 +136,7 @@ const MainSlider = ({ initialData }) => {
         return (
             <div className="w-full relative flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5 py-20">
                 <div className="text-center">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground mb-2 leading-tight">
-                        <span className="block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)' }}>
-                            Welcome
-                        </span>
-                        <span className="block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)' }}>
-                            To
-                        </span>
-                        <span className="block text-primary" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(0,0,0,0.2)' }}>
-                            Tiger Bhai
-                        </span>
-                    </h1>
+                    <WelcomeAnimatedHeading key={`fallback-${currentSlide}`} />
                     <p className="text-muted-foreground text-lg">No carousel slides available at the moment</p>
                 </div>
             </div>
@@ -140,45 +163,31 @@ const MainSlider = ({ initialData }) => {
                             />
                             
                             {/* Overlay Content */}
-                            <div className="absolute inset-0 bg-black/30 flex items-center">
-                                <div className="container mx-auto px-6 lg:px-32">
-                                    <div className="max-w-2xl">
-                                        {slide.title ? (
-                                            <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-                                                {slide.title}
-                                            </h1>
-                                        ) : (
-                                            <div className="text-center">
-                                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-2 leading-tight">
-                                                    <span className="block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}>
-                                                        Welcome
-                                                    </span>
-                                                    <span className="block" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}>
-                                                        To
-                                                    </span>
-                                                    <span className="block text-primary" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.6)' }}>
-                                                        Tiger Bhai
-                                                    </span>
-                                                </h1>
-                                            </div>
-                                        )}
-                                        {slide.description && (
-                                            <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed">
-                                                {slide.description}
-                                            </p>
-                                        )}
-                                        {slide.buttonUrl && (
-                                            <Link href={slide.buttonUrl}>
-                                                <Button 
-                                                    variant="default"
-                                                    size="lg" 
-                                                    className="px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                                                >
-                                                    {slide.buttonText}
-                                                </Button>
-                                            </Link>
-                                        )}
-                                    </div>
+                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                                <div className="w-full px-6 lg:px-32 flex flex-col items-center text-center">
+                                    {slide.title ? (
+                                        <h1 className="text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+                                            {slide.title}
+                                        </h1>
+                                    ) : (
+                                        <WelcomeAnimatedHeading key={`slide-${currentSlide}`} />
+                                    )}
+                                    {slide.description && (
+                                        <p className="text-lg lg:text-xl text-white/90 mb-8 leading-relaxed max-w-2xl">
+                                            {slide.description}
+                                        </p>
+                                    )}
+                                    {slide.buttonUrl && (
+                                        <Link href={slide.buttonUrl}>
+                                            <Button 
+                                                variant="default"
+                                                size="lg" 
+                                                className="px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                                            >
+                                                {slide.buttonText}
+                                            </Button>
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
                         </div>
