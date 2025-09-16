@@ -28,12 +28,16 @@ const reviewSchema = new mongoose.Schema({
 
     deletedAt: {
         type: Date,
-        default: null,
-        index: true
+        default: null
     },
 
 }, { timestamps: true })
 
+// Helpful indexes
+reviewSchema.index({ product: 1 })
+reviewSchema.index({ user: 1 })
+reviewSchema.index({ product: 1, createdAt: -1 })
+reviewSchema.index({ deletedAt: 1 })
 
 const ReviewModel = mongoose.models.Review || mongoose.model('Review', reviewSchema, 'reviews')
 export default ReviewModel

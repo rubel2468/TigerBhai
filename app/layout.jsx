@@ -1,5 +1,6 @@
 import GlobalProvider from "@/components/Application/GlobalProvider";
 import ServiceWorker from "@/components/Application/ServiceWorker";
+import WebVitals from "@/components/Application/WebVitals";
 import "./globals.css";
 import { Assistant } from 'next/font/google'
 import { ToastContainer } from 'react-toastify';
@@ -49,6 +50,7 @@ export default function RootLayout({ children }) {
       >
         <GlobalProvider>
           <ServiceWorker />
+          <WebVitals />
           <ToastContainer />
           {children}
         </GlobalProvider>

@@ -3,6 +3,7 @@ import React, { memo, useMemo } from 'react'
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
 import Link from 'next/link'
 import { WEBSITE_PRODUCT_DETAILS } from '@/routes/WebsiteRoute'
+import { BLUR_DATA_URL, getImageSizes, getImageQuality } from '@/lib/imageUtils'
 
 const ProductBox = memo(({ product }) => {
     // Calculate discount percentage with memoization
@@ -27,7 +28,10 @@ const ProductBox = memo(({ product }) => {
                         title={product?.media[0]?.title || product?.name}
                         className='w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105'
                         loading="lazy"
-                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                        sizes={getImageSizes('mobile')}
+                        quality={getImageQuality(false)}
+                        placeholder="blur"
+                        blurDataURL={BLUR_DATA_URL}
                     />
                     
                     {/* Discount Badge */}

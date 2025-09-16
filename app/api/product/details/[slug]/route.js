@@ -7,7 +7,7 @@ import ReviewModel from "@/models/Review.model";
 
 export async function GET(request, { params }) {
     try {
-
+        const start = Date.now()
         await connectDB()
 
         const getParams = await params
@@ -28,8 +28,11 @@ export async function GET(request, { params }) {
 
         filter.slug = slug
 
-        // get product 
-        const getProduct = await ProductModel.findOne(filter).populate('media', 'filePath').lean()
+        // get product (project only needed fields)
+        const getProduct = await ProductModel.findOne(filter)
+            .select('name slug description shortDescription whatsappLink offer companyDetails media videos vendorSettings')
+            .populate('media', 'filePath')
+            .lean()
 
         if (!getProduct) {
             return response(false, 404, 'Product not found.')
@@ -82,7 +85,7 @@ export async function GET(request, { params }) {
 
         // group variants by color with size entries
         const allVariants = await ProductVariantModel.find({ product: getProduct._id })
-            .select('color size sku mrp sellingPrice discountPercentage media stock recommendedFor')
+            .select('color size mrp sellingPrice discountPercentage media stock recommendedFor')
             .populate('media', 'filePath')
             .lean()
 
@@ -114,6 +117,8 @@ export async function GET(request, { params }) {
             variantsByColor
         }
 
+        const durationMs = Date.now() - start
+        console.log(`[API] /api/product/details/${slug} ${durationMs}ms`)
         return response(true, 200, 'Product data found.', productData)
 
     } catch (error) {

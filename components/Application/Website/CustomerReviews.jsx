@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { IoStar, IoStarHalf, IoStarOutline } from "react-icons/io5"
 import { BsChatQuote, BsArrowLeft, BsArrowRight } from "react-icons/bs"
 import userIcon from '@/public/assets/images/user.png'
+import { BLUR_DATA_URL, getImageSizes, getImageQuality } from '@/lib/imageUtils'
 
 const CustomerReviews = ({ initialData }) => {
     const [currentIndex, setCurrentIndex] = useState(0)
@@ -212,6 +213,10 @@ const CustomerReviews = ({ initialData }) => {
                                                 alt={reviews[currentIndex]?.reviewedBy}
                                                 className='w-full h-full object-cover'
                                                 loading="lazy"
+                                                quality={getImageQuality(false)}
+                                                sizes={getImageSizes('thumbnail')}
+                                                placeholder="blur"
+                                                blurDataURL={BLUR_DATA_URL}
                                             />
                                         </div>
                                                 <div>

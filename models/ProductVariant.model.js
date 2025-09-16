@@ -53,12 +53,17 @@ const ProductVariantSchema = new mongoose.Schema({
 
     deletedAt: {
         type: Date,
-        default: null,
-        index: true
+        default: null
     },
 
 }, { timestamps: true })
 
+// Indexes to speed common queries
+ProductVariantSchema.index({ product: 1 })
+ProductVariantSchema.index({ product: 1, color: 1 })
+ProductVariantSchema.index({ product: 1, size: 1 })
+ProductVariantSchema.index({ product: 1, color: 1, size: 1 })
+ProductVariantSchema.index({ deletedAt: 1 })
 
 const ProductVariantModel = mongoose.models.ProductVariant || mongoose.model('ProductVariant', ProductVariantSchema, 'productvariants')
 export default ProductVariantModel

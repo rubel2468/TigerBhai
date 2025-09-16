@@ -26,6 +26,7 @@ import loadingSvg from '@/public/assets/images/loading.svg'
 import ProductReveiw from "@/components/Application/Website/ProductReveiw";
 import WhatsAppChat from "@/components/Application/Website/WhatsAppChat";
 import { FaYoutube } from "react-icons/fa";
+import { BLUR_DATA_URL, getImageSizes, getImageQuality } from '@/lib/imageUtils'
 
 // ShortDescription component with see more functionality
 const ShortDescription = ({ text }) => {
@@ -452,6 +453,11 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                 height={650}
                                 alt="product"
                                 className="border rounded max-w-full"
+                                priority={true}
+                                quality={getImageQuality(true)}
+                                sizes={getImageSizes('hero')}
+                                placeholder="blur"
+                                blurDataURL={BLUR_DATA_URL}
                             />
                         )}
                     </div>
@@ -465,6 +471,11 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                         height={100}
                                         alt={`product thumbnail ${index + 1}`}
                                         className={`rounded ${(!activeIsVideo && item.src === activeThumb) ? 'ring-2 ring-primary' : ''}`}
+                                        loading="lazy"
+                                        quality={getImageQuality(false)}
+                                        sizes={getImageSizes('thumbnail')}
+                                        placeholder="blur"
+                                        blurDataURL={BLUR_DATA_URL}
                                     />
                                 ) : (
                                     <div className={`relative w-[100px] h-[56px] overflow-hidden rounded ${activeIsVideo && item.videoId === activeThumb ? 'ring-2 ring-primary' : ''}`}>
@@ -473,7 +484,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                             alt="video thumbnail" 
                                             width={100}
                                             height={56}
-                                            className="w-full h-full object-cover" 
+                                            className="w-full h-full object-cover"
+                                            loading="lazy"
+                                            quality={getImageQuality(false)}
+                                            sizes={getImageSizes('thumbnail')}
+                                            placeholder="blur"
+                                            blurDataURL={BLUR_DATA_URL}
                                         />
                                         <div className="absolute inset-0 grid place-items-center bg-black/30">
                                             <FaYoutube className="text-white text-2xl drop-shadow-lg" />
@@ -549,6 +565,11 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                         height={120}
                                                         alt={`${group.color} variant`}
                                                         className="w-full h-full object-cover"
+                                                        loading="lazy"
+                                                        quality={getImageQuality(false)}
+                                                        sizes={getImageSizes('thumbnail')}
+                                                        placeholder="blur"
+                                                        blurDataURL={BLUR_DATA_URL}
                                                     />
                                                 </div>
                                             )}

@@ -9,6 +9,7 @@ import Link from 'next/link';
 // Optimized icon imports
 import { LuChevronRight, LuChevronLeft } from "react-icons/lu";
 import { Button } from '@/components/ui/button';
+import { BLUR_DATA_URL, getImageSizes, getImageQuality } from '@/lib/imageUtils';
 
 const WelcomeAnimatedHeading = memo(() => {
     const [isVisible, setIsVisible] = useState(false)
@@ -180,8 +181,10 @@ const MainSlider = ({ initialData }) => {
                                 priority={index === 0}
                                 fetchPriority={index === 0 ? 'high' : 'auto'}
                                 loading={index === 0 ? 'eager' : 'lazy'}
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-                                quality={index === 0 ? 80 : 70}
+                                sizes={getImageSizes('hero')}
+                                quality={getImageQuality(index === 0)}
+                                placeholder="blur"
+                                blurDataURL={BLUR_DATA_URL}
                             />
                             
                             {/* Overlay Content */}
