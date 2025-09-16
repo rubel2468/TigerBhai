@@ -107,7 +107,14 @@ const EditProduct = ({ params }) => {
       }
 
       if (product.videos && Array.isArray(product.videos)) {
-        setVideos(product.videos)
+        // Normalize existing videos to ensure url/thumbnail presence
+        const normalized = product.videos.map(v => {
+          const id = v.videoId || ''
+          const url = v.url || (id ? `https://youtu.be/${id}` : '')
+          const thumb = v.thumbnail || (id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : '')
+          return { platform: 'youtube', url, videoId: id, title: v.title || '', thumbnail: thumb }
+        }).filter(v => v.videoId && v.url)
+        setVideos(normalized)
       }
 
     }
@@ -146,7 +153,14 @@ const EditProduct = ({ params }) => {
 
       const mediaIds = selectedMedia.map(media => media._id)
       values.media = mediaIds
-      values.videos = videos
+      // Normalize videos to satisfy server validation
+      const normalizedVideos = (videos || []).map(v => {
+        const id = v.videoId || ''
+        const url = v.url || (id ? `https://youtu.be/${id}` : '')
+        const thumb = v.thumbnail || (id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : '')
+        return { platform: 'youtube', url, videoId: id, title: v.title || '', thumbnail: thumb }
+      }).filter(v => v.videoId && v.url)
+      values.videos = normalizedVideos
 
       const { data: response } = await axios.put('/api/product/update', values)
       if (!response.success) {

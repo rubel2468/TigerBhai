@@ -167,7 +167,7 @@ const Home = async () => {
                         <p className='flex justify-center items-center mb-3 text-primary'>
                             <GiReturnArrow size={30} />
                         </p>
-                        <h3 className='text-xl font-semibold text-foreground'>7-Days Returns</h3>
+                        <h3 className='text-xl font-semibold text-foreground'>Instant Returns</h3>
                         <p className='text-muted-foreground'>Risk-free shopping with easy returns.</p>
                     </div>
                     <div className='text-center'>
