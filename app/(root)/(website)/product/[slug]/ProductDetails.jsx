@@ -517,25 +517,25 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                     </div>
                                                                     {/* Second row: Prices left, Qty control right with stock centered above qty */}
                                                                     <div className="mt-1 flex items-center justify-between gap-2">
-                                                                        <div className="flex flex-col items-start">
+                                                                        <div className="flex flex-col items-start justify-center">
                                                                             {hasDiscount && (
                                                                                 <span className="text-xs text-muted-foreground line-through">Tk {Number(e.mrp || 0).toLocaleString()}</span>
                                                                             )}
                                                                             <div className="flex items-center gap-2">
-                                                                                <span className="text-sm font-semibold text-foreground">Tk {Number(e.sellingPrice || 0).toLocaleString()}</span>
+                                                                                <span className="text-sm font-bold text-foreground">Tk {Number(e.sellingPrice || 0).toLocaleString()}</span>
                                                                                 {hasDiscount && (
                                                                                     <span className="text-xs text-green-600">({offPct}% off)</span>
                                                                                 )}
                                                                             </div>
                                                                         </div>
-                                                                        <div className="flex flex-col items-center justify-center gap-0.5">
-                                                                            <span className="text-[10px] text-muted-foreground">Stock: {e.stock ?? 0}</span>
-                                                                            <div className="flex items-center justify-center h-9 sm:h-9 sm:gap-0 gap-0 border border-border rounded-full bg-background">
-                                                                                <button type="button" disabled={isOut} className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
+                                                                        <div className="flex flex-col items-center justify-center gap-1">
+                                                                            <span className="text-xs sm:text-sm font-semibold text-muted-foreground">Stock: {e.stock ?? 0}</span>
+                                                                            <div className="flex items-center justify-center h-10 sm:h-11 sm:gap-0 gap-0 border border-border rounded-full bg-background">
+                                                                                <button type="button" disabled={isOut} className={`sm:h-11 sm:w-11 h-10 w-10 flex justify-center items-center text-foreground hover:bg-accent text-base ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
                                                                                     <HiMinus />
                                                                                 </button>
-                                                                                <input type="text" value={qtyVal} className="sm:w-12 w-10 text-center border-none outline-none bg-transparent text-foreground" readOnly />
-                                                                                <button type="button" disabled={isOut} className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
+                                                                                <input type="text" value={qtyVal} className="sm:w-14 w-12 text-center border-none outline-none bg-transparent text-foreground text-base" readOnly />
+                                                                                <button type="button" disabled={isOut} className={`sm:h-11 sm:w-11 h-10 w-10 flex justify-center items-center text-foreground hover:bg-accent text-base ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
                                                                                     <HiPlus />
                                                                                 </button>
                                                                             </div>
@@ -581,25 +581,28 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                         </div>
                                                                         {/* Second row: Prices left, Qty right */}
                                                                         <div className="mt-1.5 flex items-center justify-between gap-2 w-full">
-                                                                            <div className="flex flex-col items-start">
+                                                                            <div className="flex flex-col items-start justify-center">
                                                                                 {hasDiscount && (
                                                                                     <span className="text-xs text-muted-foreground line-through">Tk {Number(entry.mrp || 0).toLocaleString()}</span>
                                                                                 )}
                                                                                 <div className="flex items-center gap-2">
-                                                                                    <span className="text-sm font-semibold text-foreground">Tk {Number(entry.sellingPrice || 0).toLocaleString()}</span>
+                                                                                    <span className="text-sm font-bold text-foreground">Tk {Number(entry.sellingPrice || 0).toLocaleString()}</span>
                                                                                     {hasDiscount && (
                                                                                         <span className="text-xs text-green-600">({offPct}% off)</span>
                                                                                     )}
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="flex items-center justify-center h-9 sm:h-9 sm:gap-0 gap-0 border border-border rounded-full bg-background">
-                                                                                <button type="button" className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent`} onClick={() => handleColorQty(group.color, 'desc')}>
+                                                                            <div className="flex flex-col items-center justify-center gap-1">
+                                                                                <span className="text-xs sm:text-sm font-semibold text-muted-foreground">Stock: {entry.stock ?? 0}</span>
+                                                                                <div className="flex items-center justify-center h-10 sm:h-11 sm:gap-0 gap-0 border border-border rounded-full bg-background">
+                                                                                    <button type="button" className={`sm:h-11 sm:w-11 h-10 w-10 flex justify-center items-center text-foreground hover:bg-accent text-base`} onClick={() => handleColorQty(group.color, 'desc')}>
                                                                                     <HiMinus />
-                                                                                </button>
-                                                                                <input type="text" value={qtyByColor[group.color] || 0} className="sm:w-12 w-10 text-center border-none outline-none bg-transparent text-foreground" readOnly />
-                                                                                <button type="button" className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent`} onClick={() => handleColorQty(group.color, 'inc')}>
+                                                                                    </button>
+                                                                                    <input type="text" value={qtyByColor[group.color] || 0} className="sm:w-14 w-12 text-center border-none outline-none bg-transparent text-foreground text-base" readOnly />
+                                                                                    <button type="button" className={`sm:h-11 sm:w-11 h-10 w-10 flex justify-center items-center text-foreground hover:bg-accent text-base`} onClick={() => handleColorQty(group.color, 'inc')}>
                                                                                     <HiPlus />
-                                                                                </button>
+                                                                                    </button>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
