@@ -487,16 +487,13 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                             
                                             {/* Content and right-side controls */}
                                             <div className="flex-1 p-3 flex flex-col gap-2">
-                                                {/* Line 1: Title and Recommended */}
-                                                <div className="flex items-start justify-between">
-                                                    <div className="font-medium text-card-foreground">{group.color}</div>
+                                                {/* Line 1: Title and Recommended (inline next line) */}
+                                                <div className="flex flex-col items-start justify-start">
+                                                    <div className="font-semibold text-card-foreground">{group.color}</div>
                                                     {(() => {
                                                         const rec = (group.entries.find(e => e.recommendedFor)?.recommendedFor) || ''
                                                         return rec ? (
-                                                            <div className="px-3 py-2 bg-blue-100/20 border border-blue-300/30 rounded-lg">
-                                                                <h4 className="font-semibold text-blue-800 mb-1">Recommended</h4>
-                                                                <div className="text-sm text-blue-700">{rec}</div>
-                                                            </div>
+                                                            <div className="text-sm text-muted-foreground mt-0.5">{rec}</div>
                                                         ) : null
                                                     })()}
                                                 </div>
@@ -511,7 +508,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                 <div key={e.variantId} className={`border border-border rounded-md px-3 py-2 ${isOut ? 'opacity-60' : ''}`}>
                                                                     {/* Top row: Size left, Stock right (full width) */}
                                                                     <div className="flex items-center justify-between">
-                                                                        <span className="text-sm text-card-foreground">Size: {e.size}</span>
+                                                                        <span className="text-sm font-semibold text-card-foreground">Size: {e.size}</span>
                                                                         <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
                                                                     </div>
                                                                     {/* Second row: Prices left, Qty control right */}
@@ -572,7 +569,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                     <div className="mt-1 w-full">
                                                                         {/* Top row: Size & Stock full width */}
                                                                         <div className="flex items-center justify-between">
-                                                                            <span className="text-sm text-card-foreground">Size: {entry.size}</span>
+                                                                            <span className="text-sm font-semibold text-card-foreground">Size: {entry.size}</span>
                                                                             <span className="text-xs text-muted-foreground">Stock: {entry.stock ?? 0}</span>
                                                                         </div>
                                                                         {/* Second row: Prices left, Qty right */}
