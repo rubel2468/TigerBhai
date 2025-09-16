@@ -53,10 +53,10 @@ const Header = () => {
                 <Link href={WEBSITE_HOME} className="group">
                     <Image
                         src={logo}
-                        width={1100}
-                        height={300}
+                        width={200}
+                        height={60}
                         alt='logo'
-                        className='h-14 lg:h-18 w-auto transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] object-contain'
+                        className='h-10 lg:h-12 w-auto transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] object-contain'
                     />
                 </Link>
 
@@ -76,10 +76,10 @@ const Header = () => {
                             <div className='flex justify-between items-center bg-white/10 backdrop-blur-sm py-4 px-6 border-b border-white/10'>
                                 <Image
                                     src={logo}
-                                    width={1100}
-                                    height={300}
+                                    width={200}
+                                    height={60}
                                     alt='logo'
-                                    className='w-28'
+                                    className='h-8 w-auto'
                                 />
                                 <button 
                                     type='button' 
