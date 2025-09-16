@@ -368,7 +368,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                 </Breadcrumb>
             </div>
 
-            <div className="md:flex justify-between items-start lg:gap-10 gap-5 mb-8 md:mb-20">
+            <div className="md:flex justify-between items-start lg:gap-10 gap-5 mb-2 md:mb-20">
                 <div className="md:w-1/2 xl:flex xl:justify-center xl:gap-5 md:sticky md:top-0">
                     <div className="xl:order-last xl:mb-0 mb-2 md:mb-5 xl:w-[calc(100%-144px)]" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
                         {activeIsVideo ? (
