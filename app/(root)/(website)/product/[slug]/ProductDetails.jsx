@@ -36,24 +36,21 @@ const ShortDescription = ({ text }) => {
     useEffect(() => {
         if (textRef.current) {
             const lineHeight = parseInt(getComputedStyle(textRef.current).lineHeight);
-            const maxHeight = lineHeight * 3; // 3 lines
+            const maxHeight = lineHeight * 2; // 2 lines
             setShouldShowButton(textRef.current.scrollHeight > maxHeight);
         }
     }, [text]);
 
     return (
         <div className="shadow rounded border border-border bg-card">
-            <div className="p-3 bg-muted border-b border-border">
-                <h2 className="font-semibold text-2xl text-card-foreground">Short Description</h2>
-            </div>
-            <div className="p-3">
-                <div className="text-muted-foreground">
+            <div className="p-2">
+                <div className="text-black">
                     <div 
                         ref={textRef}
-                        className={`transition-all duration-300 ${isExpanded ? '' : 'line-clamp-3'}`}
+                        className={`transition-all duration-300 ${isExpanded ? '' : 'line-clamp-2'}`}
                         style={{ 
                             display: '-webkit-box',
-                            WebkitLineClamp: isExpanded ? 'unset' : 3,
+                            WebkitLineClamp: isExpanded ? 'unset' : 2,
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden'
                         }}
