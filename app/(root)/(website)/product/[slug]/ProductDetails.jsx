@@ -438,11 +438,11 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                             <div className="flex items-center gap-3 mb-3">
                                 {hasDiscount && (
                                     <span className="text-lg text-muted-foreground line-through">
-                                        BDT {minMrp.toLocaleString()}{maxMrp !== minMrp ? ` - ${maxMrp.toLocaleString()}` : ''}
+                                        Tk {minMrp.toLocaleString()}{maxMrp !== minMrp ? ` - ${maxMrp.toLocaleString()}` : ''}
                                     </span>
                                 )}
                                 <span className="text-2xl font-semibold text-foreground">
-                                    BDT {minSelling.toLocaleString()}{maxSelling !== minSelling ? ` - ${maxSelling.toLocaleString()}` : ''}
+                                    Tk {minSelling.toLocaleString()}{maxSelling !== minSelling ? ` - ${maxSelling.toLocaleString()}` : ''}
                                 </span>
                             </div>
                         )
@@ -514,27 +514,27 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                         <span className="text-sm text-card-foreground">Size: {e.size}</span>
                                                                         <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
                                                                     </div>
-                                                                    {/* Second row: Qty control left, Prices right */}
+                                                                    {/* Second row: Prices left, Qty control right */}
                                                                     <div className="mt-2 flex items-center justify-between gap-3">
-                                                                        <div className="flex items-center h-9 border border-border rounded-full bg-background">
-                                                                            <button type="button" disabled={isOut} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
-                                                                                <HiMinus />
-                                                                            </button>
-                                                                            <input type="text" value={qtyVal} className="w-12 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
-                                                                            <button type="button" disabled={isOut} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
-                                                                                <HiPlus />
-                                                                            </button>
-                                                                        </div>
-                                                                        <div className="flex flex-col items-end">
+                                                                        <div className="flex flex-col items-start">
                                                                             {hasDiscount && (
-                                                                                <span className="text-xs text-muted-foreground line-through">BDT {Number(e.mrp || 0).toLocaleString()}</span>
+                                                                                <span className="text-xs text-muted-foreground line-through">Tk {Number(e.mrp || 0).toLocaleString()}</span>
                                                                             )}
                                                                             <div className="flex items-center gap-2">
-                                                                                <span className="text-sm font-semibold text-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
+                                                                                <span className="text-sm font-semibold text-foreground">Tk {Number(e.sellingPrice || 0).toLocaleString()}</span>
                                                                                 {hasDiscount && (
                                                                                     <span className="text-xs text-green-600">({offPct}% off)</span>
                                                                                 )}
                                                                             </div>
+                                                                        </div>
+                                                                        <div className="flex items-center h-9 sm:h-9 sm:gap-0 gap-0 border border-border rounded-full bg-background">
+                                                                            <button type="button" disabled={isOut} className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
+                                                                                <HiMinus />
+                                                                            </button>
+                                                                            <input type="text" value={qtyVal} className="sm:w-12 w-10 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
+                                                                            <button type="button" disabled={isOut} className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
+                                                                                <HiPlus />
+                                                                            </button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -544,8 +544,8 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                 )}
                                                 {isMultiSize && (
                                                     <div className="flex flex-col gap-2 border border-border rounded-md px-3 py-2">
-                                                        <div className="flex-1">
-                                                            <div className="flex flex-wrap gap-2 mb-2">
+                                                        <div className="flex-1 w-full">
+                                                            <div className="flex flex-wrap gap-2 mb-2 w-full">
                                                                 {group.entries.map(e => {
                                                                     const isSelected = selectedSize === e.size
                                                                     const isOut = (e.stock ?? 0) <= 0
@@ -569,33 +569,33 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                 const hasDiscount = Number(entry.mrp) > Number(entry.sellingPrice)
                                                                 const offPct = hasDiscount ? Math.round(((Number(entry.mrp) - Number(entry.sellingPrice)) / Number(entry.mrp)) * 100) : 0
                                                                 return (
-                                                                    <div className="mt-1">
+                                                                    <div className="mt-1 w-full">
                                                                         {/* Top row: Size & Stock full width */}
                                                                         <div className="flex items-center justify-between">
                                                                             <span className="text-sm text-card-foreground">Size: {entry.size}</span>
                                                                             <span className="text-xs text-muted-foreground">Stock: {entry.stock ?? 0}</span>
                                                                         </div>
-                                                                        {/* Second row: Qty left, Prices right */}
-                                                                        <div className="mt-2 flex items-center justify-between gap-3">
-                                                                            <div className="flex items-center h-9 border border-border rounded-full bg-background">
-                                                                                <button type="button" className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent`} onClick={() => handleColorQty(group.color, 'desc')}>
-                                                                                    <HiMinus />
-                                                                                </button>
-                                                                                <input type="text" value={qtyByColor[group.color] || 0} className="w-12 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
-                                                                                <button type="button" className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent`} onClick={() => handleColorQty(group.color, 'inc')}>
-                                                                                    <HiPlus />
-                                                                                </button>
-                                                                            </div>
-                                                                            <div className="flex flex-col items-end">
+                                                                        {/* Second row: Prices left, Qty right */}
+                                                                        <div className="mt-2 flex items-center justify-between gap-3 w-full">
+                                                                            <div className="flex flex-col items-start">
                                                                                 {hasDiscount && (
-                                                                                    <span className="text-xs text-muted-foreground line-through">BDT {Number(entry.mrp || 0).toLocaleString()}</span>
+                                                                                    <span className="text-xs text-muted-foreground line-through">Tk {Number(entry.mrp || 0).toLocaleString()}</span>
                                                                                 )}
                                                                                 <div className="flex items-center gap-2">
-                                                                                    <span className="text-sm font-semibold text-foreground">BDT {Number(entry.sellingPrice || 0).toLocaleString()}</span>
+                                                                                    <span className="text-sm font-semibold text-foreground">Tk {Number(entry.sellingPrice || 0).toLocaleString()}</span>
                                                                                     {hasDiscount && (
                                                                                         <span className="text-xs text-green-600">({offPct}% off)</span>
                                                                                     )}
                                                                                 </div>
+                                                                            </div>
+                                                                            <div className="flex items-center h-9 sm:h-9 sm:gap-0 gap-0 border border-border rounded-full bg-background">
+                                                                                <button type="button" className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent`} onClick={() => handleColorQty(group.color, 'desc')}>
+                                                                                    <HiMinus />
+                                                                                </button>
+                                                                                <input type="text" value={qtyByColor[group.color] || 0} className="sm:w-12 w-10 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
+                                                                                <button type="button" className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent`} onClick={() => handleColorQty(group.color, 'inc')}>
+                                                                                    <HiPlus />
+                                                                                </button>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -605,12 +605,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                         {/* When size not selected, show disabled qty on right to keep layout stable on desktop */}
                                                         {!selectedSize && (
                                                             <div className="flex items-center justify-end">
-                                                                <div className="flex items-center h-9 border border-border rounded-full bg-background opacity-50">
-                                                                    <button type="button" disabled className={`h-9 w-9 flex justify-center items-center`}>
+                                                                <div className="flex items-center h-9 sm:h-9 border border-border rounded-full bg-background opacity-50">
+                                                                    <button type="button" disabled className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center`}>
                                                                         <HiMinus />
                                                                     </button>
-                                                                    <input type="text" value={0} className="w-12 text-center border-none outline-offset-0 bg-transparent" readOnly />
-                                                                    <button type="button" disabled className={`h-9 w-9 flex justify-center items-center`}>
+                                                                    <input type="text" value={0} className="sm:w-12 w-10 text-center border-none outline-offset-0 bg-transparent" readOnly />
+                                                                    <button type="button" disabled className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center`}>
                                                                         <HiPlus />
                                                                     </button>
                                                                 </div>
@@ -656,7 +656,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                         {it.color} - {it.size} (qty {it.qty}, stock {it.stock}){idx < selections.length - 1 ? ', ' : ''}
                                                     </span>
                                                 ))}
-                                                <span className="ml-2 font-medium text-foreground">| Total: {totalQty} item(s), BDT {Number(totalPrice).toLocaleString()}</span>
+                                                <span className="ml-2 font-medium text-foreground">| Total: {totalQty} item(s), Tk {Number(totalPrice).toLocaleString()}</span>
                                             </div>
                                         )}
                                         <div className="grid grid-cols-2 gap-3 mt-3">
@@ -684,7 +684,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                     })
                                                 }}
                                             >
-                                                Add Selected To Cart
+                                                Add To Cart
                                             </Button>
                                             <Button 
                                                 variant="destructive"
