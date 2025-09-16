@@ -505,26 +505,17 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                         {group.entries.map(e => {
                                                             const isOut = (e.stock ?? 0) <= 0
                                                             const qtyVal = qtyByVariant[e.variantId] || 0
+                                                            const hasDiscount = Number(e.mrp) > Number(e.sellingPrice)
+                                                            const offPct = hasDiscount ? Math.round(((Number(e.mrp) - Number(e.sellingPrice)) / Number(e.mrp)) * 100) : 0
                                                             return (
-                                                                <div key={e.variantId} className={`flex items-center justify-between gap-3 border border-border rounded-md px-3 py-2 ${isOut ? 'opacity-60' : ''}`}>
-                                                                    <div className="flex flex-col gap-0.5">
-                                                                        {/* Line 2: Size and Stock */}
-                                                                        <div className="flex items-center gap-2">
-                                                                            <span className="text-sm text-card-foreground">Size: {e.size}</span>
-                                                                            <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
-                                                                        </div>
-                                                                        {/* Line 3: Prices */}
-                                                                        <div className="flex items-center gap-2">
-                                                                            {(Number(e.mrp) > Number(e.sellingPrice)) && (
-                                                                                <span className="text-xs text-muted-foreground line-through">BDT {Number(e.mrp || 0).toLocaleString()}</span>
-                                                                            )}
-                                                                            <span className="text-sm font-semibold text-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
-                                                                            {(Number(e.mrp) > Number(e.sellingPrice)) && (
-                                                                                <span className="text-xs text-green-600">({Math.round(((Number(e.mrp)-Number(e.sellingPrice))/Number(e.mrp))*100)}% off)</span>
-                                                                            )}
-                                                                        </div>
+                                                                <div key={e.variantId} className={`border border-border rounded-md px-3 py-2 ${isOut ? 'opacity-60' : ''}`}>
+                                                                    {/* Top row: Size left, Stock right (full width) */}
+                                                                    <div className="flex items-center justify-between">
+                                                                        <span className="text-sm text-card-foreground">Size: {e.size}</span>
+                                                                        <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
                                                                     </div>
-                                                                    <div className="flex items-center">
+                                                                    {/* Second row: Qty control left, Prices right */}
+                                                                    <div className="mt-2 flex items-center justify-between gap-3">
                                                                         <div className="flex items-center h-9 border border-border rounded-full bg-background">
                                                                             <button type="button" disabled={isOut} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
                                                                                 <HiMinus />
@@ -534,6 +525,17 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                                 <HiPlus />
                                                                             </button>
                                                                         </div>
+                                                                        <div className="flex flex-col items-end">
+                                                                            {hasDiscount && (
+                                                                                <span className="text-xs text-muted-foreground line-through">BDT {Number(e.mrp || 0).toLocaleString()}</span>
+                                                                            )}
+                                                                            <div className="flex items-center gap-2">
+                                                                                <span className="text-sm font-semibold text-foreground">BDT {Number(e.sellingPrice || 0).toLocaleString()}</span>
+                                                                                {hasDiscount && (
+                                                                                    <span className="text-xs text-green-600">({offPct}% off)</span>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             )
@@ -541,7 +543,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                     </div>
                                                 )}
                                                 {isMultiSize && (
-                                                    <div className="flex items-center justify-between gap-3 border border-border rounded-md px-3 py-2">
+                                                    <div className="flex flex-col gap-2 border border-border rounded-md px-3 py-2">
                                                         <div className="flex-1">
                                                             <div className="flex flex-wrap gap-2 mb-2">
                                                                 {group.entries.map(e => {
@@ -560,35 +562,60 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                     )
                                                                 })}
                                                             </div>
-                                                            {/* Selected size summary */}
+                                                            {/* Selected size summary with qty and prices */}
                                                             {selectedSize && (() => {
                                                                 const entry = group.entries.find(en => en.size === selectedSize)
                                                                 if (!entry) return null
+                                                                const hasDiscount = Number(entry.mrp) > Number(entry.sellingPrice)
+                                                                const offPct = hasDiscount ? Math.round(((Number(entry.mrp) - Number(entry.sellingPrice)) / Number(entry.mrp)) * 100) : 0
                                                                 return (
-                                                                    <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
-                                                                        <span>Stock: {entry.stock ?? 0}</span>
-                                                                        {(Number(entry.mrp) > Number(entry.sellingPrice)) && (
-                                                                            <span className="line-through">BDT {Number(entry.mrp || 0).toLocaleString()}</span>
-                                                                        )}
-                                                                        <span className="text-foreground font-medium">BDT {Number(entry.sellingPrice || 0).toLocaleString()}</span>
-                                                                        {(Number(entry.mrp) > Number(entry.sellingPrice)) && (
-                                                                            <span className="text-green-600">({Math.round(((Number(entry.mrp)-Number(entry.sellingPrice))/Number(entry.mrp))*100)}% off)</span>
-                                                                        )}
+                                                                    <div className="mt-1">
+                                                                        {/* Top row: Size & Stock full width */}
+                                                                        <div className="flex items-center justify-between">
+                                                                            <span className="text-sm text-card-foreground">Size: {entry.size}</span>
+                                                                            <span className="text-xs text-muted-foreground">Stock: {entry.stock ?? 0}</span>
+                                                                        </div>
+                                                                        {/* Second row: Qty left, Prices right */}
+                                                                        <div className="mt-2 flex items-center justify-between gap-3">
+                                                                            <div className="flex items-center h-9 border border-border rounded-full bg-background">
+                                                                                <button type="button" className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent`} onClick={() => handleColorQty(group.color, 'desc')}>
+                                                                                    <HiMinus />
+                                                                                </button>
+                                                                                <input type="text" value={qtyByColor[group.color] || 0} className="w-12 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
+                                                                                <button type="button" className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent`} onClick={() => handleColorQty(group.color, 'inc')}>
+                                                                                    <HiPlus />
+                                                                                </button>
+                                                                            </div>
+                                                                            <div className="flex flex-col items-end">
+                                                                                {hasDiscount && (
+                                                                                    <span className="text-xs text-muted-foreground line-through">BDT {Number(entry.mrp || 0).toLocaleString()}</span>
+                                                                                )}
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <span className="text-sm font-semibold text-foreground">BDT {Number(entry.sellingPrice || 0).toLocaleString()}</span>
+                                                                                    {hasDiscount && (
+                                                                                        <span className="text-xs text-green-600">({offPct}% off)</span>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 )
                                                             })()}
                                                         </div>
-                                                        <div className="flex items-center">
-                                                            <div className="flex items-center h-9 border border-border rounded-full bg-background">
-                                                                <button type="button" disabled={!selectedSize} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${!selectedSize ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'desc')}>
-                                                                    <HiMinus />
-                                                                </button>
-                                                                <input type="text" value={qtyByColor[group.color] || 0} className="w-12 text-center border-none outline-offset-0 bg-transparent text-foreground" readOnly />
-                                                                <button type="button" disabled={!selectedSize} className={`h-9 w-9 flex justify-center items-center text-foreground hover:bg-accent ${!selectedSize ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'inc')}>
-                                                                    <HiPlus />
-                                                                </button>
+                                                        {/* When size not selected, show disabled qty on right to keep layout stable on desktop */}
+                                                        {!selectedSize && (
+                                                            <div className="flex items-center justify-end">
+                                                                <div className="flex items-center h-9 border border-border rounded-full bg-background opacity-50">
+                                                                    <button type="button" disabled className={`h-9 w-9 flex justify-center items-center`}>
+                                                                        <HiMinus />
+                                                                    </button>
+                                                                    <input type="text" value={0} className="w-12 text-center border-none outline-offset-0 bg-transparent" readOnly />
+                                                                    <button type="button" disabled className={`h-9 w-9 flex justify-center items-center`}>
+                                                                        <HiPlus />
+                                                                    </button>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        )}
                                                     </div>
                                                 )}
                                             </div>
