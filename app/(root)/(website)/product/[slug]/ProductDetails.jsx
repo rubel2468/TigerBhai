@@ -12,7 +12,7 @@ import { IoStar } from "react-icons/io5";
 import { WEBSITE_CART, WEBSITE_CHECKOUT, WEBSITE_PRODUCT_DETAILS, WEBSITE_SHOP } from "@/routes/WebsiteRoute"
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useMemo } from "react"
 import { useSearchParams } from "next/navigation"
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
 import { decode, encode } from "entities";
@@ -98,6 +98,35 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     const [isProductLoading, setIsProductLoading] = useState(false)
     const [allImages, setAllImages] = useState([])
     
+    // Selections and totals (memoized)
+    const selections = useMemo(() => {
+        if (!Array.isArray(variantsByColor)) return []
+        const list = []
+        variantsByColor.forEach(v => {
+            const isMultiSize = (v.entries?.length || 0) > 1
+            if (isMultiSize) {
+                const selSize = selectedSizeByColor[v.color]
+                const count = qtyByColor[v.color] || 0
+                if (selSize && count > 0) {
+                    const entry = v.entries.find(e => e.size === selSize)
+                    if (entry) {
+                        list.push({ color: v.color, size: entry.size, qty: count, price: entry.sellingPrice, stock: entry.stock ?? 0, variantId: entry.variantId, media: entry?.media?.filePath, mrp: entry.mrp })
+                    }
+                }
+            } else {
+                v.entries.forEach(e => {
+                    const q = qtyByVariant[e.variantId] || 0
+                    if (q > 0) {
+                        list.push({ color: v.color, size: e.size, qty: q, price: e.sellingPrice, stock: e.stock ?? 0, variantId: e.variantId, media: e?.media?.filePath, mrp: e.mrp })
+                    }
+                })
+            }
+        })
+        return list
+    }, [variantsByColor, selectedSizeByColor, qtyByColor, qtyByVariant])
+
+    const totalQty = useMemo(() => selections.reduce((sum, it) => sum + it.qty, 0), [selections])
+    const totalPrice = useMemo(() => selections.reduce((sum, it) => sum + (Number(it.price) * it.qty), 0), [selections])
     
     useEffect(() => {
         // Build gallery with images and YouTube videos
@@ -382,6 +411,24 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                 </Breadcrumb>
             </div>
 
+            {selections.length > 0 && (
+                <div className="fixed z-40 right-3 sm:right-4 md:right-6 lg:right-10 top-16 sm:top-16 md:top-20 max-w-[90vw] sm:max-w-xs shadow-lg rounded border border-border bg-card p-3">
+                    <div className="text-sm">
+                        <div className="text-blue-600 font-semibold mb-1">Selected:</div>
+                        <div className="space-y-0.5">
+                            {selections.map(it => (
+                                <div key={`${it.color}-${it.size}`} className="text-foreground text-xs sm:text-sm">
+                                    {it.color} - {it.size} (qty {it.qty})
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-2 text-foreground text-base sm:text-lg font-bold">
+                            Total: {totalQty} item(s), Tk {Number(totalPrice).toLocaleString()}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="md:flex justify-between items-start lg:gap-10 gap-5 mb-0">
                 <div className="md:w-1/2 xl:flex xl:justify-center xl:gap-5 md:sticky md:top-0">
                     <div className="xl:order-last xl:mb-0 mb-2 md:mb-5 xl:w-[calc(100%-144px)]" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
@@ -546,11 +593,11 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                             <span className="text-sm font-bold text-muted-foreground">Stock: {e.stock ?? 0}</span>
                                                                             <div className="flex items-center justify-center h-8 sm:h-9 gap-0 border border-border rounded-full bg-background">
                                                                                 <button type="button" disabled={isOut || qtyVal <= 0} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(isOut || qtyVal <= 0) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
-                                                                                    <HiMinus />
+                                                                                    <span className="text-lg sm:text-xl font-bold">-</span>
                                                                                 </button>
                                                                                 <input type="text" value={qtyVal} className="sm:w-8 w-6 text-center border-none outline-none bg-transparent text-foreground text-sm" readOnly />
                                                                                 <button type="button" disabled={isOut || qtyVal >= (e.stock ?? 0)} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(isOut || qtyVal >= (e.stock ?? 0)) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
-                                                                                    <HiPlus />
+                                                                                    <span className="text-lg sm:text-xl font-bold">+</span>
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -610,11 +657,11 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                                 <span className="text-sm font-bold text-muted-foreground">Stock: {entry.stock ?? 0}</span>
                                                                                 <div className="flex items-center justify-center h-8 sm:h-9 gap-0 border border-border rounded-full bg-background">
                                                                                     <button type="button" disabled={!selectedSize || (qtyByColor[group.color] || 0) <= 0} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(!selectedSize || (qtyByColor[group.color] || 0) <= 0) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'desc')}>
-                                                                                        <HiMinus />
+                                                                                        <span className="text-lg sm:text-xl font-bold">-</span>
                                                                                     </button>
                                                                                     <input type="text" value={qtyByColor[group.color] || 0} className="sm:w-8 w-6 text-center border-none outline-none bg-transparent text-foreground text-sm" readOnly />
                                                                                     <button type="button" disabled={!selectedSize || (qtyByColor[group.color] || 0) >= (entry?.stock ?? 0)} className={`sm:h-9 sm:w-8 h-8 w-7 flex justify-center items-center text-foreground hover:bg-accent text-sm ${(!selectedSize || (qtyByColor[group.color] || 0) >= (entry?.stock ?? 0)) ? 'cursor-not-allowed opacity-50' : ''}`} onClick={() => handleColorQty(group.color, 'inc')}>
-                                                                                        <HiPlus />
+                                                                                        <span className="text-lg sm:text-xl font-bold">+</span>
                                                                                     </button>
                                                                                 </div>
                                                                             </div>
@@ -628,11 +675,11 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                             <div className="flex items-center justify-end">
                                                                 <div className="flex items-center h-9 sm:h-9 border border-border rounded-full bg-background opacity-50">
                                                                     <button type="button" disabled className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center`}>
-                                                                        <HiMinus />
+                                                                        <span className="text-lg sm:text-xl font-bold">-</span>
                                                                     </button>
                                                                     <input type="text" value={0} className="sm:w-12 w-10 text-center border-none outline-none bg-transparent" readOnly />
                                                                     <button type="button" disabled className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center`}>
-                                                                        <HiPlus />
+                                                                        <span className="text-lg sm:text-xl font-bold">+</span>
                                                                     </button>
                                                                 </div>
                                                             </div>
@@ -644,102 +691,59 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                     </div>
                                 )
                             })}
-                            {(() => {
-                                const selections = []
-                                variantsByColor.forEach(v => {
-                                    const isMultiSize = (v.entries?.length || 0) > 1
-                                    if (isMultiSize) {
-                                        const selSize = selectedSizeByColor[v.color]
-                                        const qty = qtyByColor[v.color] || 0
-                                        if (selSize && qty > 0) {
-                                            const entry = v.entries.find(e => e.size === selSize)
-                                            if (entry) {
-                                                selections.push({ color: v.color, size: entry.size, qty, price: entry.sellingPrice, stock: entry.stock ?? 0, variantId: entry.variantId, media: entry?.media?.filePath, mrp: entry.mrp })
+                            <div className="grid grid-cols-2 gap-3 mt-3">
+                                <Button 
+                                    variant="secondary"
+                                    className={`w-full rounded-full py-5 text-md cursor-pointer ${selections.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    type="button" 
+                                    disabled={selections.length === 0}
+                                    onClick={() => {
+                                        selections.forEach(sel => {
+                                            const cartProduct = {
+                                                productId: product._id,
+                                                variantId: sel.variantId,
+                                                name: product.name,
+                                                url: product.slug,
+                                                size: sel.size,
+                                                color: sel.color,
+                                                mrp: sel.mrp,
+                                                sellingPrice: sel.price,
+                                                media: sel.media,
+                                                qty: sel.qty
                                             }
-                                        }
-                                    } else {
-                                        v.entries.forEach(e => {
-                                            const q = qtyByVariant[e.variantId] || 0
-                                            if (q > 0) {
-                                                selections.push({ color: v.color, size: e.size, qty: q, price: e.sellingPrice, stock: e.stock ?? 0, variantId: e.variantId, media: e?.media?.filePath, mrp: e.mrp })
-                                            }
+                                            dispatch(addIntoCart(cartProduct))
                                         })
-                                    }
-                                })
-                                const totalQty = selections.reduce((sum, it) => sum + it.qty, 0)
-                                const totalPrice = selections.reduce((sum, it) => sum + (it.price * it.qty), 0)
-                                return (
-                                    <>
-                                        {selections.length > 0 && (
-                                            <div className="text-sm border-t border-border pt-3">
-                                                <span className="text-blue-600 font-semibold">Selected:</span>{' '}
-                                                {selections.map((it, idx) => (
-                                                    <span key={`${it.color}-${it.size}`} className="text-blue-600 font-semibold">
-                                                        {it.color} - {it.size} (qty {it.qty}, stock {it.stock}){idx < selections.length - 1 ? ', ' : ''}
-                                                    </span>
-                                                ))}
-                                                <span className="ml-2 font-medium text-foreground">| Total: {totalQty} item(s), Tk {Number(totalPrice).toLocaleString()}</span>
-                                            </div>
-                                        )}
-                                        <div className="grid grid-cols-2 gap-3 mt-3">
-                                            <Button 
-                                                variant="secondary"
-                                                className={`w-full rounded-full py-5 text-md cursor-pointer ${selections.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                type="button" 
-                                                disabled={selections.length === 0}
-                                                onClick={() => {
-                                                    // Add all selected variants to cart
-                                                    selections.forEach(sel => {
-                                                        const cartProduct = {
-                                                            productId: product._id,
-                                                            variantId: sel.variantId,
-                                                            name: product.name,
-                                                            url: product.slug,
-                                                            size: sel.size,
-                                                            color: sel.color,
-                                                            mrp: sel.mrp,
-                                                            sellingPrice: sel.price,
-                                                            media: sel.media,
-                                                            qty: sel.qty
-                                                        }
-                                                        dispatch(addIntoCart(cartProduct))
-                                                    })
-                                                }}
-                                            >
-                                                Add To Cart
-                                            </Button>
-                                            <Button 
-                                                variant="destructive"
-                                                className={`w-full rounded-full py-5 text-md cursor-pointer ${selections.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                                type="button" 
-                                                disabled={selections.length === 0}
-                                                onClick={() => {
-                                                    // Add all selected variants to cart
-                                                    selections.forEach(sel => {
-                                                        const cartProduct = {
-                                                            productId: product._id,
-                                                            variantId: sel.variantId,
-                                                            name: product.name,
-                                                            url: product.slug,
-                                                            size: sel.size,
-                                                            color: sel.color,
-                                                            mrp: sel.mrp,
-                                                            sellingPrice: sel.price,
-                                                            media: sel.media,
-                                                            qty: sel.qty
-                                                        }
-                                                        dispatch(addIntoCart(cartProduct))
-                                                    })
-                                                    // Redirect directly to checkout
-                                                    window.location.href = WEBSITE_CHECKOUT
-                                                }}
-                                            >
-                                                <span className="text-xs sm:text-sm md:text-base leading-tight whitespace-normal break-words text-center block">Order Now (অর্ডার করুন)</span>
-                                            </Button>
-                                        </div>
-                                    </>
-                                )
-                            })()}
+                                    }}
+                                >
+                                    Add To Cart
+                                </Button>
+                                <Button 
+                                    variant="destructive"
+                                    className={`w-full rounded-full py-5 text-md cursor-pointer ${selections.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    type="button" 
+                                    disabled={selections.length === 0}
+                                    onClick={() => {
+                                        selections.forEach(sel => {
+                                            const cartProduct = {
+                                                productId: product._id,
+                                                variantId: sel.variantId,
+                                                name: product.name,
+                                                url: product.slug,
+                                                size: sel.size,
+                                                color: sel.color,
+                                                mrp: sel.mrp,
+                                                sellingPrice: sel.price,
+                                                media: sel.media,
+                                                qty: sel.qty
+                                            }
+                                            dispatch(addIntoCart(cartProduct))
+                                        })
+                                        window.location.href = WEBSITE_CHECKOUT
+                                    }}
+                                >
+                                    <span className="text-xs sm:text-sm md:text-base leading-tight whitespace-normal break-words text-center block">Order Now (অর্ডার করুন)</span>
+                                </Button>
+                            </div>
                         </div>
                     )}
 

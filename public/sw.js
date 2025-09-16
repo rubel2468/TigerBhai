@@ -1,7 +1,6 @@
 // Service Worker for better caching and performance
-const CACHE_NAME = 'Tiger-bhai-next-v1'
-const STATIC_CACHE = 'static-v1'
-const DYNAMIC_CACHE = 'dynamic-v1'
+const STATIC_CACHE = 'static-v3'
+const DYNAMIC_CACHE = 'dynamic-v3'
 
 // Assets to cache immediately
 const STATIC_ASSETS = [
@@ -28,9 +27,7 @@ self.addEventListener('install', (event) => {
                         );
                     });
             })
-            .then(() => {
-                return self.skipWaiting()
-            })
+            .then(() => self.skipWaiting())
     )
 })
 
@@ -44,14 +41,10 @@ self.addEventListener('activate', (event) => {
                         .filter((cacheName) => {
                             return cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE
                         })
-                        .map((cacheName) => {
-                            return caches.delete(cacheName)
-                        })
+                        .map((cacheName) => caches.delete(cacheName))
                 )
             })
-            .then(() => {
-                return self.clients.claim()
-            })
+            .then(() => self.clients.claim())
     )
 })
 
@@ -60,58 +53,53 @@ self.addEventListener('fetch', (event) => {
     const { request } = event
     const url = new URL(request.url)
 
-    // Skip non-GET requests
-    if (request.method !== 'GET') {
-        return
-    }
+    // Only handle same-origin GET requests
+    if (request.method !== 'GET') return
+    if (url.origin !== location.origin) return
 
-    // Skip external requests
-    if (url.origin !== location.origin) {
-        return
-    }
+    // Let Next.js handle its own build assets
+    if (url.pathname.startsWith('/_next/static/')) return
 
-    // Skip static assets that should be handled by the browser directly
-    if (url.pathname.startsWith('/_next/static/')) {
-        return
-    }
+    const isNavigation = request.mode === 'navigate' || (request.headers.get('Accept') || '').includes('text/html')
+    const isApi = url.pathname.startsWith('/api/')
 
-    event.respondWith(
-        caches.match(request)
-            .then((cachedResponse) => {
-                if (cachedResponse) {
-                    return cachedResponse
+    // Network-first for pages and APIs to avoid stale data
+    if (isNavigation || isApi) {
+        event.respondWith((async () => {
+            try {
+                const response = await fetch(request, { cache: 'no-store' })
+                // Cache only HTML navigations for offline fallback
+                if (isNavigation && response && response.ok && response.type === 'basic') {
+                    const clone = response.clone()
+                    caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, clone)).catch(() => {})
                 }
+                return response
+            } catch (err) {
+                if (isNavigation) {
+                    const cached = await caches.match(request)
+                    if (cached) return cached
+                    const offline = await caches.match('/offline.html')
+                    if (offline) return offline
+                }
+                return new Response('Network error', { status: 408, statusText: 'Request Timeout' })
+            }
+        })())
+        return
+    }
 
-                return fetch(request)
-                    .then((response) => {
-                        // Don't cache non-successful responses
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            return response
-                        }
-
-                        // Clone the response
-                        const responseToCache = response.clone()
-
-                        // Cache API responses and page requests only
-                        if (url.pathname.startsWith('/api/') || request.mode === 'navigate') {
-                            caches.open(DYNAMIC_CACHE)
-                                .then((cache) => {
-                                    cache.put(request, responseToCache)
-                                })
-                                .catch(err => console.warn('Failed to cache response:', err))
-                        }
-
-                        return response
-                    })
-                    .catch((error) => {
-                        console.warn('Fetch failed:', error);
-                        // Return offline page for navigation requests
-                        if (request.mode === 'navigate') {
-                            return caches.match('/offline.html')
-                        }
-                        // For other requests, return a basic error response
-                        return new Response('Network error', { status: 408, statusText: 'Request Timeout' })
-                    })
-            })
-    )
+    // Cache-first for other static assets (images, fonts, etc.)
+    event.respondWith((async () => {
+        const cached = await caches.match(request)
+        if (cached) return cached
+        try {
+            const response = await fetch(request)
+            if (response && response.ok && (response.type === 'basic' || response.type === 'opaque')) {
+                const clone = response.clone()
+                caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, clone)).catch(() => {})
+            }
+            return response
+        } catch (err) {
+            return new Response('Network error', { status: 408, statusText: 'Request Timeout' })
+        }
+    })())
 })
