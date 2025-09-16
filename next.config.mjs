@@ -52,9 +52,6 @@ const nextConfig = {
             };
         }
         
-        // Target modern browsers to reduce polyfills
-        config.target = ['web', 'es2020'];
-        
         // Enable prefetching for better navigation performance
         if (!isServer) {
             config.resolve.fallback = {
