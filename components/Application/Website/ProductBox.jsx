@@ -11,7 +11,7 @@ const ProductBox = memo(({ product }) => {
     }, [product?.mrp, product?.sellingPrice])
 
     return (
-        <div className='group relative bg-card dark:bg-card rounded-xl md:rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 ease-out border border-border/50 hover:border-primary/30 hover:-translate-y-1'>
+        <div className='group relative bg-card dark:bg-card rounded-xl md:rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 ease-out border border-border/50 hover:border-blue-500/40 hover:-translate-y-1'>
             <Link 
                 href={WEBSITE_PRODUCT_DETAILS(product.slug)} 
                 className='block'
@@ -38,7 +38,7 @@ const ProductBox = memo(({ product }) => {
                     )}
                     
                     {/* Hover Overlay */}
-                    <div className='absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300'></div>
+                    <div className='absolute inset-0 bg-black/0 group-hover:bg-blue-500/10 transition-all duration-300'></div>
                     
                     {/* Quick View Button (appears on hover) */}
                     <div className='absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300'>
@@ -51,7 +51,7 @@ const ProductBox = memo(({ product }) => {
                 {/* Product Info */}
                 <div className="p-2 md:p-4 space-y-2 md:space-y-3">
                     {/* Product Name */}
-                    <h4 className='font-semibold text-card-foreground dark:text-white text-xs md:text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200'>
+                    <h4 className='font-semibold text-card-foreground dark:text-white text-xs md:text-sm leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors duration-200'>
                         {product?.name}
                     </h4>
                     

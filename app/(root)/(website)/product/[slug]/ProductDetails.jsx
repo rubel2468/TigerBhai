@@ -44,10 +44,10 @@ const ShortDescription = ({ text }) => {
     return (
         <div className="shadow rounded border border-border bg-card">
             <div className="p-2">
-                <div className="text-black">
+                <div className="text-black relative">
                     <div 
                         ref={textRef}
-                        className={`transition-all duration-300 ${isExpanded ? '' : 'line-clamp-2'}`}
+                        className={`transition-all duration-300 ${isExpanded ? '' : 'line-clamp-2 pr-16'}`}
                         style={{ 
                             display: '-webkit-box',
                             WebkitLineClamp: isExpanded ? 'unset' : 2,
@@ -57,12 +57,20 @@ const ShortDescription = ({ text }) => {
                     >
                         {text}
                     </div>
-                    {shouldShowButton && (
+                    {shouldShowButton && !isExpanded && (
                         <button
-                            onClick={() => setIsExpanded(!isExpanded)}
-                            className="text-primary hover:text-primary/80 text-xs sm:text-sm font-medium mt-1 inline-block float-right"
+                            onClick={() => setIsExpanded(true)}
+                            className="absolute right-2 bottom-2 text-primary hover:text-primary/80 text-xs sm:text-sm font-medium bg-card"
                         >
-                            {isExpanded ? 'See less' : 'See more'}
+                            See more
+                        </button>
+                    )}
+                    {shouldShowButton && isExpanded && (
+                        <button
+                            onClick={() => setIsExpanded(false)}
+                            className="mt-1 text-primary hover:text-primary/80 text-xs sm:text-sm font-medium inline-block"
+                        >
+                            See less
                         </button>
                     )}
                 </div>
@@ -503,13 +511,12 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                             const offPct = hasDiscount ? Math.round(((Number(e.mrp) - Number(e.sellingPrice)) / Number(e.mrp)) * 100) : 0
                                                             return (
                                                                 <div key={e.variantId} className={`border border-border rounded-md px-2 py-1 ${isOut ? 'opacity-60' : ''}`}>
-                                                                    {/* Top row: Size left, Stock right (full width) */}
+                                                                    {/* Top row: Size full width */}
                                                                     <div className="flex items-center justify-between">
                                                                         <span className="text-sm font-semibold text-card-foreground">Size: {e.size}</span>
-                                                                        <span className="text-xs text-muted-foreground">Stock: {e.stock ?? 0}</span>
                                                                     </div>
-                                                                    {/* Second row: Prices left, Qty control right */}
-                                                                    <div className="mt-1.5 flex items-center justify-between gap-2">
+                                                                    {/* Second row: Prices left, Qty control right with stock centered above qty */}
+                                                                    <div className="mt-1 flex items-center justify-between gap-2">
                                                                         <div className="flex flex-col items-start">
                                                                             {hasDiscount && (
                                                                                 <span className="text-xs text-muted-foreground line-through">Tk {Number(e.mrp || 0).toLocaleString()}</span>
@@ -521,14 +528,17 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                                                 )}
                                                                             </div>
                                                                         </div>
-                                                                        <div className="flex items-center justify-center h-9 sm:h-9 sm:gap-0 gap-0 border border-border rounded-full bg-background">
-                                                                            <button type="button" disabled={isOut} className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
-                                                                                <HiMinus />
-                                                                            </button>
-                                                                            <input type="text" value={qtyVal} className="sm:w-12 w-10 text-center border-none outline-none bg-transparent text-foreground" readOnly />
-                                                                            <button type="button" disabled={isOut} className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
-                                                                                <HiPlus />
-                                                                            </button>
+                                                                        <div className="flex flex-col items-center justify-center gap-0.5">
+                                                                            <span className="text-[10px] text-muted-foreground">Stock: {e.stock ?? 0}</span>
+                                                                            <div className="flex items-center justify-center h-9 sm:h-9 sm:gap-0 gap-0 border border-border rounded-full bg-background">
+                                                                                <button type="button" disabled={isOut} className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'desc')}>
+                                                                                    <HiMinus />
+                                                                                </button>
+                                                                                <input type="text" value={qtyVal} className="sm:w-12 w-10 text-center border-none outline-none bg-transparent text-foreground" readOnly />
+                                                                                <button type="button" disabled={isOut} className={`sm:h-9 sm:w-9 h-8 w-8 flex justify-center items-center text-foreground hover:bg-accent ${isOut ? 'cursor-not-allowed' : ''}`} onClick={() => handleEntryQty(e.variantId, 'inc')}>
+                                                                                    <HiPlus />
+                                                                                </button>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -706,7 +716,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                     window.location.href = WEBSITE_CHECKOUT
                                                 }}
                                             >
-                                                <span className="text-sm sm:text-base md:text-lg leading-tight">Order Now (অর্ডার করুন)</span>
+                                                <span className="text-xs sm:text-sm md:text-base leading-tight whitespace-normal break-words text-center block">Order Now (অর্ডার করুন)</span>
                                             </Button>
                                         </div>
                                     </>
