@@ -348,7 +348,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                 </div>
             }
 
-            <div className="my-10 bg-blue-100 p-4 rounded-lg border-2 border-blue-300">
+            <div className="mt-0 mb-2 bg-blue-100 p-4 rounded-lg border-2 border-blue-300">
                 <div className="text-sm font-semibold text-blue-800 mb-2">TITLE SECTION</div>
                 <Breadcrumb>
                     <BreadcrumbList>
@@ -369,7 +369,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                 </Breadcrumb>
             </div>
 
-            <div className="md:flex justify-between items-start lg:gap-10 gap-5 mb-2 md:mb-20">
+            <div className="md:flex justify-between items-start lg:gap-10 gap-5 mb-0">
                 <div className="md:w-1/2 xl:flex xl:justify-center xl:gap-5 md:sticky md:top-0 bg-green-100 p-4 rounded-lg border-2 border-green-300">
                     <div className="text-sm font-semibold text-green-800 mb-2">IMAGE GALLERY SECTION</div>
                     <div className="xl:order-last xl:mb-0 mb-2 md:mb-5 xl:w-[calc(100%-144px)]" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
@@ -424,7 +424,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                     </div>
                 </div>
 
-                <div className="md:w-1/2 md:mt-0 mt-5">
+                <div className="md:w-1/2 md:mt-0 mt-0">
                     <h1 className="text-3xl font-semibold mb-2 text-foreground">{product.name}</h1>
                     <div className="flex items-center gap-1 mb-4">
                         {Array.from({ length: 5 }).map((_, i) => (
