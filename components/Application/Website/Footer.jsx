@@ -106,22 +106,22 @@ const Footer = () => {
                     </ul>
 
 
-                    <div className='flex gap-5 mt-5'>
+                    <div className='flex gap-3 sm:gap-4 mt-5 justify-end'>
 
-                        <Link href="">
-                            <AiOutlineYoutube className='text-primary' size={25} />
+                        <Link href="" className='p-1'>
+                            <AiOutlineYoutube className='text-primary' size={22} />
                         </Link>
-                        <Link href="">
-                            <FaInstagram className='text-primary' size={25} />
+                        <Link href="" className='p-1'>
+                            <FaInstagram className='text-primary' size={22} />
                         </Link>
-                        <Link href="">
-                            <FaWhatsapp className='text-primary' size={25} />
+                        <Link href="" className='p-1'>
+                            <FaWhatsapp className='text-primary' size={22} />
                         </Link>
-                        <Link href="">
-                            <TiSocialFacebookCircular className='text-primary' size={25} />
+                        <Link href="" className='p-1'>
+                            <TiSocialFacebookCircular className='text-primary' size={22} />
                         </Link>
-                        <Link href="">
-                            <FiTwitter className='text-primary' size={25} />
+                        <Link href="" className='p-1'>
+                            <FiTwitter className='text-primary' size={22} />
                         </Link>
 
                     </div>
