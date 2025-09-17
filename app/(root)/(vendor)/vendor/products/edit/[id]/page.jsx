@@ -53,7 +53,6 @@ const EditVendorProduct = ({ params }) => {
     sellingPrice: true,
     discountPercentage: true,
     description: true,
-    shortDescription: true,
     whatsappLink: true,
     offer: true,
     companyDetails: true,
@@ -70,7 +69,6 @@ const EditVendorProduct = ({ params }) => {
       sellingPrice: 0,
       discountPercentage: 0,
       description: "",
-      shortDescription: "",
       whatsappLink: "",
       offer: "",
       companyDetails: "",
@@ -89,7 +87,6 @@ const EditVendorProduct = ({ params }) => {
         sellingPrice: product?.sellingPrice,
         discountPercentage: product?.discountPercentage,
         description: product?.description,
-        shortDescription: product?.shortDescription || "",
         whatsappLink: product?.whatsappLink || "",
         offer: product?.offer || "",
         companyDetails: product?.companyDetails || "",
@@ -279,24 +276,6 @@ const EditVendorProduct = ({ params }) => {
                         data={field.value}
                         onChange={editor}
                         placeholder="Enter product description"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="shortDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Short Description (Optional)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="text" 
-                        placeholder="Enter a brief description (2-3 lines)" 
-                        {...field} 
                       />
                     </FormControl>
                     <FormMessage />

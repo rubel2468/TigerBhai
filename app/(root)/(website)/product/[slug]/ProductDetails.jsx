@@ -414,7 +414,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
 
             {selections.length > 0 && (
                 <div className="fixed z-40 left-0 right-0 top-16 sm:top-16 md:top-20 w-full">
-                    <div className="mx-auto w-full shadow-lg border-y border-border bg-card px-3 sm:px-4 md:px-6 py-3">
+                    <div className="mx-auto w-full shadow-lg border-y border-border bg-card px-3 sm:px-4 md:px-6 pt-5 pb-3">
                         <div className="text-sm">
                             <div className="text-blue-600 font-bold text-base sm:text-lg mb-1">Selected</div>
                             <div className="space-y-0.5">
