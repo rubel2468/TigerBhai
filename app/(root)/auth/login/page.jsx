@@ -1,6 +1,6 @@
 'use client'
 import { Card, CardContent } from '@/components/ui/card'
-import React, { useState } from 'react'
+import React, { useState, Suspense } from 'react'
 import Logo from '@/public/assets/images/logo-black.png'
 import Image from 'next/image'
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -160,4 +160,12 @@ const LoginPage = () => {
     )
 }
 
-export default LoginPage
+const LoginPageWrapper = () => {
+    return (
+        <Suspense fallback={<div className="flex justify-center items-center h-64">Loading...</div>}>
+            <LoginPage />
+        </Suspense>
+    )
+}
+
+export default LoginPageWrapper

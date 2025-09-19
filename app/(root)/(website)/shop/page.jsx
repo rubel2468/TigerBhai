@@ -3,7 +3,7 @@ import Filter from '@/components/Application/Website/Filter'
 import Sorting from '@/components/Application/Website/Sorting'
 import WebsiteBreadcrumb from '@/components/Application/Website/WebsiteBreadcrumb'
 import { WEBSITE_SHOP } from '@/routes/WebsiteRoute'
-import React, { useState } from 'react'
+import React, { useState, Suspense } from 'react'
 import {
     Sheet,
     SheetContent,
@@ -120,4 +120,12 @@ const Shop = () => {
     )
 }
 
-export default Shop
+const ShopPage = () => {
+    return (
+        <Suspense fallback={<div className="flex justify-center items-center h-64">Loading...</div>}>
+            <Shop />
+        </Suspense>
+    )
+}
+
+export default ShopPage

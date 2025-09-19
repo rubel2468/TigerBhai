@@ -4,6 +4,9 @@ import Topbar from '@/components/Application/Admin/Topbar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import React from 'react'
 
+// Force dynamic rendering for admin pages
+export const dynamic = 'force-dynamic'
+
 const layout = ({ children }) => {
     return (
         <ThemeProvider

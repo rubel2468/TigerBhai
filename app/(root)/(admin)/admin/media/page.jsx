@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb'
 import Media from '@/components/Application/Admin/Media'
 import LocalUploadMedia from '@/components/Application/Admin/LocalUploadMedia'
@@ -210,4 +211,7 @@ const MediaPage = () => {
     )
 }
 
-export default MediaPage
+export default dynamic(() => Promise.resolve(MediaPage), {
+    ssr: false,
+    loading: () => <div className="flex justify-center items-center h-64">Loading...</div>
+})

@@ -1,22 +1,38 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Provider } from "react-redux";
-import store from "@/store/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "@/store/store";
 import { sendPageView } from "@/lib/gtm";
 
 export default function GlobalProvider({ children }) {
   const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    if (pathname) {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (pathname && isClient) {
       sendPageView(pathname);
     }
-  }, [pathname]);
+  }, [pathname, isClient]);
+
+  if (!isClient) {
+    return (
+      <Provider store={store}>
+        {children}
+      </Provider>
+    );
+  }
 
   return (
     <Provider store={store}>
-      {children}
+      <PersistGate loading={null} persistor={persistor}>
+        {children}
+      </PersistGate>
     </Provider>
   );
 }

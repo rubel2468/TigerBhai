@@ -1,5 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
+
+// Force dynamic rendering for vendor pages
+export const dynamic = 'force-dynamic'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'

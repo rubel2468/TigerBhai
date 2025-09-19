@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -349,4 +350,7 @@ const CarouselManagement = () => {
     )
 }
 
-export default CarouselManagement
+export default dynamic(() => Promise.resolve(CarouselManagement), {
+    ssr: false,
+    loading: () => <div className="flex justify-center items-center h-64">Loading...</div>
+})

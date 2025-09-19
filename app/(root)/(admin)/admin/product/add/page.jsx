@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb'
 import { ADMIN_CATEGORY_SHOW, ADMIN_DASHBOARD, ADMIN_PRODUCT_SHOW } from '@/routes/AdminPanelRoute'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -497,4 +498,7 @@ const AddProduct = () => {
   )
 }
 
-export default AddProduct
+export default dynamic(() => Promise.resolve(AddProduct), {
+    ssr: false,
+    loading: () => <div className="flex justify-center items-center h-64">Loading...</div>
+})
