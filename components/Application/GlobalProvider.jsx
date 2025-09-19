@@ -30,7 +30,7 @@ export default function GlobalProvider({ children }) {
 
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate loading={<div className="flex justify-center items-center h-64">Loading...</div>} persistor={persistor}>
         {children}
       </PersistGate>
     </Provider>
