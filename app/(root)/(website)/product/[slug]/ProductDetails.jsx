@@ -459,23 +459,27 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
             </div>
 
             {selections.length > 0 && (
-                <div className="fixed z-40 left-0 right-0 top-16 sm:top-16 md:top-20 w-full">
-                    <div className="mx-auto w-full shadow-lg border-y border-border bg-card px-3 sm:px-4 md:px-6 pt-5 pb-3 md:pl-[50%]">
-                        <div className="text-sm">
-                            <div className="text-red-600 font-bold text-base sm:text-lg mb-1">Selected</div>
-                            <div className="space-y-0.5">
-                                {selections.map(it => (
-                                    <div key={`${it.color}-${it.size}`} className="text-foreground text-xs sm:text-sm">
-                                        {it.color} - {it.size} (qty {it.qty})
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="mt-2 text-foreground text-base sm:text-lg font-bold">
-                                Total = {totalQty} item(s), Tk {Number(totalPrice).toLocaleString()}
+                <>
+                    <div className="fixed z-40 left-0 right-0 top-16 sm:top-16 md:top-20 w-full">
+                        <div className="mx-auto w-full shadow-lg border-y border-border bg-card px-3 sm:px-4 md:px-6 pt-5 pb-3 md:pl-[50%] min-h-[92px] sm:min-h-[96px] md:min-h-[104px] flex items-start">
+                            <div className="text-sm">
+                                <div className="text-red-600 font-bold text-base sm:text-lg mb-1">Selected</div>
+                                <div className="space-y-0.5">
+                                    {selections.map(it => (
+                                        <div key={`${it.color}-${it.size}`} className="text-foreground text-xs sm:text-sm">
+                                            {it.color} - {it.size} (qty {it.qty})
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mt-2 text-foreground text-base sm:text-lg font-bold">
+                                    Total = {totalQty} item(s), Tk {Number(totalPrice).toLocaleString()}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    {/* Spacer to offset the fixed selections bar */}
+                    <div className="w-full min-h-[92px] sm:min-h-[96px] md:min-h-[104px]"></div>
+                </>
             )}
 
             <div className="md:flex justify-between items-start lg:gap-10 gap-5 mb-0">
