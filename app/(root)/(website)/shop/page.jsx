@@ -24,13 +24,12 @@ const breadcrumb = {
         { label: 'Shop', href: WEBSITE_SHOP }
     ]
 }
-const Shop = () => {
+const ShopPage = () => {
     const searchParams = useSearchParams().toString()
     const [limit, setLimit] = useState(9)
     const [sorting, setSorting] = useState('default_sorting')
     const [isMobileFilter, setIsMobileFilter] = useState(false)
     const windowSize = useWindowSize()
-
 
     const fetchProduct = async (pageParam) => {
         const { data: getProduct } = await axios.get(`/api/shop?page=${pageParam}&limit=${limit}&sort=${sorting}&${searchParams}`)
@@ -50,7 +49,6 @@ const Shop = () => {
             return lastPage.nextPage
         }
     })
-
 
     return (
         <div >
@@ -120,12 +118,12 @@ const Shop = () => {
     )
 }
 
-const ShopPage = () => {
+const ShopPageWrapper = () => {
     return (
         <Suspense fallback={<div className="flex justify-center items-center h-64">Loading...</div>}>
-            <Shop />
+            <ShopPage />
         </Suspense>
     )
 }
 
-export default ShopPage
+export default ShopPageWrapper
