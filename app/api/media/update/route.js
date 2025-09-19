@@ -4,6 +4,7 @@ import { zSchema } from "@/lib/zodSchema";
 import MediaModel from "@/models/Media.model";
 import { isValidObjectId } from "mongoose";
 import { isAuthenticated } from "@/lib/authentication";
+import { revalidateTag } from "next/cache";
 export async function PUT(request) {
     try {
         const auth = await isAuthenticated('admin')
@@ -42,6 +43,10 @@ export async function PUT(request) {
 
         await getMedia.save()
 
+        try {
+            revalidateTag('featured-products')
+            revalidateTag('shop-products')
+        } catch (_) { /* noop */ }
 
         return response(true, 200, 'Media updated successfully.')
 

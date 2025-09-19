@@ -119,7 +119,9 @@ export async function GET(request, { params }) {
 
         const durationMs = Date.now() - start
         console.log(`[API] /api/product/details/${slug} ${durationMs}ms`)
-        return response(true, 200, 'Product data found.', productData)
+        const res = response(true, 200, 'Product data found.', productData)
+        res.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=1800')
+        return res
 
     } catch (error) {
         return catchError(error)

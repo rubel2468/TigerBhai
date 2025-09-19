@@ -6,6 +6,7 @@ import ProductVariantModel from "@/models/ProductVariant.model"
 import ProductModel from "@/models/Product.model"
 import VendorModel from "@/models/Vendor.model"
 import { cookies } from "next/headers"
+import { revalidateTag } from "next/cache"
 
 export async function PUT(request) {
     try {
@@ -83,6 +84,11 @@ export async function PUT(request) {
         getProductVariant.media = singleMediaId
         getProductVariant.recommendedFor = validatedData.recommendedFor || ''
         await getProductVariant.save()
+
+        try {
+            revalidateTag('shop-products')
+            revalidateTag('featured-products')
+        } catch (_) { /* noop */ }
 
         return response(true, 200, 'Product variant updated successfully.')
 

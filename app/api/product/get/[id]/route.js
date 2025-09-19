@@ -27,7 +27,10 @@ export async function GET(request, { params }) {
 
         filter._id = id
 
-        const getProduct = await ProductModel.findOne(filter).populate('media', '_id filePath').lean()
+        const getProduct = await ProductModel.findOne(filter)
+            .select('name slug category mrp sellingPrice discountPercentage description shortDescription whatsappLink offer companyDetails media videos')
+            .populate('media', '_id filePath')
+            .lean()
 
         if (!getProduct) {
             return response(false, 404, 'Product not found.')

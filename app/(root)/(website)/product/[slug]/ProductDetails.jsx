@@ -27,6 +27,7 @@ import ProductReveiw from "@/components/Application/Website/ProductReveiw";
 import WhatsAppChat from "@/components/Application/Website/WhatsAppChat";
 import { FaYoutube } from "react-icons/fa";
 import { BLUR_DATA_URL, getImageSizes, getImageQuality } from '@/lib/imageUtils'
+import { pushToDataLayer } from '@/lib/gtm'
 
 // ShortDescription component with see more functionality
 const ShortDescription = ({ text }) => {
@@ -276,6 +277,21 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
         dispatch(addIntoCart(cartProduct))
         setIsAddedIntoCart(true)
         
+        // GTM add_to_cart
+        pushToDataLayer('add_to_cart', {
+            currency: 'BDT',
+            value: Number(variant.sellingPrice) * Number(qty),
+            items: [{
+                item_id: variant._id,
+                item_name: product.name,
+                item_brand: product.brand || undefined,
+                item_category: product?.category?.name || undefined,
+                item_variant: variant.size ? `${variant.color || ''} ${variant.size}`.trim() : variant.color,
+                price: Number(variant.sellingPrice),
+                quantity: Number(qty),
+            }],
+        })
+        
         // Popup removed; action works directly
     }
 
@@ -297,6 +313,21 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
             dispatch(addIntoCart(cartProduct))
             setIsAddedIntoCart(true)
         }
+        
+        // GTM add_to_cart for buy now
+        pushToDataLayer('add_to_cart', {
+            currency: 'BDT',
+            value: Number(variant.sellingPrice) * Number(qty),
+            items: [{
+                item_id: variant._id,
+                item_name: product.name,
+                item_brand: product.brand || undefined,
+                item_category: product?.category?.name || undefined,
+                item_variant: variant.size ? `${variant.color || ''} ${variant.size}`.trim() : variant.color,
+                price: Number(variant.sellingPrice),
+                quantity: Number(qty),
+            }],
+        })
         
         // Popup removed; redirect directly
         window.location.href = WEBSITE_CHECKOUT
@@ -373,6 +404,21 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
         }
         dispatch(addIntoCart(cartProduct))
         
+        // GTM add_to_cart for variant add
+        pushToDataLayer('add_to_cart', {
+            currency: 'BDT',
+            value: Number(entry.sellingPrice) * Number(desiredQty),
+            items: [{
+                item_id: entry.variantId,
+                item_name: product.name,
+                item_brand: product.brand || undefined,
+                item_category: product?.category?.name || undefined,
+                item_variant: `${color} ${entry.size}`,
+                price: Number(entry.sellingPrice),
+                quantity: Number(desiredQty),
+            }],
+        })
+        
         // Popup removed; action works directly
     }
 
@@ -414,9 +460,9 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
 
             {selections.length > 0 && (
                 <div className="fixed z-40 left-0 right-0 top-16 sm:top-16 md:top-20 w-full">
-                    <div className="mx-auto w-full shadow-lg border-y border-border bg-card px-3 sm:px-4 md:px-6 pt-5 pb-3">
+                    <div className="mx-auto w-full shadow-lg border-y border-border bg-card px-3 sm:px-4 md:px-6 pt-5 pb-3 md:pl-[50%]">
                         <div className="text-sm">
-                            <div className="text-blue-600 font-bold text-base sm:text-lg mb-1">Selected</div>
+                            <div className="text-red-600 font-bold text-base sm:text-lg mb-1">Selected</div>
                             <div className="space-y-0.5">
                                 {selections.map(it => (
                                     <div key={`${it.color}-${it.size}`} className="text-foreground text-xs sm:text-sm">
@@ -582,7 +628,7 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                     {(() => {
                                                         const rec = (group.entries.find(e => e.recommendedFor)?.recommendedFor) || ''
                                                         return rec ? (
-                                                            <div className="text-sm text-muted-foreground mt-0.5">{rec}</div>
+                                                            <div className="text-sm text-black font-normal mt-0.5">{rec}</div>
                                                         ) : null
                                                     })()}
                                                 </div>
@@ -736,6 +782,20 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                             }
                                             dispatch(addIntoCart(cartProduct))
                                         })
+                                        // GTM add_to_cart for multi-add
+                                        pushToDataLayer('add_to_cart', {
+                                            currency: 'BDT',
+                                            value: Number(totalPrice),
+                                            items: selections.map(sel => ({
+                                                item_id: sel.variantId,
+                                                item_name: product.name,
+                                                item_brand: product.brand || undefined,
+                                                item_category: product?.category?.name || undefined,
+                                                item_variant: `${sel.color} ${sel.size}`,
+                                                price: Number(sel.price),
+                                                quantity: Number(sel.qty),
+                                            })),
+                                        })
                                     }}
                                 >
                                     Add To Cart
@@ -760,6 +820,20 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                                 qty: sel.qty
                                             }
                                             dispatch(addIntoCart(cartProduct))
+                                        })
+                                        // GTM add_to_cart for multi-add/buy now
+                                        pushToDataLayer('add_to_cart', {
+                                            currency: 'BDT',
+                                            value: Number(totalPrice),
+                                            items: selections.map(sel => ({
+                                                item_id: sel.variantId,
+                                                item_name: product.name,
+                                                item_brand: product.brand || undefined,
+                                                item_category: product?.category?.name || undefined,
+                                                item_variant: `${sel.color} ${sel.size}`,
+                                                price: Number(sel.price),
+                                                quantity: Number(sel.qty),
+                                            })),
                                         })
                                         window.location.href = WEBSITE_CHECKOUT
                                     }}

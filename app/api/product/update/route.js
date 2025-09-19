@@ -4,6 +4,7 @@ import { catchError, response } from "@/lib/helperFunction"
 import { zSchema } from "@/lib/zodSchema"
 import ProductModel from "@/models/Product.model"
 import { encode } from "entities"
+import { revalidateTag } from "next/cache"
 
 export async function PUT(request) {
     try {
@@ -57,6 +58,13 @@ export async function PUT(request) {
         getProduct.media = validatedData.media
         getProduct.videos = validatedData.videos || []
         await getProduct.save()
+
+        // Revalidate caches for product listings, featured and product details
+        try {
+            revalidateTag('shop-products')
+            revalidateTag('featured-products')
+            revalidateTag(`product:${getProduct.slug}`)
+        } catch (_) { /* noop in dev */ }
 
         return response(true, 200, 'Product updated successfully.')
 

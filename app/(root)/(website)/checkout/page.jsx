@@ -22,6 +22,7 @@ import { FaShippingFast } from "react-icons/fa";
 import { Textarea } from '@/components/ui/textarea'
 import { useRouter } from 'next/navigation'
 import PathaoChargeTable from '@/components/Application/Website/PathaoChargeTable'
+import { pushToDataLayer } from '@/lib/gtm'
 
 import loading from '@/public/assets/images/loading.svg'
 const breadCrumb = {
@@ -73,6 +74,22 @@ const Checkout = () => {
         setTotalAmount(subTotalAmount - couponDiscountAmount)
 
         couponForm.setValue('minShoppingAmount', subTotalAmount)
+
+        // GTM initiatecheckout when we have items and totals
+        if (cartProducts.length > 0) {
+            pushToDataLayer('initiatecheckout', {
+                currency: 'BDT',
+                value: Number(subTotalAmount - couponDiscountAmount),
+                coupon: isCouponApplied ? couponCode : undefined,
+                items: cartProducts.map(p => ({
+                    item_id: p.variantId,
+                    item_name: p.name,
+                    item_variant: `${p.color || ''} ${p.size || ''}`.trim(),
+                    price: Number(p.sellingPrice),
+                    quantity: Number(p.qty),
+                }))
+            })
+        }
 
     }, [cart])
 
@@ -198,6 +215,21 @@ const Checkout = () => {
             })
 
             if (orderResponseData.success) {
+                // GTM purchase
+                pushToDataLayer('purchase', {
+                    transaction_id: orderResponseData.data.orderNumber,
+                    value: Number(totalAmount),
+                    currency: 'BDT',
+                    coupon: isCouponApplied ? couponCode : undefined,
+                    items: verifiedCartData.map(p => ({
+                        item_id: p.variantId,
+                        item_name: p.name,
+                        item_variant: `${p.color || ''} ${p.size || ''}`.trim(),
+                        price: Number(p.sellingPrice),
+                        quantity: Number(p.qty),
+                    })),
+                })
+
                 showToast('success', 'Order placed successfully!')
                 dispatch(clearCart())
                 orderForm.reset()

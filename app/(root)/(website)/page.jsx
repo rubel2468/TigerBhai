@@ -43,12 +43,12 @@ async function getHomepageData() {
         const [carouselRes, featuredRes] = await Promise.all([
             fetch(`${baseUrl}/api/carousel`, { 
                 cache: 'force-cache',
-                next: { revalidate: 3600 },
+                next: { revalidate: 3600, tags: ['carousel'] },
                 headers: { 'Accept': 'application/json' }
             }),
             fetch(`${baseUrl}/api/product/get-featured-product`, { 
                 cache: 'force-cache', 
-                next: { revalidate: 1800 },
+                next: { revalidate: 1800, tags: ['featured-products', 'shop-products'] },
                 headers: { 'Accept': 'application/json' }
             })
         ])
@@ -62,12 +62,12 @@ async function getHomepageData() {
         const [reviewsRes, categoriesRes] = await Promise.all([
             fetch(`${baseUrl}/api/review/homepage?limit=5`, { 
                 cache: 'force-cache', 
-                next: { revalidate: 1800 },
+                next: { revalidate: 1800, tags: ['homepage-reviews'] },
                 headers: { 'Accept': 'application/json' }
             }),
             fetch(`${baseUrl}/api/category/get-category`, { 
                 cache: 'force-cache', 
-                next: { revalidate: 3600 },
+                next: { revalidate: 3600, tags: ['categories'] },
                 headers: { 'Accept': 'application/json' }
             })
         ])

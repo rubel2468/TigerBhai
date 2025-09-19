@@ -6,6 +6,7 @@ import ProductModel from "@/models/Product.model"
 import VendorModel from "@/models/Vendor.model"
 import { encode } from "entities"
 import { cookies } from "next/headers"
+import { revalidateTag } from "next/cache"
 
 export async function POST(request) {
     try {
@@ -87,6 +88,12 @@ export async function POST(request) {
         })
 
         await newProduct.save()
+
+        // Revalidate caches for product listings and featured products
+        try {
+            revalidateTag('shop-products')
+            revalidateTag('featured-products')
+        } catch (_) { /* noop in dev */ }
 
         return response(true, 200, 'Product added successfully.')
 

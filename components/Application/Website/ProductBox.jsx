@@ -21,7 +21,7 @@ const ProductBox = memo(({ product }) => {
                 {/* Image Container with 4:5 aspect ratio */}
                 <div className='relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-muted to-background dark:from-gray-800 dark:to-gray-900'>
                     <Image
-                        src={product?.media[0]?.filePath || imgPlaceholder.src}
+                        src={(product?.media[0]?.filePath ? `${product.media[0].filePath}${product?.updatedAt ? `?v=${new Date(product.updatedAt).getTime()}` : ''}` : imgPlaceholder.src)}
                         width={400}
                         height={500}
                         alt={product?.media[0]?.alt || product?.name}

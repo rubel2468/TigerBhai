@@ -103,6 +103,7 @@ export async function GET(request) {
                     _id: 1,
                     name: 1,
                     slug: 1,
+                    updatedAt: 1,
                     mrp: 1,
                     sellingPrice: 1,
                     discountPercentage: 1,

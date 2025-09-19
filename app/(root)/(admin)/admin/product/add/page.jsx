@@ -173,7 +173,14 @@ const AddProduct = () => {
 
       const mediaIds = selectedMedia.map(media => media._id)
       values.media = mediaIds
-      values.videos = videos
+      // Normalize videos to satisfy server validation and persistence
+      const normalizedVideos = (videos || []).map(v => {
+        const id = v.videoId || ''
+        const url = v.url || (id ? `https://youtu.be/${id}` : '')
+        const thumb = v.thumbnail || (id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : '')
+        return { platform: 'youtube', url, videoId: id, title: v.title || '', thumbnail: thumb }
+      }).filter(v => v.videoId && v.url)
+      values.videos = normalizedVideos
 
       const { data: response } = await axios.post('/api/product/create', values)
       if (!response.success) {

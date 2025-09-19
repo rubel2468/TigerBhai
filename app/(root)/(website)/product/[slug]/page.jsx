@@ -1,58 +1,36 @@
+"use client"
+import React, { useEffect } from 'react'
 import ProductDetails from './ProductDetails'
-import ProductSkeleton from '@/components/Application/Website/ProductSkeleton'
+import useFetch from '@/hooks/useFetch'
+import { useParams } from 'next/navigation'
+import { pushToDataLayer } from '@/lib/gtm'
 
-export const revalidate = 300
-export const dynamicParams = true
+const ProductPage = () => {
+  const params = useParams()
+  const slug = params?.slug
+  const { data, loading } = useFetch(`/api/product/details?slug=${slug}`)
 
-const fetchProductData = async (slug, searchParams) => {
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://tigerbhai.online'
-    const qs = new URLSearchParams()
-    const color = searchParams?.color
-    const size = searchParams?.size
-    if (color) qs.set('color', color)
-    if (size) qs.set('size', size)
-    const qstr = qs.toString()
-    const url = `${baseUrl}/api/product/details/${slug}${qstr ? `?${qstr}` : ''}`
-
-    const res = await fetch(url, {
-        cache: 'force-cache',
-        next: { revalidate },
-        headers: { 'Accept': 'application/json' }
-    })
-    if (!res.ok) return null
-    const json = await res.json()
-    if (!json?.success) return null
-    return json.data
-}
-
-const ProductPage = async ({ params, searchParams }) => {
-    const { slug } = params || {}
-    if (!slug) {
-        return (
-            <div className='flex justify-center items-center py-10 h-[300px]'>
-                <div className="text-center">
-                    <h1 className='text-4xl font-semibold text-foreground mb-4'>Product not found</h1>
-                    <p className="text-gray-600 mb-4">Invalid product URL.</p>
-                </div>
-            </div>
-        )
+  useEffect(() => {
+    if (data?.success && data?.data?.product && data?.data?.variant) {
+      const { product, variant } = data.data
+      pushToDataLayer('viewcontent', {
+        item_id: variant._id,
+        item_name: product.name,
+        item_brand: product.brand || undefined,
+        item_category: product?.category?.name || undefined,
+        item_variant: variant.size ? `${variant.color || ''} ${variant.size}`.trim() : variant.color,
+        price: Number(variant.sellingPrice),
+        currency: 'BDT',
+      })
     }
+  }, [data])
 
-    const productData = await fetchProductData(slug, searchParams)
-    if (!productData) {
-        return <ProductSkeleton />
-    }
+  if (loading) return null
+  if (!data?.success) return null
 
-    return (
-        <ProductDetails
-            product={productData.product}
-            variant={productData.variant}
-            colors={productData.colors}
-            sizes={productData.sizes}
-            reviewCount={productData.reviewCount}
-            variantsByColor={productData.variantsByColor}
-        />
-    )
+  return (
+    <ProductDetails {...data.data} />
+  )
 }
 
 export default ProductPage

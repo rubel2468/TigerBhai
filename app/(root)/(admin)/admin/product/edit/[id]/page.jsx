@@ -9,14 +9,13 @@ import { Button } from '@/components/ui/button'
 import { zSchema } from '@/lib/zodSchema'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { use, useEffect, useState } from 'react'
+import { use, useEffect, useState, useRef } from 'react'
 import slugify from 'slugify'
 import { showToast } from '@/lib/showToast'
 import axios from 'axios'
 import useFetch from '@/hooks/useFetch'
 import Select from '@/components/Application/Select'
 import Editor from '@/components/Application/Admin/Editor'
-import MediaModal from '@/components/Application/Admin/MediaModal'
 import Image from 'next/image'
 const breadcrumbData = [
   { href: ADMIN_DASHBOARD, label: 'Home' },
@@ -35,11 +34,72 @@ const EditProduct = ({ params }) => {
 
 
 
-  // media modal states  
-  const [open, setOpen] = useState(false)
+  // image upload states  
   const [selectedMedia, setSelectedMedia] = useState([])
   const [videos, setVideos] = useState([])
   const [videoInput, setVideoInput] = useState('')
+  const fileInputRef = useRef(null)
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleUploadChange = async (event) => {
+    const files = event.target.files
+    if (!files || files.length === 0) return
+
+    try {
+      const formData = new FormData()
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i])
+      }
+
+      const { data: uploadResponse } = await axios.post('/api/cloudinary-upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+
+      if (!uploadResponse.success) {
+        throw new Error(uploadResponse.message)
+      }
+
+      const uploaded = (uploadResponse.data || []).map(m => ({ _id: m._id, url: m.filePath }))
+      setSelectedMedia(prev => [...prev, ...uploaded])
+      showToast('success', uploadResponse.message || 'Images uploaded successfully')
+    } catch (error) {
+      showToast('error', error.response?.data?.message || error.message)
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const handleDeleteImage = (mediaId) => {
+    setSelectedMedia(prev => prev.filter(media => media._id !== mediaId))
+    showToast('success', 'Image removed successfully')
+  }
+
+  const handleDragStart = (e, index) => {
+    e.dataTransfer.setData('text/plain', index)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+  }
+
+  const handleDrop = (e, dropIndex) => {
+    e.preventDefault()
+    const dragIndex = parseInt(e.dataTransfer.getData('text/plain'))
+    if (dragIndex === dropIndex) return
+    setSelectedMedia(prev => {
+      const newMedia = [...prev]
+      const draggedItem = newMedia[dragIndex]
+      newMedia.splice(dragIndex, 1)
+      newMedia.splice(dropIndex, 0, draggedItem)
+      return newMedia
+    })
+    showToast('success', 'Image order updated')
+  }
 
   useEffect(() => {
     if (getCategory && getCategory.success) {
@@ -102,7 +162,7 @@ const EditProduct = ({ params }) => {
       })
 
       if (product.media) {
-        const media = product.media.map((media) => ({ _id: media._id, url: media.secure_url }))
+        const media = product.media.map((media) => ({ _id: media._id, url: media.filePath || media.secure_url }))
         setSelectedMedia(media)
       }
 
@@ -355,34 +415,57 @@ const EditProduct = ({ params }) => {
               </div>
 
               <div className='md:col-span-2 border border-dashed rounded p-5 text-center'>
-                <MediaModal
-                  open={open}
-                  setOpen={setOpen}
-                  selectedMedia={selectedMedia}
-                  setSelectedMedia={setSelectedMedia}
-                  isMultiple={true}
+                <input
+                  ref={fileInputRef}
+                  type='file'
+                  accept='image/*'
+                  multiple
+                  className='hidden'
+                  onChange={handleUploadChange}
                 />
 
-                {selectedMedia.length > 0
-                  && <div className='flex justify-center items-center flex-wrap mb-3 gap-2'>
-                    {selectedMedia.map(media => (
-                      <div key={media._id} className='h-24 w-24 border'>
-                        <Image
-                          src={media.url}
-                          height={100}
-                          width={100}
-                          alt=''
-                          className='size-full object-cover'
-                        />
-                      </div>
-                    ))}
+                {selectedMedia.length > 0 && (
+                  <div className='mb-3'>
+                    <p className='text-sm text-gray-600 mb-2 text-center'>
+                      Drag and drop images to reorder them. Click the × to delete.
+                    </p>
+                    <div className='flex justify-center items-center flex-wrap gap-2'>
+                      {selectedMedia.map((media, index) => (
+                        <div
+                          key={media._id}
+                          className='relative h-24 w-24 border group cursor-move hover:border-blue-400 transition-colors'
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, index)}
+                          onDragOver={handleDragOver}
+                          onDrop={(e) => handleDrop(e, index)}
+                        >
+                          <Image
+                            src={media.url}
+                            height={100}
+                            width={100}
+                            alt=''
+                            className='size-full object-cover'
+                          />
+                          <button
+                            type='button'
+                            onClick={() => handleDeleteImage(media._id)}
+                            className='absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg'
+                            title='Delete image'
+                          >
+                            ×
+                          </button>
+                          <div className='absolute -top-2 -left-2 bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-lg'>
+                            {index + 1}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                }
+                )}
 
-                <div onClick={() => setOpen(true)} className='bg-gray-50 dark:bg-card border w-[200px] mx-auto p-5 cursor-pointer'>
-                  <span className='font-semibold'>Select Media</span>
-                </div>
-
+                <Button type='button' onClick={handleUploadClick} className='w-[200px] mx-auto'>
+                  Upload Images
+                </Button>
               </div>
 
               <div className='md:col-span-2 border border-dashed rounded p-5'>
