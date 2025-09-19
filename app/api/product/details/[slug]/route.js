@@ -50,10 +50,29 @@ export async function GET(request, { params }) {
             variantFilter.color = color
         }
 
-        const variant = await ProductVariantModel.findOne(variantFilter).populate('media', 'filePath').lean()
+        let variant = await ProductVariantModel.findOne(variantFilter).populate('media', 'filePath').lean()
 
+        // If no variant found and no specific size/color requested, get the first available variant
+        if (!variant && !size && !color) {
+            const firstVariant = await ProductVariantModel.findOne({ product: getProduct._id }).populate('media', 'filePath').lean()
+            if (firstVariant) {
+                variant = firstVariant
+            }
+        }
+
+        // If still no variant found, create a fallback variant from product data
         if (!variant) {
-            return response(false, 404, 'Product not found.')
+            variant = {
+                _id: getProduct._id,
+                color: 'default',
+                size: 'default',
+                mrp: getProduct.mrp || 0,
+                sellingPrice: getProduct.sellingPrice || 0,
+                discountPercentage: getProduct.discountPercentage || 0,
+                stock: 0,
+                media: getProduct.media || [],
+                recommendedFor: ''
+            }
         }
 
         // get color and size (sizes filtered by selected color if provided)
@@ -77,6 +96,10 @@ export async function GET(request, { params }) {
             { $sort: { first: 1 } },
             { $project: { _id: 0, size: "$_id" } }
         ])
+
+        // If no variants exist, provide default values
+        const colors = getColor.length > 0 ? getColor : ['default']
+        const sizes = getSize.length > 0 ? getSize.map(item => item.size) : ['default']
 
 
         // get review  
@@ -105,14 +128,30 @@ export async function GET(request, { params }) {
                 recommendedFor: v.recommendedFor || ''
             })
         }
-        const variantsByColor = Array.from(variantsByColorMap.entries()).map(([color, entries]) => ({ color, entries }))
-
+        
+        // If no variants exist, create a default variant structure
+        let variantsByColor = Array.from(variantsByColorMap.entries()).map(([color, entries]) => ({ color, entries }))
+        if (variantsByColor.length === 0) {
+            variantsByColor = [{
+                color: 'default',
+                entries: [{
+                    size: 'default',
+                    variantId: getProduct._id,
+                    stock: 0,
+                    mrp: getProduct.mrp || 0,
+                    sellingPrice: getProduct.sellingPrice || 0,
+                    discountPercentage: getProduct.discountPercentage || 0,
+                    media: getProduct.media || [],
+                    recommendedFor: ''
+                }]
+            }]
+        }
 
         const productData = {
             product: getProduct,
             variant: variant,
-            colors: getColor,
-            sizes: getSize.length ? getSize.map(item => item.size) : [],
+            colors: colors,
+            sizes: sizes,
             reviewCount: review,
             variantsByColor
         }
