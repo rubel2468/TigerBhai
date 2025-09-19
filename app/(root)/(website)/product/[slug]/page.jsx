@@ -8,7 +8,7 @@ import { pushToDataLayer } from '@/lib/gtm'
 const ProductPage = () => {
   const params = useParams()
   const slug = params?.slug
-  const { data, loading } = useFetch(`/api/product/details?slug=${slug}`)
+  const { data, loading } = useFetch(`/api/product/details/${slug}`)
 
   useEffect(() => {
     if (data?.success && data?.data?.product && data?.data?.variant) {
