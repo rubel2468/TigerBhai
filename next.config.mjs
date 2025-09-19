@@ -101,6 +101,7 @@ const nextConfig = {
                 source: '/(.*)',
                 headers: [
                     { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+                    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()' },
                      {
                          key: 'Content-Security-Policy',
                          value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src * blob: data:; object-src 'none'; frame-ancestors 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com; child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com; connect-src 'self' https:;",

@@ -5,6 +5,8 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "@/store/store";
 import { sendPageView } from "@/lib/gtm";
+import { ReactQueryProvider } from "@/lib/queryClient";
+import { SWRProvider } from "@/lib/swrConfig";
 
 export default function GlobalProvider({ children }) {
   const pathname = usePathname();
@@ -22,17 +24,25 @@ export default function GlobalProvider({ children }) {
 
   if (!isClient) {
     return (
-      <Provider store={store}>
-        {children}
-      </Provider>
+      <ReactQueryProvider>
+        <SWRProvider>
+          <Provider store={store}>
+            {children}
+          </Provider>
+        </SWRProvider>
+      </ReactQueryProvider>
     );
   }
 
   return (
-    <Provider store={store}>
-      <PersistGate loading={<div className="flex justify-center items-center h-64">Loading...</div>} persistor={persistor}>
-        {children}
-      </PersistGate>
-    </Provider>
+    <ReactQueryProvider>
+      <SWRProvider>
+        <Provider store={store}>
+          <PersistGate loading={<div className="flex justify-center items-center h-64">Loading...</div>} persistor={persistor}>
+            {children}
+          </PersistGate>
+        </Provider>
+      </SWRProvider>
+    </ReactQueryProvider>
   );
 }
