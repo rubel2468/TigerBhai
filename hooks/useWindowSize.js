@@ -1,7 +1,7 @@
 const { useState, useLayoutEffect } = require("react")
 
 const useWindowSize = () => {
-    const [size, setSize] = useState({ width: null, height: null })
+    const [size, setSize] = useState({ width: 0, height: 0 }) // Start with 0 to match server
 
     useLayoutEffect(() => {
         const handleSize = () => {

@@ -22,23 +22,12 @@ export default function GlobalProvider({ children }) {
     }
   }, [pathname, isClient]);
 
-  if (!isClient) {
-    return (
-      <ReactQueryProvider>
-        <SWRProvider>
-          <Provider store={store}>
-            {children}
-          </Provider>
-        </SWRProvider>
-      </ReactQueryProvider>
-    );
-  }
-
+  // Always render the same structure to prevent hydration mismatches
   return (
     <ReactQueryProvider>
       <SWRProvider>
         <Provider store={store}>
-          <PersistGate loading={<div className="flex justify-center items-center h-64">Loading...</div>} persistor={persistor}>
+          <PersistGate loading={null} persistor={persistor}>
             {children}
           </PersistGate>
         </Provider>
