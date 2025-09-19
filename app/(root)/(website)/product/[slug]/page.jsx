@@ -25,8 +25,18 @@ const ProductPage = () => {
     }
   }, [data])
 
-  if (loading) return null
-  if (!data?.success) return null
+  if (loading) {
+    return <div className="flex justify-center items-center h-64">Loading...</div>
+  }
+  
+  if (!data?.success) {
+    return <div className="flex justify-center items-center h-64">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-600">Product not found</h2>
+        <p className="text-gray-500 mt-2">The product you're looking for doesn't exist.</p>
+      </div>
+    </div>
+  }
 
   return (
     <Suspense fallback={<div className="flex justify-center items-center h-64">Loading...</div>}>
