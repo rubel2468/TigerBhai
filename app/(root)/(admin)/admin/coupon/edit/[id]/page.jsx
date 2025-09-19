@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb'
 import { ADMIN_COUPON_SHOW, ADMIN_DASHBOARD, } from '@/routes/AdminPanelRoute'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -172,4 +173,7 @@ const EditCoupon = ({ params }) => {
   )
 }
 
-export default EditCoupon
+export default dynamic(() => Promise.resolve(EditCoupon), {
+    ssr: false,
+    loading: () => <div className='flex justify-center items-center h-64'>Loading...</div>
+})

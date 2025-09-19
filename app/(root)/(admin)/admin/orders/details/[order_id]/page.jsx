@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import Image from "next/image"
 import placeholderImg from '@/public/assets/images/img-placeholder.webp'
 import Link from "next/link"
@@ -426,4 +427,7 @@ const OrderDetails = ({ params }) => {
     )
 }
 
-export default OrderDetails
+export default dynamic(() => Promise.resolve(OrderDetails), {
+    ssr: false,
+    loading: () => <div className='flex justify-center items-center h-64'>Loading...</div>
+})

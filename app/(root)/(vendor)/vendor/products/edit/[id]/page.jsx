@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb'
 import { VENDOR_DASHBOARD, VENDOR_PRODUCTS } from '@/routes/VendorRoute'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -358,6 +359,9 @@ const EditVendorProduct = ({ params }) => {
   )
 }
 
-export default EditVendorProduct
+export default dynamic(() => Promise.resolve(EditVendorProduct), {
+    ssr: false,
+    loading: () => <div className='flex justify-center items-center h-64'>Loading...</div>
+})
 
 

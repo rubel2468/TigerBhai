@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import BreadCrumb from "@/components/Application/Admin/BreadCrumb"
 import DatatableWrapper from "@/components/Application/Admin/DatatableWrapper"
 import DeleteAction from "@/components/Application/Admin/DeleteAction"
@@ -111,4 +112,7 @@ const Trash = () => {
     )
 }
 
-export default Trash
+export default dynamic(() => Promise.resolve(Trash), {
+    ssr: false,
+    loading: () => <div className='flex justify-center items-center h-64'>Loading...</div>
+})

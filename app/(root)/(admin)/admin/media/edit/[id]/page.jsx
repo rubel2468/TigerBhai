@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb'
 import ButtonLoading from '@/components/Application/ButtonLoading'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -144,4 +145,7 @@ const EditMedia = ({ params }) => {
     )
 }
 
-export default EditMedia
+export default dynamic(() => Promise.resolve(EditMedia), {
+    ssr: false,
+    loading: () => <div className='flex justify-center items-center h-64'>Loading...</div>
+})

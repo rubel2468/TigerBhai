@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -205,7 +206,10 @@ const ViewProductVariant = ({ params }) => {
   )
 }
 
-export default ViewProductVariant
+export default dynamic(() => Promise.resolve(ViewProductVariant), {
+    ssr: false,
+    loading: () => <div className='flex justify-center items-center h-64'>Loading...</div>
+})
 
 
 

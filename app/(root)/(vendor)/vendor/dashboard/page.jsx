@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,7 +18,7 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/lib/showToast'
 
-export default function VendorDashboard() {
+function VendorDashboard() {
     const [stats, setStats] = useState({
         overview: {
             totalProducts: 0,
@@ -313,3 +314,8 @@ export default function VendorDashboard() {
         </div>
     )
 }
+
+export default dynamic(() => Promise.resolve(VendorDashboard), {
+    ssr: false,
+    loading: () => <div className='flex justify-center items-center h-64'>Loading...</div>
+})

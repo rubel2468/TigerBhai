@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -435,7 +436,10 @@ const AddProductVariant = () => {
   )
 }
 
-export default AddProductVariant
+export default dynamic(() => Promise.resolve(AddProductVariant), {
+    ssr: false,
+    loading: () => <div className='flex justify-center items-center h-64'>Loading...</div>
+})
 
 
 

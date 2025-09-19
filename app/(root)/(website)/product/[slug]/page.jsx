@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense } from 'react'
 import ProductDetails from './ProductDetails'
 import useFetch from '@/hooks/useFetch'
 import { useParams } from 'next/navigation'
@@ -29,7 +29,9 @@ const ProductPage = () => {
   if (!data?.success) return null
 
   return (
-    <ProductDetails {...data.data} />
+    <Suspense fallback={<div className="flex justify-center items-center h-64">Loading...</div>}>
+      <ProductDetails {...data.data} />
+    </Suspense>
   )
 }
 
