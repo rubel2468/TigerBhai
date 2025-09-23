@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { firestoreDb } from '@/lib/firebase'
+import { getFirestoreDb } from '@/lib/firebase'
 import { collection, query, where, limit, getDocs, addDoc, serverTimestamp } from 'firebase/firestore'
 
 export async function POST(request) {
@@ -10,7 +10,8 @@ export async function POST(request) {
       return NextResponse.json({ success: false, message: 'Missing params' }, { status: 400 })
     }
 
-    const threadsRef = collection(firestoreDb, 'threads')
+    const db = getFirestoreDb()
+    const threadsRef = collection(db, 'threads')
     const q = query(
       threadsRef,
       where('buyerId', '==', buyerId),

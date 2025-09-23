@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { useSelector } from 'react-redux'
-import { firestoreDb } from '@/lib/firebase'
+import { getFirestoreDb } from '@/lib/firebase'
 import { collection, addDoc, serverTimestamp, onSnapshot, orderBy, query, doc, updateDoc } from 'firebase/firestore'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,7 +17,8 @@ export default function ChatThreadPage() {
 
   useEffect(() => {
     if (!threadId) return
-    const msgsRef = collection(firestoreDb, 'threads', threadId, 'messages')
+    const db = getFirestoreDb()
+    const msgsRef = collection(db, 'threads', threadId, 'messages')
     const q = query(msgsRef, orderBy('createdAt', 'asc'))
     const unsub = onSnapshot(q, snap => {
       setMessages(snap.docs.map(d => ({ id: d.id, ...d.data() })))
@@ -28,7 +29,8 @@ export default function ChatThreadPage() {
 
   const send = async () => {
     if (!text.trim() || !threadId || !auth?._id) return
-    const msgsRef = collection(firestoreDb, 'threads', threadId, 'messages')
+    const db = getFirestoreDb()
+    const msgsRef = collection(db, 'threads', threadId, 'messages')
     await addDoc(msgsRef, {
       senderId: auth._id,
       content: text.trim(),
@@ -36,7 +38,8 @@ export default function ChatThreadPage() {
       createdAt: serverTimestamp(),
       readBy: [auth._id],
     })
-    await updateDoc(doc(firestoreDb, 'threads', threadId), { updatedAt: serverTimestamp() })
+    const db2 = getFirestoreDb()
+    await updateDoc(doc(db2, 'threads', threadId), { updatedAt: serverTimestamp() })
     setText('')
   }
 
