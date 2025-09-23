@@ -7,6 +7,7 @@ import { store, persistor } from "@/store/store";
 import { sendPageView } from "@/lib/gtm";
 import { ReactQueryProvider } from "@/lib/queryClient";
 import { SWRProvider } from "@/lib/swrConfig";
+import ErrorBoundary from "./ErrorBoundary";
 
 export default function GlobalProvider({ children }) {
   const pathname = usePathname();
@@ -24,14 +25,16 @@ export default function GlobalProvider({ children }) {
 
   // Always render the same structure to prevent hydration mismatches
   return (
-    <ReactQueryProvider>
-      <SWRProvider>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            {children}
-          </PersistGate>
-        </Provider>
-      </SWRProvider>
-    </ReactQueryProvider>
+    <ErrorBoundary>
+      <ReactQueryProvider>
+        <SWRProvider>
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              {children}
+            </PersistGate>
+          </Provider>
+        </SWRProvider>
+      </ReactQueryProvider>
+    </ErrorBoundary>
   );
 }

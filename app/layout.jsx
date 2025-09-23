@@ -113,7 +113,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <ServiceWorker />
           <WebVitals />
           <ToastContainer />
-          {children}
+          <div style={{ minHeight: '100vh' }}>
+            {children}
+          </div>
         </GlobalProvider>
       </body>
     </html>

@@ -39,42 +39,65 @@ async function getHomepageData() {
         // Use environment variable for base URL or default to production URL
         const baseUrl = process.env.NEXTAUTH_URL || 'https://tigerbhai.online'
         
+        // Add timeout and better error handling for fetch requests
+        const fetchWithTimeout = async (url, options = {}) => {
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+            
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                })
+                clearTimeout(timeoutId)
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
+                
+                return response
+            } catch (error) {
+                clearTimeout(timeoutId)
+                throw error
+            }
+        }
+        
         // Prioritize critical above-the-fold content with proper caching
         const [carouselRes, featuredRes] = await Promise.all([
-            fetch(`${baseUrl}/api/carousel`, { 
+            fetchWithTimeout(`${baseUrl}/api/carousel`, { 
                 cache: 'force-cache',
                 next: { revalidate: 3600, tags: ['carousel'] },
                 headers: { 'Accept': 'application/json' }
-            }),
-            fetch(`${baseUrl}/api/product/get-featured-product`, { 
+            }).catch(() => null),
+            fetchWithTimeout(`${baseUrl}/api/product/get-featured-product`, { 
                 cache: 'force-cache', 
                 next: { revalidate: 1800, tags: ['featured-products', 'shop-products'] },
                 headers: { 'Accept': 'application/json' }
-            })
+            }).catch(() => null)
         ])
 
         const [carouselData, featuredData] = await Promise.all([
-            carouselRes.json(),
-            featuredRes.json()
+            carouselRes ? carouselRes.json().catch(() => ({ success: false, data: [] })) : { success: false, data: [] },
+            featuredRes ? featuredRes.json().catch(() => ({ success: false, data: [] })) : { success: false, data: [] }
         ])
 
         // Load below-the-fold content separately to improve LCP
         const [reviewsRes, categoriesRes] = await Promise.all([
-            fetch(`${baseUrl}/api/review/homepage?limit=5`, { 
+            fetchWithTimeout(`${baseUrl}/api/review/homepage?limit=5`, { 
                 cache: 'force-cache', 
                 next: { revalidate: 1800, tags: ['homepage-reviews'] },
                 headers: { 'Accept': 'application/json' }
-            }),
-            fetch(`${baseUrl}/api/category/get-category`, { 
+            }).catch(() => null),
+            fetchWithTimeout(`${baseUrl}/api/category/get-category`, { 
                 cache: 'force-cache', 
                 next: { revalidate: 3600, tags: ['categories'] },
                 headers: { 'Accept': 'application/json' }
-            })
+            }).catch(() => null)
         ])
 
         const [reviewsData, categoriesData] = await Promise.all([
-            reviewsRes.json(),
-            categoriesRes.json()
+            reviewsRes ? reviewsRes.json().catch(() => ({ success: false, data: { reviews: [], stats: {} } })) : { success: false, data: { reviews: [], stats: {} } },
+            categoriesRes ? categoriesRes.json().catch(() => ({ success: false, data: { mainCategories: [] } })) : { success: false, data: { mainCategories: [] } }
         ])
 
         return {
