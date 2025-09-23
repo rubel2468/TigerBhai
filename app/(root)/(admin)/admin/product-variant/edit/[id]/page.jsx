@@ -95,8 +95,17 @@ const EditProductVariant = ({ params }) => {
     mrp: true,
     sellingPrice: true,
     discountPercentage: true,
-    sizesWithStock: true,
     recommendedFor: true,
+  }).extend({
+    sizesWithStock: z.array(
+      z.object({
+        name: z.string().min(1, 'Size name is required.'),
+        stock: z.union([
+          z.number().nonnegative('Stock must be >= 0'),
+          z.string().transform((val) => Number(val)).refine((val) => !isNaN(val) && val >= 0, 'Please enter a valid number.')
+        ])
+      })
+    ).optional(),
   })
 
   const form = useForm({
@@ -175,6 +184,11 @@ const EditProductVariant = ({ params }) => {
       // In a real implementation, you might want to create multiple variants
       const firstSize = sizesWithStock[0]
 
+      // Validate required fields
+      if (!values._id || !values.product || !values.sku || !values.color || !firstSize.name) {
+        return showToast('error', 'Please fill in all required fields.')
+      }
+
       const mediaId = selectedMedia[0]._id
       const payload = {
         _id: values._id,
@@ -182,14 +196,15 @@ const EditProductVariant = ({ params }) => {
         sku: values.sku,
         color: values.color,
         size: firstSize.name,
-        stock: firstSize.stock,
-        mrp: values.mrp,
-        sellingPrice: values.sellingPrice,
-        discountPercentage: values.discountPercentage,
+        stock: Number(firstSize.stock),
+        mrp: Number(values.mrp),
+        sellingPrice: Number(values.sellingPrice),
+        discountPercentage: Number(values.discountPercentage),
         media: mediaId,
-        recommendedFor: values.recommendedFor,
+        recommendedFor: values.recommendedFor || '',
       }
 
+      console.log('Variant Edit Payload:', payload)
       const { data: response } = await axios.put('/api/product-variant/update', payload)
       if (!response.success) {
         throw new Error(response.message)
@@ -197,7 +212,8 @@ const EditProductVariant = ({ params }) => {
 
       showToast('success', response.message)
     } catch (error) {
-      showToast('error', error.message)
+      console.error('Variant Edit Error:', error.response?.data || error.message)
+      showToast('error', error.response?.data?.message || error.message)
     } finally {
       setLoading(false)
     }
