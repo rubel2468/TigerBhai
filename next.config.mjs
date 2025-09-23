@@ -91,7 +91,6 @@ const nextConfig = {
         minimumCacheTTL: 31536000, // 1 year cache
         unoptimized: false,
         dangerouslyAllowSVG: false, // better security + perf
-        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
 
     // Cache & security headers
@@ -101,10 +100,10 @@ const nextConfig = {
                 source: '/(.*)',
                 headers: [
                     { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-                    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), interest-cohort=(), run-ad-auction=(), browsing-topics=(), private-state-token-redemption=(), private-state-token-issuance=(), join-ad-interest-group=()' },
+                    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
                      {
                          key: 'Content-Security-Policy',
-                         value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src * blob: data:; object-src 'none'; frame-ancestors 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com; child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com; connect-src 'self' https:;",
+                         value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com; style-src 'self' 'unsafe-inline'; img-src * blob: data:; font-src 'self' https: data:; object-src 'none'; frame-ancestors 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com; child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com; connect-src 'self' https: wss: https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com; worker-src 'self' blob:; base-uri 'self';",
                      },
                 ],
             },
