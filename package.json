@@ -51,6 +51,7 @@
     "dayjs": "^1.11.13",
     "entities": "^6.0.0",
     "export-to-csv": "^1.4.0",
+    "firebase": "^11.10.0",
     "framer-motion": "^12.23.12",
     "fuse.js": "^7.1.0",
     "html2canvas": "^1.4.1",
