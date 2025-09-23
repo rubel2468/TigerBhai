@@ -1,18 +1,36 @@
-"use client"
-import React, { useEffect, Suspense } from 'react'
+import React from 'react'
 import ProductDetails from './ProductDetails'
-import useFetch from '@/hooks/useFetch'
-import { useParams } from 'next/navigation'
-import { pushToDataLayer } from '@/lib/gtm'
+import { headers } from 'next/headers'
 
-const ProductPage = () => {
-  const params = useParams()
-  const slug = params?.slug
-  const { data, loading } = useFetch(`/api/product/details/${slug}`)
+function getBaseUrl() {
+  const hdrs = headers()
+  const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || ''
+  const proto = hdrs.get('x-forwarded-proto') || 'http'
+  return `${proto}://${host}`
+}
 
+async function fetchProduct(slug) {
+  try {
+    const baseUrl = getBaseUrl()
+    const res = await fetch(`${baseUrl}/api/product/details/${slug}`, {
+      // Cache on the server and revalidate periodically
+      next: { revalidate: 300 },
+    })
+    if (!res.ok) return null
+    const json = await res.json()
+    if (!json?.success) return null
+    return json.data
+  } catch (e) {
+    return null
+  }
+}
+
+const ViewContentEffect = ({ product, variant }) => {
+  "use client"
+  const { useEffect } = React
+  const { pushToDataLayer } = require('@/lib/gtm')
   useEffect(() => {
-    if (data?.success && data?.data?.product && data?.data?.variant) {
-      const { product, variant } = data.data
+    if (product && variant) {
       pushToDataLayer('viewcontent', {
         item_id: variant._id,
         item_name: product.name,
@@ -23,25 +41,30 @@ const ProductPage = () => {
         currency: 'BDT',
       })
     }
-  }, [data])
+  }, [product, variant])
+  return null
+}
 
-  if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>
-  }
-  
-  if (!data?.success) {
-    return <div className="flex justify-center items-center h-64">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-600">Product not found</h2>
-        <p className="text-gray-500 mt-2">The product you're looking for doesn't exist.</p>
+const ProductPage = async ({ params }) => {
+  const slug = params?.slug
+  const data = slug ? await fetchProduct(slug) : null
+
+  if (!data) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-600">Product not found</h2>
+          <p className="text-gray-500 mt-2">The product you're looking for doesn't exist.</p>
+        </div>
       </div>
-    </div>
+    )
   }
 
   return (
-    <Suspense fallback={<div className="flex justify-center items-center h-64">Loading...</div>}>
-      <ProductDetails {...data.data} />
-    </Suspense>
+    <>
+      <ViewContentEffect product={data.product} variant={data.variant} />
+      <ProductDetails {...data} />
+    </>
   )
 }
 
