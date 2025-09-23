@@ -49,7 +49,7 @@ const Header = () => {
 
     return (
         <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-primary border-b border-primary/70 shadow-lg shadow-black/10`}>
-            <div className='flex justify-between items-center h-20 lg:pl-16 pl-6 lg:pr-32 pr-6'>
+            <div className='flex justify-between items-center h-20 lg:pl-8 pl-3 lg:pr-32 pr-6'>
                 <Link href={WEBSITE_HOME} className="group">
                     <Image
                         src={logo}
@@ -174,7 +174,7 @@ const Header = () => {
                     </nav>
 
 
-                    <div className='flex justify-between items-center gap-3'>
+                    <div className='flex justify-between items-center gap-2'>
                         {/* Search Button */}
                         <button 
                             type='button' 

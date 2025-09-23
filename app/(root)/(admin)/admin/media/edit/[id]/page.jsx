@@ -94,7 +94,7 @@ const EditMedia = ({ params }) => {
                         <form onSubmit={form.handleSubmit(onSubmit)} >
                             <div className='mb-5'>
                                 <Image
-                                    src={mediaData?.data?.secure_url || imgPlaceholder}
+                                    src={mediaData?.data?.filePath || imgPlaceholder}
                                     width={150}
                                     height={150}
                                     alt={mediaData?.atl || 'Image'}

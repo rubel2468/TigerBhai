@@ -17,7 +17,7 @@ const Footer = () => {
     const { data: categoryRes } = useFetch('/api/category/get-category')
     const subCategories = categoryRes?.data?.subCategories || []
     return (
-        <footer className='bg-gray-50 border-t'>
+        <footer className='bg-[#757E88] border-t'>
             <div className='grid lg:grid-cols-5 md:grid-cols-2 grid-cols-1 gap-10 py-10 lg:px-32 px-4'>
 
                 <div className='lg:col-span-1 md:col-span-2 col-span-1'>
@@ -131,7 +131,7 @@ const Footer = () => {
             </div>
 
 
-            <div className='py-5 bg-gray-100' >
+            <div className='py-5 bg-[#757E88]' >
                 <p className='text-center'>© 2025 Tiger Bhai. All Rights Reserved.</p>
             </div>
 

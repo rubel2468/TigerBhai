@@ -88,7 +88,7 @@ const EditProduct = ({ params }) => {
       })
 
       if (product.media) {
-        const media = product.media.map((media) => ({ _id: media._id, url: media.secure_url }))
+        const media = product.media.map((media) => ({ _id: media._id, url: media.filePath }))
         setSelectedMedia(media)
       }
 

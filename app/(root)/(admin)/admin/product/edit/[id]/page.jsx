@@ -163,7 +163,7 @@ const EditProduct = ({ params }) => {
       })
 
       if (product.media) {
-        const media = product.media.map((media) => ({ _id: media._id, url: media.filePath || media.secure_url }))
+        const media = product.media.map((media) => ({ _id: media._id, url: media.filePath }))
         setSelectedMedia(media)
       }
 
@@ -512,7 +512,7 @@ const EditProduct = ({ params }) => {
                 {videos.length > 0 && (
                   <div className='flex flex-wrap gap-3'>
                     {videos.map((v, idx) => (
-                      <div key={`${v.videoId || v._id || idx}-${idx}`} className='relative w-32'>
+                      <div key={`${v.videoId}-${idx}`} className='relative w-32'>
                         <Image src={v.thumbnail || `/assets/images/img-placeholder.webp`} width={128} height={72} alt='' className='w-full h-auto rounded border' />
                         <div className='text-xs mt-1 truncate'>youtube.com/{v.videoId}</div>
                         <button

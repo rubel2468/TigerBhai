@@ -48,7 +48,7 @@ const LatestReview = () => {
                     <TableRow key={review._id}>
                         <TableCell className="flex items-center gap-3">
                             <Avatar>
-                                <AvatarImage src={review?.product?.media[0]?.secure_url || imgPlaceholder.src} />
+                                <AvatarImage src={review?.product?.media[0]?.filePath || imgPlaceholder.src} />
                             </Avatar>
                             <span className="line-clamp-1">{review?.product?.name || 'Not found'}</span>
                         </TableCell>

@@ -21,7 +21,7 @@ export async function GET() {
                 select: 'name media',
                 populate: {
                     path: 'media',
-                    select: 'secure_url'
+                    select: 'filePath'
                 }
             })
 

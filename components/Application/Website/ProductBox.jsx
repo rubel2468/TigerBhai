@@ -36,7 +36,7 @@ const ProductBox = memo(({ product }) => {
                     
                     {/* Discount Badge */}
                     {discountPercentage > 0 && (
-                        <div className='absolute top-3 left-3 bg-destructive text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg'>
+                        <div className='absolute top-3 right-3 bg-destructive text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg'>
                             -{discountPercentage}%
                         </div>
                     )}
