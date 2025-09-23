@@ -5,7 +5,7 @@ export const revalidate = 300
 
 async function fetchProduct(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || ''
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || ''
     const url = baseUrl ? `${baseUrl}/api/product/details/${slug}` : `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ''}/api/product/details/${slug}`
     const res = await fetch(url, { next: { revalidate: 300 } })
     if (!res.ok) return null
