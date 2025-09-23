@@ -54,7 +54,7 @@ const EditVendorProduct = ({ params }) => {
     sellingPrice: true,
     discountPercentage: true,
     description: true,
-    whatsappLink: true,
+    // whatsappLink removed
     offer: true,
     companyDetails: true,
   })
@@ -70,7 +70,7 @@ const EditVendorProduct = ({ params }) => {
       sellingPrice: 0,
       discountPercentage: 0,
       description: "",
-      whatsappLink: "",
+      // whatsappLink removed
       offer: "",
       companyDetails: "",
     },
@@ -88,7 +88,7 @@ const EditVendorProduct = ({ params }) => {
         sellingPrice: product?.sellingPrice,
         discountPercentage: product?.discountPercentage,
         description: product?.description,
-        whatsappLink: product?.whatsappLink || "",
+        // whatsappLink removed
         offer: product?.offer || "",
         companyDetails: product?.companyDetails || "",
       })
@@ -326,23 +326,7 @@ const EditVendorProduct = ({ params }) => {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="whatsappLink"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>WhatsApp Link (Optional)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="url" 
-                        placeholder="https://wa.me/1234567890" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              
 
               <div className="flex justify-end gap-4">
                 <ButtonLoading

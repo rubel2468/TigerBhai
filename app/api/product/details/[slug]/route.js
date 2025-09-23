@@ -30,7 +30,7 @@ export async function GET(request, { params }) {
 
         // get product (project only needed fields)
         const getProduct = await ProductModel.findOne(filter)
-            .select('name slug description shortDescription whatsappLink offer companyDetails media videos vendorSettings')
+            .select('name slug description shortDescription offer companyDetails media videos vendorSettings vendor')
             .populate('media', 'filePath')
             .lean()
 

@@ -24,7 +24,7 @@ import { showToast } from "@/lib/showToast";
 import { Button } from "@/components/ui/button";
 import loadingSvg from '@/public/assets/images/loading.svg'
 import ProductReveiw from "@/components/Application/Website/ProductReveiw";
-import WhatsAppChat from "@/components/Application/Website/WhatsAppChat";
+import ChatButton from "@/components/Application/Website/ChatButton";
 import { FaYoutube } from "react-icons/fa";
 import { BLUR_DATA_URL, getImageSizes, getImageQuality } from '@/lib/imageUtils'
 import { pushToDataLayer } from '@/lib/gtm'
@@ -846,11 +846,11 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                         </div>
                     )}
 
-                    {/* WhatsApp Chat Button - Bottom of buy now and add to cart buttons */}
                     <div className="mt-4">
-                        <WhatsAppChat 
+                        <ChatButton 
+                            productId={product._id}
                             productName={product.name}
-                            whatsappLink={product.whatsappLink}
+                            vendorId={product.vendor}
                             className="w-full rounded-full py-5 text-md"
                         />
                     </div>

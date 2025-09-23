@@ -1,7 +1,7 @@
 import Footer from '@/components/Application/Website/Footer'
 import Header from '@/components/Application/Website/Header'
 import ErrorBoundary from '@/components/Application/ErrorBoundary'
-import WhatsAppSupport from '@/components/Application/Website/WhatsAppSupport'
+// import WhatsAppSupport from '@/components/Application/Website/WhatsAppSupport'
 import React from 'react'
 import { Kumbh_Sans } from 'next/font/google'
 
@@ -21,7 +21,7 @@ const layout = ({ children }) => {
                     {children}
                 </main>
                 <Footer />
-                <WhatsAppSupport />
+                {/* <WhatsAppSupport /> */}
             </div>
         </ErrorBoundary>
     )
