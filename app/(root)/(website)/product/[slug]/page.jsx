@@ -5,12 +5,24 @@ export const revalidate = 300
 
 async function fetchProduct(slug) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || ''
-    const url = baseUrl ? `${baseUrl}/api/product/details/${slug}` : `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ''}/api/product/details/${slug}`
-    const res = await fetch(url, { next: { revalidate: 300 } })
-    if (!res.ok) return null
+    // Use relative URL as fallback to avoid environment variable issues
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL
+    const url = baseUrl ? `${baseUrl}/api/product/details/${slug}` : `/api/product/details/${slug}`
+    const res = await fetch(url, { 
+      next: { revalidate: 300 },
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    if (!res.ok) {
+      console.error(`[product/[slug]] API error: ${res.status} ${res.statusText}`)
+      return null
+    }
     const json = await res.json()
-    if (!json?.success) return null
+    if (!json?.success) {
+      console.error('[product/[slug]] API response not successful:', json)
+      return null
+    }
     return json.data
   } catch (e) {
     console.error('[product/[slug]] fetch error', e)
