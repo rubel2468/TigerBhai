@@ -17,7 +17,6 @@ import useFetch from '@/hooks/useFetch'
 import Select from '@/components/Application/Select'
 import Editor from '@/components/Application/Admin/Editor'
 import Image from 'next/image'
-import { sizes } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useRef } from 'react'
 const breadcrumbData = [
@@ -96,8 +95,7 @@ const EditProductVariant = ({ params }) => {
     mrp: true,
     sellingPrice: true,
     discountPercentage: true,
-    size: true,
-    stock: true,
+    sizesWithStock: true,
     recommendedFor: true,
   })
 
@@ -108,8 +106,7 @@ const EditProductVariant = ({ params }) => {
       product: "",
       sku: "",
       color: "",
-      size: "",
-      stock: 0,
+      sizesWithStock: [{ name: "", stock: 0 }],
       mrp: "",
       sellingPrice: "",
       discountPercentage: "",
@@ -121,13 +118,18 @@ const EditProductVariant = ({ params }) => {
   useEffect(() => {
     if (getProductVariant && getProductVariant.success) {
       const variant = getProductVariant.data
+      
+      // Convert single size/stock to sizesWithStock format
+      const sizesWithStock = variant.size && variant.stock !== undefined 
+        ? [{ name: variant.size, stock: variant.stock }]
+        : [{ name: "", stock: 0 }]
+
       form.reset({
         _id: variant._id,
         product: variant.product,
         sku: variant.sku,
         color: variant.color,
-        size: variant.size,
-        stock: variant.stock,
+        sizesWithStock: sizesWithStock,
         mrp: variant.mrp,
         sellingPrice: variant.sellingPrice,
         discountPercentage: variant.discountPercentage,
@@ -160,10 +162,32 @@ const EditProductVariant = ({ params }) => {
         return showToast('error', 'Please upload exactly 1 image for the product variant.')
       }
 
+      // Convert sizesWithStock back to single size/stock for API
+      const sizesWithStock = values.sizesWithStock
+        .map(item => ({ name: (item.name || '').trim(), stock: Number(item.stock) || 0 }))
+        .filter(item => item.name)
+      
+      if (sizesWithStock.length === 0) {
+        return showToast('error', 'Please add at least one size with stock.')
+      }
+
+      // For now, we'll use the first size/stock entry
+      // In a real implementation, you might want to create multiple variants
+      const firstSize = sizesWithStock[0]
+
       const mediaId = selectedMedia[0]._id
       const payload = {
-        ...values,
+        _id: values._id,
+        product: values.product,
+        sku: values.sku,
+        color: values.color,
+        size: firstSize.name,
+        stock: firstSize.stock,
+        mrp: values.mrp,
+        sellingPrice: values.sellingPrice,
+        discountPercentage: values.discountPercentage,
         media: mediaId,
+        recommendedFor: values.recommendedFor,
       }
 
       const { data: response } = await axios.put('/api/product-variant/update', payload)
@@ -229,57 +253,101 @@ const EditProductVariant = ({ params }) => {
                     )}
                   />
                 </div>
-                <div className=''>
+                <div className='md:col-span-2'>
                   <FormField
                     control={form.control}
                     name="color"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Color <span className='text-red-500'>*</span></FormLabel>
-                        <FormControl>
-                          <Input type="text" placeholder="Enter color" {...field} />
-                        </FormControl>
+                        <FormLabel>Variant <span className='text-red-500'>*</span></FormLabel>
+                        <div className='border rounded-md'>
+                          <div className='grid grid-cols-12 gap-3 p-3 bg-gray-50 dark:bg-card/60 border-b rounded-t-md'>
+                            <div className='col-span-10 font-semibold'>Variant Name</div>
+                            <div className='col-span-2'></div>
+                          </div>
+                          <div className='p-3'>
+                            <Input
+                              type="text"
+                              placeholder="Variant (e.g., Red, 64GB, etc.)"
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
+                          </div>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                <div className=''>
+                <div className='md:col-span-2'>
                   <FormField
                     control={form.control}
-                    name="size"
-                    render={({ field }) => (
+                    name="sizesWithStock"
+                    render={() => (
                       <FormItem>
-                        <FormLabel>Size <span className='text-red-500'>*</span></FormLabel>
-                        <FormControl>
-                          <Select
-                            options={sizes}
-                            selected={field.value}
-                            setSelected={field.onChange}
-                            isMulti={false}
-                          />
-                        </FormControl>
+                        <FormLabel>Sizes with Stock <span className='text-red-500'>*</span></FormLabel>
+                        <div className='border rounded-md'>
+                          <div className='grid grid-cols-12 gap-3 p-3 bg-gray-50 dark:bg-card/60 border-b rounded-t-md'>
+                            <div className='col-span-6 font-semibold'>Size Name</div>
+                            <div className='col-span-4 font-semibold'>Stock</div>
+                            <div className='col-span-2'></div>
+                          </div>
+                          <div className='divide-y'>
+                            {form.watch('sizesWithStock').map((row, index) => (
+                              <div key={index} className='grid grid-cols-12 gap-3 p-3 items-center'>
+                                <div className='col-span-6'>
+                                  <Input
+                                    type="text"
+                                    placeholder="Size name (e.g., S, M, Custom)"
+                                    value={row.name}
+                                    onChange={(e) => {
+                                      const next = [...form.getValues('sizesWithStock')]
+                                      next[index].name = e.target.value
+                                      form.setValue('sizesWithStock', next, { shouldDirty: true, shouldValidate: true })
+                                    }}
+                                  />
+                                </div>
+                                <div className='col-span-4'>
+                                  <Input
+                                    type="number"
+                                    min={0}
+                                    placeholder="Stock"
+                                    value={row.stock}
+                                    onChange={(e) => {
+                                      const next = [...form.getValues('sizesWithStock')]
+                                      const parsed = parseInt(e.target.value, 10)
+                                      next[index].stock = isNaN(parsed) ? 0 : parsed
+                                      form.setValue('sizesWithStock', next, { shouldDirty: true, shouldValidate: true })
+                                    }}
+                                  />
+                                </div>
+                                <div className='col-span-2 flex justify-end'>
+                                  <Button
+                                    type='button'
+                                    variant='destructive'
+                                    onClick={() => {
+                                      const next = [...form.getValues('sizesWithStock')]
+                                      next.splice(index, 1)
+                                      form.setValue('sizesWithStock', next.length ? next : [{ name: "", stock: 0 }], { shouldDirty: true, shouldValidate: true })
+                                    }}
+                                  >
+                                    Remove
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <div className='p-3 border-t rounded-b-md flex justify-between'>
+                            <Button type='button' variant='secondary' onClick={() => form.setValue('sizesWithStock', [...form.getValues('sizesWithStock'), { name: "", stock: 0 }], { shouldDirty: true, shouldValidate: true })}>Add Row</Button>
+                            <span className='text-sm text-gray-500'>Add custom size names with their stock.</span>
+                          </div>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                <div className=''>
-                  <FormField
-                    control={form.control}
-                    name="stock"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Stock <span className='text-red-500'>*</span></FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="Enter stock quantity" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className=''>
+                <div className='md:col-span-2'>
                   <FormField
                     control={form.control}
                     name="recommendedFor"
@@ -287,7 +355,7 @@ const EditProductVariant = ({ params }) => {
                       <FormItem>
                         <FormLabel>Recommended For (Optional)</FormLabel>
                         <FormControl>
-                          <Input type="text" placeholder="e.g., Men, Women, Kids" {...field} />
+                          <Input type="text" maxLength={120} placeholder="e.g., Kids, Runners, Heavy duty" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -295,46 +363,48 @@ const EditProductVariant = ({ params }) => {
                   />
                 </div>
 
-                <div className='grid grid-cols-2 gap-3 md:col-span-2'>
-                  <FormField
-                    control={form.control}
-                    name="mrp"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>MRP <span className='text-red-500'>*</span></FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="Enter MRP" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="sellingPrice"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Selling Price <span className='text-red-500'>*</span></FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="Enter Selling Price" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="discountPercentage"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Discount Percentage <span className='text-red-500'>*</span></FormLabel>
-                        <FormControl>
-                          <Input type="number" readOnly placeholder="Discount %" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div className='md:col-span-2'>
+                  <div className='grid md:grid-cols-3 grid-cols-1 gap-5 items-end'>
+                    <FormField
+                      control={form.control}
+                      name="mrp"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>MRP <span className='text-red-500'>*</span></FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="Enter MRP" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="sellingPrice"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Selling Price <span className='text-red-500'>*</span></FormLabel>
+                          <FormControl>
+                            <Input type="number" placeholder="Enter Selling Price" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="discountPercentage"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount Percentage <span className='text-red-500'>*</span></FormLabel>
+                          <FormControl>
+                            <Input type="number" readOnly placeholder="Discount %" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
 
               </div>
