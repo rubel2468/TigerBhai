@@ -1,26 +1,19 @@
 import React from 'react'
 import ProductDetails from './ProductDetails'
-import { headers } from 'next/headers'
 
-function getBaseUrl() {
-  const hdrs = headers()
-  const host = hdrs.get('x-forwarded-host') || hdrs.get('host') || ''
-  const proto = hdrs.get('x-forwarded-proto') || 'http'
-  return `${proto}://${host}`
-}
+export const revalidate = 300
 
 async function fetchProduct(slug) {
   try {
-    const baseUrl = getBaseUrl()
-    const res = await fetch(`${baseUrl}/api/product/details/${slug}`, {
-      // Cache on the server and revalidate periodically
-      next: { revalidate: 300 },
-    })
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || ''
+    const url = baseUrl ? `${baseUrl}/api/product/details/${slug}` : `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : ''}/api/product/details/${slug}`
+    const res = await fetch(url, { next: { revalidate: 300 } })
     if (!res.ok) return null
     const json = await res.json()
     if (!json?.success) return null
     return json.data
   } catch (e) {
+    console.error('[product/[slug]] fetch error', e)
     return null
   }
 }
