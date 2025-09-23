@@ -18,12 +18,12 @@ const ProductBox = memo(({ product }) => {
                 className='block'
                 prefetch={true}
             >
-                {/* Image Container with 4:5 aspect ratio */}
-                <div className='relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-muted to-background dark:from-gray-800 dark:to-gray-900'>
+                {/* Image Container with square aspect ratio */}
+                <div className='relative aspect-square overflow-hidden bg-gradient-to-br from-muted to-background dark:from-gray-800 dark:to-gray-900'>
                     <Image
                         src={(product?.media[0]?.filePath ? `${product.media[0].filePath}${product?.updatedAt ? `?v=${new Date(product.updatedAt).getTime()}` : ''}` : imgPlaceholder.src)}
                         width={400}
-                        height={500}
+                        height={400}
                         alt={product?.media[0]?.alt || product?.name}
                         title={product?.media[0]?.title || product?.name}
                         className='w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105'

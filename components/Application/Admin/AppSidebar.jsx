@@ -42,15 +42,13 @@ const AppSidebar = () => {
                         <Collapsible key={index} className="group/collapsible">
                             <SidebarMenuItem>
                                 <CollapsibleTrigger asChild>
-                                    <SidebarMenuButton asChild className="font-semibold px-2 py-5">
-                                        <Link href={menu?.url}>
-                                            <menu.icon />
-                                            {menu.title}
+                                    <SidebarMenuButton className="font-semibold px-2 py-5">
+                                        <menu.icon />
+                                        {menu.title}
 
-                                            {menu.submenu && menu.submenu.length > 0 &&
-                                                <LuChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                            }
-                                        </Link>
+                                        {menu.submenu && menu.submenu.length > 0 &&
+                                            <LuChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                        }
                                     </SidebarMenuButton>
                                 </CollapsibleTrigger>
 

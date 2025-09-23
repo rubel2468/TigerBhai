@@ -17,7 +17,7 @@ const Footer = () => {
     const { data: categoryRes } = useFetch('/api/category/get-category')
     const subCategories = categoryRes?.data?.subCategories || []
     return (
-        <footer className='bg-[#757E88] border-t'>
+        <footer className='bg-[#757E88] border-t text-white'>
             <div className='grid lg:grid-cols-5 md:grid-cols-2 grid-cols-1 gap-10 py-10 lg:px-32 px-4'>
 
                 <div className='lg:col-span-1 md:col-span-2 col-span-1'>
@@ -28,59 +28,59 @@ const Footer = () => {
                         alt='logo'
                         className='w-36 mb-2'
                     />
-                    <p className='text-gray-500 text-sm'>
+                    <p className='text-gray-100 text-sm'>
                         Tiger Bhai is your trusted destination for quality and convenience. From fashion to essentials, we bring everything you need right to your doorstep. Shop smart, live better — only at Tiger Bhai.
                     </p>
                 </div>
 
 
                 <div>
-                    <h4 className='text-xl font-bold uppercase mb-5'>Categories</h4>
+                    <h4 className='text-xl font-bold uppercase mb-5 text-white'>Categories</h4>
                     <ul>
                         {subCategories.map(sc => (
-                            <li key={sc._id} className='mb-2 text-gray-500'>
+                            <li key={sc._id} className='mb-2 text-gray-100'>
                                 <Link href={`${WEBSITE_SHOP}?category=${encodeURIComponent(sc.slug)}`}>{sc.name}</Link>
                             </li>
                         ))}
                     </ul>
                 </div>
                 <div>
-                    <h4 className='text-xl font-bold uppercase mb-5'>Userfull Links</h4>
+                    <h4 className='text-xl font-bold uppercase mb-5 text-white'>Userfull Links</h4>
                     <ul>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href={WEBSITE_HOME}>Home</Link>
                         </li>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href={WEBSITE_SHOP}>Shop</Link>
                         </li>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href="/about-us">About</Link>
                         </li>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href={WEBSITE_REGISTER}>Register</Link>
                         </li>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href={WEBSITE_LOGIN}>Login</Link>
                         </li>
 
                     </ul>
                 </div>
                 <div>
-                    <h4 className='text-xl font-bold uppercase mb-5'>Help Center</h4>
+                    <h4 className='text-xl font-bold uppercase mb-5 text-white'>Help Center</h4>
                     <ul>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href={WEBSITE_REGISTER}>Register</Link>
                         </li>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href={WEBSITE_LOGIN}>Login</Link>
                         </li>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href={USER_DASHBOARD}>My Account</Link>
                         </li>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href="/privacy-policy">Privacy Policy</Link>
                         </li>
-                        <li className='mb-2 text-gray-500'>
+                        <li className='mb-2 text-gray-100'>
                             <Link href="/terms-and-conditions">Terms & Conditions</Link>
                         </li>
 
@@ -88,17 +88,17 @@ const Footer = () => {
                     </ul>
                 </div>
                 <div>
-                    <h4 className='text-xl font-bold uppercase mb-5'>Contact Us </h4>
+                    <h4 className='text-xl font-bold uppercase mb-5 text-white'>Contact Us </h4>
                     <ul>
-                        <li className='mb-2 text-gray-500 flex gap-2'>
+                        <li className='mb-2 text-gray-100 flex gap-2'>
                             <IoLocationOutline size={20} />
                             <span className='text-sm'>1293 D.T Road Raza Supper Market , Dhaniyala Para. Chittagong</span>
                         </li>
-                        <li className='mb-2 text-gray-500 flex gap-2'>
+                        <li className='mb-2 text-gray-100 flex gap-2'>
                             <MdOutlinePhone size={20} />
                             <Link href="tel:+8801611101430" className='hover:text-primary text-sm'>+88 01903-961752</Link>
                         </li>
-                        <li className='mb-2 text-gray-500 flex gap-2'>
+                        <li className='mb-2 text-gray-100 flex gap-2'>
                             <MdOutlineMail size={20} />
                             <Link href="mailto:tigerbhaioffice@gmail.com" className='hover:text-primary text-sm'>tigerbhaioffice@gmail.com</Link>
                         </li>
@@ -132,7 +132,7 @@ const Footer = () => {
 
 
             <div className='py-5 bg-[#757E88]' >
-                <p className='text-center'>© 2025 Tiger Bhai. All Rights Reserved.</p>
+                <p className='text-center text-white'>© 2025 Tiger Bhai. All Rights Reserved.</p>
             </div>
 
         </footer>
