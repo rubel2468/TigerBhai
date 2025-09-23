@@ -201,7 +201,7 @@ const EditProductVariant = ({ params }) => {
         mrp: Number(values.mrp),
         sellingPrice: Number(values.sellingPrice),
         discountPercentage: Number(values.discountPercentage),
-        media: mediaId,
+        media: [mediaId],
         recommendedFor: values.recommendedFor || '',
       }
 
