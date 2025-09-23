@@ -2,6 +2,7 @@ import React from 'react'
 import ProductDetails from './ProductDetails'
 
 export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 async function fetchProduct(slug) {
   try {
@@ -51,26 +52,49 @@ const ViewContentEffect = ({ product, variant }) => {
 }
 
 const ProductPage = async ({ params }) => {
-  const slug = params?.slug
-  const data = slug ? await fetchProduct(slug) : null
+  try {
+    const slug = params?.slug
+    if (!slug) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-600">Invalid product</h2>
+            <p className="text-gray-500 mt-2">No product slug provided.</p>
+          </div>
+        </div>
+      )
+    }
 
-  if (!data) {
+    const data = await fetchProduct(slug)
+
+    if (!data) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-600">Product not found</h2>
+            <p className="text-gray-500 mt-2">The product you're looking for doesn't exist.</p>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <>
+        <ViewContentEffect product={data.product} variant={data.variant} />
+        <ProductDetails {...data} />
+      </>
+    )
+  } catch (error) {
+    console.error('[ProductPage] Server error:', error)
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-600">Product not found</h2>
-          <p className="text-gray-500 mt-2">The product you're looking for doesn't exist.</p>
+          <h2 className="text-2xl font-bold text-gray-600">Something went wrong</h2>
+          <p className="text-gray-500 mt-2">Please try again later.</p>
         </div>
       </div>
     )
   }
-
-  return (
-    <>
-      <ViewContentEffect product={data.product} variant={data.variant} />
-      <ProductDetails {...data} />
-    </>
-  )
 }
 
 export default ProductPage
