@@ -2,10 +2,13 @@ import Image from 'next/image'
 import React, { memo, useMemo } from 'react'
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { WEBSITE_PRODUCT_DETAILS } from '@/routes/WebsiteRoute'
 import { BLUR_DATA_URL, getImageSizes, getImageQuality } from '@/lib/imageUtils'
 
 const ProductBox = memo(({ product }) => {
+    const router = useRouter()
+    const href = WEBSITE_PRODUCT_DETAILS(product.slug)
     // Calculate discount percentage with memoization
     const discountPercentage = useMemo(() => {
         return Math.round(((product?.mrp - product?.sellingPrice) / product?.mrp) * 100)
@@ -14,9 +17,11 @@ const ProductBox = memo(({ product }) => {
     return (
         <div className='group relative bg-card dark:bg-card rounded-xl md:rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 ease-out border border-border/50 hover:border-blue-500/40 hover:-translate-y-1'>
             <Link 
-                href={WEBSITE_PRODUCT_DETAILS(product.slug)} 
+                href={href}
                 className='block'
                 prefetch={true}
+                onMouseEnter={() => router.prefetch?.(href)}
+                onTouchStart={() => router.prefetch?.(href)}
             >
                 {/* Image Container with square aspect ratio */}
                 <div className='relative aspect-square overflow-hidden bg-gradient-to-br from-muted to-background dark:from-gray-800 dark:to-gray-900'>
