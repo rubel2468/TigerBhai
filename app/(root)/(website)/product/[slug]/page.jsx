@@ -34,18 +34,20 @@ async function fetchProduct(slug) {
 const ViewContentEffect = ({ product, variant }) => {
   "use client"
   const { useEffect } = React
-  const { pushToDataLayer } = require('@/lib/gtm')
   useEffect(() => {
     if (product && variant) {
-      pushToDataLayer('viewcontent', {
-        item_id: variant._id,
-        item_name: product.name,
-        item_brand: product.brand || undefined,
-        item_category: product?.category?.name || undefined,
-        item_variant: variant.size ? `${variant.color || ''} ${variant.size}`.trim() : variant.color,
-        price: Number(variant.sellingPrice),
-        currency: 'BDT',
-      })
+      // Dynamic import to avoid SSR issues
+      import('@/lib/gtm').then(({ pushToDataLayer }) => {
+        pushToDataLayer('viewcontent', {
+          item_id: variant._id,
+          item_name: product.name,
+          item_brand: product.brand || undefined,
+          item_category: product?.category?.name || undefined,
+          item_variant: variant.size ? `${variant.color || ''} ${variant.size}`.trim() : variant.color,
+          price: Number(variant.sellingPrice),
+          currency: 'BDT',
+        })
+      }).catch(console.error)
     }
   }, [product, variant])
   return null
