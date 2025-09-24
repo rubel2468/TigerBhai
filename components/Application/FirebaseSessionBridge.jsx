@@ -9,6 +9,9 @@ export default function FirebaseSessionBridge() {
 
   useEffect(() => {
     let unsubscribe = () => {}
+    if (typeof window !== 'undefined') {
+      window.firebaseAuth = firebaseAuth
+    }
     if (!appUser?._id) {
       // Fallback: mint token from server using cookie session
       (async () => {
@@ -29,6 +32,9 @@ export default function FirebaseSessionBridge() {
         unsubscribe = onAuthStateChanged(firebaseAuth, async (fbUser) => {
           if (typeof window !== 'undefined') {
             window.firebaseAuth = firebaseAuth
+            window.__firebaseSignInWithToken = async (token) => {
+              try { await signInWithCustomToken(firebaseAuth, token) } catch (e) { console.error(e) }
+            }
           }
           if (fbUser?.uid === String(appUser._id)) return
           const res = await fetch('/api/firebase/custom-token', {
