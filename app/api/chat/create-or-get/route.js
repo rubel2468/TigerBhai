@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getFirestoreDb } from '@/lib/firebase'
-import { collection, query, where, limit, getDocs, addDoc, serverTimestamp } from 'firebase/firestore'
+import { getAdminFirestore } from '@/lib/firebaseAdmin'
 
 export async function POST(request) {
   try {
@@ -10,29 +9,28 @@ export async function POST(request) {
       return NextResponse.json({ success: false, message: 'Missing params' }, { status: 400 })
     }
 
-    const db = getFirestoreDb()
-    const threadsRef = collection(db, 'threads')
-    const q = query(
-      threadsRef,
-      where('buyerId', '==', buyerId),
-      where('vendorId', '==', vendorId),
-      where('productId', '==', productId),
-      limit(1)
-    )
-    const snap = await getDocs(q)
+    const db = getAdminFirestore()
+    const threadsRef = db.collection('threads')
+    const snap = await threadsRef
+      .where('buyerId', '==', buyerId)
+      .where('vendorId', '==', vendorId)
+      .where('productId', '==', productId)
+      .limit(1)
+      .get()
     if (!snap.empty) {
       const doc = snap.docs[0]
       return NextResponse.json({ success: true, data: { threadId: doc.id } })
     }
 
-    const docRef = await addDoc(threadsRef, {
+    const now = new Date()
+    const docRef = await threadsRef.add({
       participants: [buyerId, vendorId],
       buyerId,
       vendorId,
       productId,
       productName,
-      updatedAt: serverTimestamp(),
-      createdAt: serverTimestamp(),
+      updatedAt: now,
+      createdAt: now,
     })
     return NextResponse.json({ success: true, data: { threadId: docRef.id } })
   } catch (e) {

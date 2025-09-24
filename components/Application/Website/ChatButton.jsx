@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 export default function ChatButton({ productId, productName, vendorId, className = '' }) {
   const router = useRouter()
   const auth = useSelector(store => store.authStore.auth)
+  const adminUid = process.env.NEXT_PUBLIC_FIREBASE_ADMIN_UID
 
   const startChat = async () => {
     if (!auth?._id) {
@@ -14,7 +15,7 @@ export default function ChatButton({ productId, productName, vendorId, className
       return
     }
     try {
-      const sellerId = vendorId || 'ADMIN'
+      const sellerId = vendorId || adminUid
       const res = await fetch('/api/chat/create-or-get', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -8,6 +8,7 @@ import { sendPageView } from "@/lib/gtm";
 import { ReactQueryProvider } from "@/lib/queryClient";
 import { SWRProvider } from "@/lib/swrConfig";
 import ErrorBoundary from "./ErrorBoundary";
+import FirebaseSessionBridge from "./FirebaseSessionBridge";
 
 export default function GlobalProvider({ children }) {
   const pathname = usePathname();
@@ -31,6 +32,7 @@ export default function GlobalProvider({ children }) {
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
               {children}
+              <FirebaseSessionBridge />
             </PersistGate>
           </Provider>
         </SWRProvider>
