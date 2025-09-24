@@ -6,6 +6,7 @@ import { getFirestoreDb } from '@/lib/firebase'
 import { collection, addDoc, serverTimestamp, onSnapshot, orderBy, query, doc, updateDoc } from 'firebase/firestore'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { format } from 'date-fns'
 
 export default function ChatThreadPage() {
   const params = useParams()
@@ -44,15 +45,19 @@ export default function ChatThreadPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <div className="border rounded h-[70vh] overflow-y-auto p-3 bg-card">
-        {messages.map(m => (
-          <div key={m.id} className={`mb-2 ${m.senderId === auth?._id ? 'text-right' : 'text-left'}`}>
-            <div className={`inline-block px-3 py-2 rounded ${m.senderId === auth?._id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
-              {m.content}
+    <div className="max-w-3xl mx-auto h-[80vh] flex flex-col p-4">
+      <div className="border rounded flex-1 overflow-y-auto p-3 bg-card">
+        {messages.map(m => {
+          const ts = m.createdAt?.toDate ? m.createdAt.toDate() : (m.createdAt?._seconds ? new Date(m.createdAt._seconds * 1000) : null)
+          return (
+            <div key={m.id} className={`mb-2 flex ${m.senderId === auth?._id ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[75%] rounded-2xl px-3 py-2 shadow ${m.senderId === auth?._id ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-muted text-muted-foreground rounded-bl-sm'}`}>
+                <div className="whitespace-pre-wrap break-words">{m.content}</div>
+                <div className="mt-1 text-[10px] opacity-80 text-right">{ts ? format(ts, 'MMM d, h:mm a') : ''}</div>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
         <div ref={bottomRef} />
       </div>
       <div className="mt-3 flex gap-2">
