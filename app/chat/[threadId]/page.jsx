@@ -16,7 +16,7 @@ export default function ChatThreadPage() {
   const bottomRef = useRef(null)
 
   useEffect(() => {
-    if (!threadId) return
+    if (!threadId || !auth?._id) return
     const db = getFirestoreDb()
     const msgsRef = collection(db, 'threads', threadId, 'messages')
     const q = query(msgsRef, orderBy('createdAt', 'asc'))
@@ -25,7 +25,7 @@ export default function ChatThreadPage() {
       setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
     })
     return unsub
-  }, [threadId])
+  }, [threadId, auth?._id])
 
   const send = async () => {
     if (!text.trim() || !threadId || !auth?._id) return

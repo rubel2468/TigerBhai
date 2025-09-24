@@ -9,12 +9,27 @@ export default function FirebaseSessionBridge() {
 
   useEffect(() => {
     let unsubscribe = () => {}
-    if (!appUser?._id) return
+    if (!appUser?._id) {
+      // Fallback: mint token from server using cookie session
+      (async () => {
+        try {
+          const res = await fetch('/api/firebase/session', { method: 'POST' })
+          const json = await res.json()
+          if (json.success) {
+            await signInWithCustomToken(firebaseAuth, json.token)
+          }
+        } catch {}
+      })()
+      return
+    }
 
     const ensure = async () => {
       try {
         // check if already the same uid
         unsubscribe = onAuthStateChanged(firebaseAuth, async (fbUser) => {
+          if (typeof window !== 'undefined') {
+            window.firebaseAuth = firebaseAuth
+          }
           if (fbUser?.uid === String(appUser._id)) return
           const res = await fetch('/api/firebase/custom-token', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
