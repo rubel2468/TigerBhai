@@ -86,6 +86,12 @@ const nextConfig = {
                 hostname: 'i.ytimg.com',
                 pathname: '/**',
             },
+            // Allow site-hosted absolute images (e.g., category images)
+            {
+                protocol: 'https',
+                hostname: 'tigerbhai.online',
+                pathname: '/**',
+            },
         ],
         formats: ['image/webp', 'image/avif'],
         minimumCacheTTL: 31536000, // 1 year cache
@@ -104,7 +110,7 @@ const nextConfig = {
                     { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
                      {
                          key: 'Content-Security-Policy',
-                         value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com https://apis.google.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * blob: data:; font-src 'self' https: data:; object-src 'none'; frame-ancestors 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com; child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com; connect-src 'self' https: wss: https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com; worker-src 'self' blob:; base-uri 'self';",
+                         value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com https://apis.google.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * blob: data:; font-src 'self' https: data:; object-src 'none'; frame-ancestors 'self'; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com https://tigerbhai-chat.firebaseapp.com https://*.firebaseapp.com; child-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.googletagmanager.com https://tigerbhai-chat.firebaseapp.com https://*.firebaseapp.com; connect-src 'self' https: wss: https://www.googletagmanager.com https://connect.facebook.net https://analytics.tiktok.com; worker-src 'self' blob:; base-uri 'self';",
                      },
                 ],
             },
