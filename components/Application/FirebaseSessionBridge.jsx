@@ -2,9 +2,10 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { signInWithCustomToken, onAuthStateChanged } from 'firebase/auth'
-import { firebaseAuth } from '@/lib/firebase'
+import { getFirebaseAuth } from '@/lib/firebase'
 
 export default function FirebaseSessionBridge() {
+  const firebaseAuth = getFirebaseAuth()
   const appUser = useSelector(store => store.authStore.auth)
 
   useEffect(() => {
