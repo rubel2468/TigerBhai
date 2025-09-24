@@ -11,6 +11,11 @@ export default function FirebaseSessionBridge() {
     let unsubscribe = () => {}
     if (typeof window !== 'undefined') {
       window.firebaseAuth = firebaseAuth
+      // Expose helpers immediately
+      window.__firebaseSignInWithToken = async (token) => {
+        try { await signInWithCustomToken(firebaseAuth, token) } catch (e) { console.error(e) }
+      }
+      window.firebaseSignInWithToken = window.__firebaseSignInWithToken
     }
     if (!appUser?._id) {
       // Fallback: mint token from server using cookie session
