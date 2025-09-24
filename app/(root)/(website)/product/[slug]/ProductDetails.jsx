@@ -100,6 +100,25 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
     const [isProductLoading, setIsProductLoading] = useState(false)
     const [allImages, setAllImages] = useState([])
     
+    // Fire GTM viewcontent on product + variant ready
+    useEffect(() => {
+        if (product && variant) {
+            try {
+                pushToDataLayer('viewcontent', {
+                    item_id: variant._id,
+                    item_name: product.name,
+                    item_brand: product.brand || undefined,
+                    item_category: product?.category?.name || undefined,
+                    item_variant: variant.size ? `${variant.color || ''} ${variant.size}`.trim() : variant.color,
+                    price: Number(variant.sellingPrice),
+                    currency: 'BDT',
+                })
+            } catch (err) {
+                console.error('[ProductDetails] GTM viewcontent error', err)
+            }
+        }
+    }, [product, variant])
+
     // Selections and totals (memoized)
     const selections = useMemo(() => {
         if (!Array.isArray(variantsByColor)) return []
