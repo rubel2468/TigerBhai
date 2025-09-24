@@ -36,8 +36,8 @@ import { TbRosetteDiscountFilled } from "react-icons/tb";
 // Server-side data fetching for better performance with mobile optimization
 async function getHomepageData() {
     try {
-        // Use environment variable for base URL or default to production URL
-        const baseUrl = process.env.NEXTAUTH_URL || 'https://tigerbhai.online'
+        // Use same-origin relative base for server-side fetch to avoid cross-origin latency/CSP
+        const baseUrl = ''
         
         // Add timeout and better error handling for fetch requests
         const fetchWithTimeout = async (url, options = {}) => {

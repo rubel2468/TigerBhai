@@ -19,16 +19,21 @@ export default function FirebaseSessionBridge() {
       window.firebaseSignInWithToken = window.__firebaseSignInWithToken
     }
     if (!appUser?._id) {
-      // Fallback: mint token from server using cookie session
-      (async () => {
-        try {
-          const res = await fetch('/api/firebase/session', { method: 'POST' })
-          const json = await res.json()
-          if (json.success) {
-            await signInWithCustomToken(firebaseAuth, json.token)
-          }
-        } catch {}
-      })()
+      // Only attempt session bridge if auth cookie exists to avoid 401 spam
+      try {
+        const hasCookie = document.cookie.includes('access_token=')
+        if (hasCookie) {
+          (async () => {
+            try {
+              const res = await fetch('/api/firebase/session', { method: 'POST' })
+              const json = await res.json()
+              if (json.success) {
+                await signInWithCustomToken(firebaseAuth, json.token)
+              }
+            } catch {}
+          })()
+        }
+      } catch {}
       return
     }
 
