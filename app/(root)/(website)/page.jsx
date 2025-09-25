@@ -99,9 +99,17 @@ async function getHomepageData() {
         ])
 
         const [reviewsData, categoriesData] = await Promise.all([
-            reviewsRes ? reviewsRes.json().catch(() => ({ success: false, data: { reviews: [], stats: {} } })) : { success: false, data: { reviews: [], stats: {} } },
-            categoriesRes ? categoriesRes.json().catch(() => ({ success: false, data: { mainCategories: [] } })) : { success: false, data: { mainCategories: [] } }
+            reviewsRes ? reviewsRes.json().catch((err) => {
+                console.error('Reviews fetch error:', err)
+                return { success: false, data: { reviews: [], stats: {} } }
+            }) : { success: false, data: { reviews: [], stats: {} } },
+            categoriesRes ? categoriesRes.json().catch((err) => {
+                console.error('Categories fetch error:', err)
+                return { success: false, data: { mainCategories: [] } }
+            }) : { success: false, data: { mainCategories: [] } }
         ])
+
+        console.log('Server-side categoriesData:', categoriesData)
 
         return {
             carousel: carouselData,
