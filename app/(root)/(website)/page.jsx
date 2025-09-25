@@ -7,8 +7,7 @@ import banner2 from '@/public/assets/images/banner2.webp'
 import banner3 from '@/public/assets/images/banner3.webp'
 import banner4 from '@/public/assets/images/banner4.webp'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 300
+// Client-side rendering for homepage components
 
 // Dynamic imports for better code splitting
 const MainSlider = dynamicImport(() => import('@/components/Application/Website/MainSlider'), {
@@ -36,104 +35,11 @@ import { GiReturnArrow } from "react-icons/gi";
 import { FaShippingFast } from "react-icons/fa";
 import { BiSupport } from "react-icons/bi";
 import { TbRosetteDiscountFilled } from "react-icons/tb";
-// Server-side data fetching for better performance with mobile optimization
-async function getHomepageData() {
-    try {
-        // Use same-origin relative base for server-side fetch to avoid cross-origin latency/CSP
-        const baseUrl = ''
-        
-        // Add timeout and better error handling for fetch requests
-        const fetchWithTimeout = async (url, options = {}) => {
-            const controller = new AbortController()
-            const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
-            
-            try {
-                const response = await fetch(url, {
-                    ...options,
-                    signal: controller.signal
-                })
-                clearTimeout(timeoutId)
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`)
-                }
-                
-                return response
-            } catch (error) {
-                clearTimeout(timeoutId)
-                throw error
-            }
-        }
-        
-        // Prioritize critical above-the-fold content with proper caching
-        const [carouselRes, featuredRes] = await Promise.all([
-            fetchWithTimeout(`${baseUrl}/api/carousel`, { 
-                cache: 'no-store',
-                next: { revalidate: 0, tags: ['carousel'] },
-                headers: { 'Accept': 'application/json' }
-            }).catch(() => null),
-            fetchWithTimeout(`${baseUrl}/api/product/get-featured-product`, { 
-                cache: 'no-store', 
-                next: { revalidate: 0, tags: ['featured-products', 'shop-products'] },
-                headers: { 'Accept': 'application/json' }
-            }).catch(() => null)
-        ])
-
-        const [carouselData, featuredData] = await Promise.all([
-            carouselRes ? carouselRes.json().catch(() => ({ success: false, data: [] })) : { success: false, data: [] },
-            featuredRes ? featuredRes.json().catch(() => ({ success: false, data: [] })) : { success: false, data: [] }
-        ])
-
-        // Load below-the-fold content separately to improve LCP
-        const [reviewsRes, categoriesRes] = await Promise.all([
-            fetchWithTimeout(`${baseUrl}/api/review/homepage?limit=5`, { 
-                cache: 'no-store', 
-                next: { revalidate: 0, tags: ['homepage-reviews'] },
-                headers: { 'Accept': 'application/json' }
-            }).catch(() => null),
-            fetchWithTimeout(`${baseUrl}/api/category/get-category`, { 
-                cache: 'no-store', 
-                next: { revalidate: 0, tags: ['categories'] },
-                headers: { 'Accept': 'application/json' }
-            }).catch(() => null)
-        ])
-
-        const [reviewsData, categoriesData] = await Promise.all([
-            reviewsRes ? reviewsRes.json().catch((err) => {
-                console.error('Reviews fetch error:', err)
-                return { success: false, data: { reviews: [], stats: {} } }
-            }) : { success: false, data: { reviews: [], stats: {} } },
-            categoriesRes ? categoriesRes.json().catch((err) => {
-                console.error('Categories fetch error:', err)
-                return { success: false, data: { mainCategories: [] } }
-            }) : { success: false, data: { mainCategories: [] } }
-        ])
-
-        console.log('Server-side categoriesData:', categoriesData)
-
-        return {
-            carousel: carouselData,
-            featured: featuredData,
-            reviews: reviewsData,
-            categories: categoriesData
-        }
-    } catch (error) {
-        console.error('Error fetching homepage data:', error)
-        return {
-            carousel: { success: false, data: [] },
-            featured: { success: false, data: [] },
-            reviews: { success: false, data: { reviews: [], stats: {} } },
-            categories: { success: false, data: { mainCategories: [] } }
-        }
-    }
-}
-
-const Home = async () => {
-    const homepageData = await getHomepageData()
+const Home = () => {
     return (
         <>
             <section className="relative">
-                <MainSlider initialData={homepageData.carousel} />
+                <MainSlider />
             </section>
             <section className='lg:px-32 px-4 sm:pt-20 pt-5 pb-10'>
                 <div className='grid grid-cols-2 lg:grid-cols-4 sm:gap-6 gap-3'>
@@ -190,10 +96,10 @@ const Home = async () => {
                 </div>
             </section>
 
-            <FeaturedProduct initialData={homepageData.featured} />
+            <FeaturedProduct />
 
 
-            <MainCategoryGrid initialData={homepageData.categories} />
+            <MainCategoryGrid />
 
             <section className='lg:px-32 px-4 border-t border-border py-10'>
                 <div className='grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-10'>
@@ -230,11 +136,11 @@ const Home = async () => {
 
             {/* Defer non-critical content for mobile - moved to bottom */}
             <div className="hidden md:block">
-                <CustomerReviews initialData={homepageData.reviews} />
+                <CustomerReviews />
             </div>
 
             <div className="md:hidden">
-                <CustomerReviews initialData={homepageData.reviews} />
+                <CustomerReviews />
             </div>
 
         </>
