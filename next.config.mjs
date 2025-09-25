@@ -92,6 +92,17 @@ const nextConfig = {
                 hostname: 'tigerbhai.online',
                 pathname: '/**',
             },
+            // Allow Firebase Storage product/category images if used
+            {
+                protocol: 'https',
+                hostname: 'firebasestorage.googleapis.com',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'storage.googleapis.com',
+                pathname: '/**',
+            },
         ],
         formats: ['image/webp', 'image/avif'],
         minimumCacheTTL: 31536000, // 1 year cache
