@@ -1,29 +1,32 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { Suspense } from 'react'
-import dynamic from 'next/dynamic'
+import dynamicImport from 'next/dynamic'
 import banner1 from '@/public/assets/images/banner1.webp'
 import banner2 from '@/public/assets/images/banner2.webp'
 import banner3 from '@/public/assets/images/banner3.webp'
 import banner4 from '@/public/assets/images/banner4.webp'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 300
+
 // Dynamic imports for better code splitting
-const MainSlider = dynamic(() => import('@/components/Application/Website/MainSlider'), {
+const MainSlider = dynamicImport(() => import('@/components/Application/Website/MainSlider'), {
     loading: () => <div className="h-[calc(100vh-4rem)] w-full bg-background animate-pulse" />,
     ssr: true
 })
 
-const FeaturedProduct = dynamic(() => import('@/components/Application/Website/FeaturedProduct'), {
+const FeaturedProduct = dynamicImport(() => import('@/components/Application/Website/FeaturedProduct'), {
     loading: () => <div className="h-96 w-full bg-background animate-pulse" />,
     ssr: true
 })
 
-const CustomerReviews = dynamic(() => import('@/components/Application/Website/CustomerReviews'), {
+const CustomerReviews = dynamicImport(() => import('@/components/Application/Website/CustomerReviews'), {
     loading: () => <div className="h-96 w-full bg-background animate-pulse" />,
     ssr: true
 })
 
-const MainCategoryGrid = dynamic(() => import('@/components/Application/Website/MainCategoryGrid'), {
+const MainCategoryGrid = dynamicImport(() => import('@/components/Application/Website/MainCategoryGrid'), {
     loading: () => <div className="h-96 w-full bg-background animate-pulse" />,
     ssr: true
 })

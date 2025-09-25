@@ -17,7 +17,8 @@ const nextConfig = {
     
     // Experimental performance features
     experimental: {
-        optimizeCss: true,
+        // Disable optimizeCss due to malformed unicode-range causing CSS parse error in some browsers
+        optimizeCss: false,
         optimizePackageImports: ['react-icons'],
         esmExternals: true,
     },
