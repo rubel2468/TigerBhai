@@ -6,7 +6,16 @@ import ProductBox from './ProductBox';
 const FeaturedProduct = ({ initialData }) => {
     const productData = initialData || { success: false, data: [] }
 
-    if (!productData || !productData.success) return null
+    // Debug logging
+    console.log('FeaturedProduct - productData:', productData)
+    console.log('FeaturedProduct - success:', productData?.success)
+    console.log('FeaturedProduct - data:', productData?.data)
+    console.log('FeaturedProduct - data length:', productData?.data?.length)
+
+    if (!productData || !productData.success) {
+        console.log('FeaturedProduct - returning null due to missing data')
+        return null
+    }
     return (
         <section className='lg:px-32 px-4 sm:py-10'>
             <div className='flex justify-between items-center mb-5'>

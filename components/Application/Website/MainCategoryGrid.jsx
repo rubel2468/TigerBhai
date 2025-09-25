@@ -36,7 +36,15 @@ const MainCategoryGrid = ({ initialData }) => {
         )
     }
 
+    // Debug logging
+    console.log('MainCategoryGrid - categoryData:', categoryData)
+    console.log('MainCategoryGrid - success:', categoryData?.success)
+    console.log('MainCategoryGrid - data:', categoryData?.data)
+    console.log('MainCategoryGrid - mainCategories:', categoryData?.data?.mainCategories)
+    console.log('MainCategoryGrid - mainCategories length:', categoryData?.data?.mainCategories?.length)
+
     if (!categoryData || !categoryData.success || !categoryData.data || !categoryData.data.mainCategories || categoryData.data.mainCategories.length === 0) {
+        console.log('MainCategoryGrid - returning null due to missing data')
         return null
     }
 
