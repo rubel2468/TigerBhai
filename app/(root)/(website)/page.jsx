@@ -68,13 +68,13 @@ async function getHomepageData() {
         // Prioritize critical above-the-fold content with proper caching
         const [carouselRes, featuredRes] = await Promise.all([
             fetchWithTimeout(`${baseUrl}/api/carousel`, { 
-                cache: 'force-cache',
-                next: { revalidate: 3600, tags: ['carousel'] },
+                cache: 'no-store',
+                next: { revalidate: 0, tags: ['carousel'] },
                 headers: { 'Accept': 'application/json' }
             }).catch(() => null),
             fetchWithTimeout(`${baseUrl}/api/product/get-featured-product`, { 
-                cache: 'force-cache', 
-                next: { revalidate: 1800, tags: ['featured-products', 'shop-products'] },
+                cache: 'no-store', 
+                next: { revalidate: 0, tags: ['featured-products', 'shop-products'] },
                 headers: { 'Accept': 'application/json' }
             }).catch(() => null)
         ])
@@ -87,13 +87,13 @@ async function getHomepageData() {
         // Load below-the-fold content separately to improve LCP
         const [reviewsRes, categoriesRes] = await Promise.all([
             fetchWithTimeout(`${baseUrl}/api/review/homepage?limit=5`, { 
-                cache: 'force-cache', 
-                next: { revalidate: 1800, tags: ['homepage-reviews'] },
+                cache: 'no-store', 
+                next: { revalidate: 0, tags: ['homepage-reviews'] },
                 headers: { 'Accept': 'application/json' }
             }).catch(() => null),
             fetchWithTimeout(`${baseUrl}/api/category/get-category`, { 
-                cache: 'force-cache', 
-                next: { revalidate: 3600, tags: ['categories'] },
+                cache: 'no-store', 
+                next: { revalidate: 0, tags: ['categories'] },
                 headers: { 'Accept': 'application/json' }
             }).catch(() => null)
         ])
