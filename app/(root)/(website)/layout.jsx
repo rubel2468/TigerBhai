@@ -3,19 +3,12 @@ import Header from '@/components/Application/Website/Header'
 import ErrorBoundary from '@/components/Application/ErrorBoundary'
 import WhatsAppSupport from '@/components/Application/Website/WhatsAppSupport'
 import React from 'react'
-import { Kumbh_Sans } from 'next/font/google'
-
-const kumbh = Kumbh_Sans({
-    weight: ['400', '500', '600', '700', '800'],
-    display: 'swap',
-    subsets: ['latin'],
-    preload: true
-})
+// next/font removed; using Google Fonts via app/layout.jsx
 
 const layout = ({ children }) => {
     return (
         <ErrorBoundary>
-            <div className={kumbh.className}>
+            <div style={{ fontFamily: "Kumbh Sans, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
                 <Header />
                 <main className="pt-20 lg:pt-20">
                     {children}

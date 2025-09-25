@@ -2,15 +2,7 @@ import GlobalProvider from "@/components/Application/GlobalProvider";
 import ServiceWorker from "@/components/Application/ServiceWorker";
 import WebVitals from "@/components/Application/WebVitals";
 import "./globals.css";
-import { Assistant } from 'next/font/google'
 import { ToastContainer } from 'react-toastify';
-const assistantFont = Assistant({
-  weight: ['400', '500', '600', '700', '800'],
-  subsets: ['latin'],
-  display: 'swap',
-  preload: true,
-  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
-})
 
 export const metadata = {
   title: "Tiger Bhai",
@@ -49,6 +41,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Google Fonts (replace next/font) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Kumbh+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
         {/* Google Tag Manager */}
         <script dangerouslySetInnerHTML={{ __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -93,8 +89,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }} />
         
         {/* Preconnect to external domains for faster loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://img.youtube.com" />
         <link rel="preconnect" href="https://i.ytimg.com" />
@@ -103,9 +97,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//res.cloudinary.com" />
       </head>
-      <body
-        className={`${assistantFont.className} antialiased`}
-      >
+      <body className={`antialiased`} style={{ fontFamily: "Assistant, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
         {/* Google Tag Manager (noscript) */}
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TW7XR5TX" height="0" width="0" style={{display:'none',visibility:'hidden'}}></iframe></noscript>
         {/* End Google Tag Manager (noscript) */}
