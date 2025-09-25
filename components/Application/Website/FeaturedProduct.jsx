@@ -1,10 +1,12 @@
+'use client'
 import Link from 'next/link'
 import React, { memo } from 'react'
 import { IoIosArrowRoundForward } from "react-icons/io";
 import ProductBox from './ProductBox';
+import useFetch from '@/hooks/useFetch'
 
 const FeaturedProduct = ({ initialData }) => {
-    const productData = initialData || { success: false, data: [] }
+    const { data: productData, loading } = useFetch('/api/product/get-featured-product', 'GET', {}, initialData)
 
     // Debug logging
     console.log('FeaturedProduct - productData:', productData)
@@ -12,8 +14,19 @@ const FeaturedProduct = ({ initialData }) => {
     console.log('FeaturedProduct - data:', productData?.data)
     console.log('FeaturedProduct - data length:', productData?.data?.length)
 
-    if (!productData || !productData.success) {
-        console.log('FeaturedProduct - returning null due to missing data')
+    if (loading) {
+        return (
+            <section className='lg:px-32 px-4 sm:py-10'>
+                <div className='grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 lg:gap-8 md:gap-6 sm:gap-4 gap-2'>
+                    {[1,2,3,4].map((i) => (
+                        <div key={i} className='h-72 bg-gray-100 animate-pulse rounded-md' />
+                    ))}
+                </div>
+            </section>
+        )
+    }
+
+    if (!productData || !productData.success || !productData.data || productData.data.length === 0) {
         return null
     }
     return (
@@ -26,8 +39,6 @@ const FeaturedProduct = ({ initialData }) => {
                 </Link>
             </div>
             <div className='grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 lg:gap-8 md:gap-6 sm:gap-4 gap-2'>
-                {!productData.success && <div className='text-center py-5'>Data Not Found.</div>}
-
                 {productData.success && productData.data.map((product) => (
                     <ProductBox key={product._id} product={product} />
                 ))}
