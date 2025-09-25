@@ -333,8 +333,8 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
             setIsAddedIntoCart(true)
         }
         
-        // GTM add_to_cart for buy now
-        pushToDataLayer('add_to_cart', {
+        // GTM initiatecheckout for buy now
+        pushToDataLayer('initiatecheckout', {
             currency: 'BDT',
             value: Number(variant.sellingPrice) * Number(qty),
             items: [{
@@ -842,8 +842,8 @@ const ProductDetails = ({ product, variant, colors, sizes, reviewCount, variants
                                             }
                                             dispatch(addIntoCart(cartProduct))
                                         })
-                                        // GTM add_to_cart for multi-add/buy now
-                                        pushToDataLayer('add_to_cart', {
+                                        // GTM initiatecheckout for buy now
+                                        pushToDataLayer('initiatecheckout', {
                                             currency: 'BDT',
                                             value: Number(totalPrice),
                                             items: selections.map(sel => ({
