@@ -64,6 +64,8 @@ const Checkout = () => {
 
     useEffect(() => {
         const cartProducts = cart.products
+        const userEmail = authStore?.auth?.email
+        const userPhone = authStore?.auth?.phone
 
         const subTotalAmount = cartProducts.reduce((sum, product) => sum + (product.sellingPrice * product.qty), 0)
 
@@ -77,17 +79,24 @@ const Checkout = () => {
 
         // GTM initiatecheckout when we have items and totals
         if (cartProducts.length > 0) {
+            const items = cartProducts.map(p => ({
+                item_id: p.variantId,
+                item_name: p.name,
+                item_variant: `${p.color || ''} ${p.size || ''}`.trim(),
+                price: Number(p.sellingPrice),
+                quantity: Number(p.qty),
+            }))
+
             pushToDataLayer('initiatecheckout', {
                 currency: 'BDT',
                 value: Number(subTotalAmount - couponDiscountAmount),
                 coupon: isCouponApplied ? couponCode : undefined,
-                items: cartProducts.map(p => ({
-                    item_id: p.variantId,
-                    item_name: p.name,
-                    item_variant: `${p.color || ''} ${p.size || ''}`.trim(),
-                    price: Number(p.sellingPrice),
-                    quantity: Number(p.qty),
-                }))
+                // TikTok enrichment
+                email: userEmail,
+                phone_number: userPhone,
+                content_type: 'product',
+                content_id: items?.[0]?.item_id,
+                items
             })
         }
 
@@ -216,18 +225,25 @@ const Checkout = () => {
 
             if (orderResponseData.success) {
                 // GTM purchase
+                const items = verifiedCartData.map(p => ({
+                    item_id: p.variantId,
+                    item_name: p.name,
+                    item_variant: `${p.color || ''} ${p.size || ''}`.trim(),
+                    price: Number(p.sellingPrice),
+                    quantity: Number(p.qty),
+                }))
+
                 pushToDataLayer('purchase', {
                     transaction_id: orderResponseData.data.orderNumber,
                     value: Number(totalAmount),
                     currency: 'BDT',
                     coupon: isCouponApplied ? couponCode : undefined,
-                    items: verifiedCartData.map(p => ({
-                        item_id: p.variantId,
-                        item_name: p.name,
-                        item_variant: `${p.color || ''} ${p.size || ''}`.trim(),
-                        price: Number(p.sellingPrice),
-                        quantity: Number(p.qty),
-                    })),
+                    // TikTok enrichment
+                    email: authStore?.auth?.email,
+                    phone_number: formData?.phone,
+                    content_type: 'product',
+                    content_id: items?.[0]?.item_id,
+                    items,
                 })
 
                 showToast('success', 'Order placed successfully!')
