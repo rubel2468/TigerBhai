@@ -246,6 +246,11 @@ const Checkout = () => {
                     items,
                 })
 
+                // Ensure pixel events are sent before navigation
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 400))
+                } catch (_) {}
+
                 showToast('success', 'Order placed successfully!')
                 dispatch(clearCart())
                 orderForm.reset()
