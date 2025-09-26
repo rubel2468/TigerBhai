@@ -31,7 +31,7 @@ export async function POST(request) {
             discount: z.number().nonnegative(),
             couponDiscountAmount: z.number().nonnegative(),
             totalAmount: z.number().nonnegative(),
-            products: z.array(productSchema)
+            products: z.array(productSchema).min(1, 'At least one product is required')
         })
 
         const validate = orderSchema.safeParse(payload)
@@ -41,6 +41,16 @@ export async function POST(request) {
         }
 
         const validatedData = validate.data
+
+        // Compute monetary fields on the server to avoid integrity issues
+        const computedSubtotal = validatedData.products.reduce((sum, p) => sum + (p.sellingPrice * p.qty), 0)
+        const computedDiscount = validatedData.discount
+        const computedCouponDiscount = validatedData.couponDiscountAmount
+        const computedTotalAmount = Math.max(0, computedSubtotal - computedDiscount - computedCouponDiscount)
+
+        if (computedSubtotal <= 0) {
+            return response(false, 400, 'Invalid order: subtotal must be greater than 0')
+        }
 
         // Generate unique order number
         const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
@@ -119,11 +129,17 @@ export async function POST(request) {
                     sellingPrice: product.sellingPrice,
                     vendorPrice: product.sellingPrice // No commission for admin orders
                 })),
-                subtotal: validatedData.subtotal,
+                subtotal: computedSubtotal,
                 commission: 0,
-                vendorEarning: validatedData.subtotal,
+                vendorEarning: computedSubtotal,
                 status: 'pending'
             })
+        }
+        
+        // Final guard: ensure aggregated products are present
+        const aggregatedProductsCount = vendorOrderItemsArray.reduce((acc, item) => acc + (item.products?.length || 0), 0)
+        if (aggregatedProductsCount === 0) {
+            return response(false, 400, 'Invalid order: no products present in order items')
         }
         
         const newOrder = await OrderModel.create({
@@ -135,11 +151,11 @@ export async function POST(request) {
             ordernote: validatedData.ordernote,
             products: validatedData.products, // Keep legacy field for backward compatibility
             orderItems: vendorOrderItemsArray, // New multivendor structure
-            discount: validatedData.discount,
-            couponDiscountAmount: validatedData.couponDiscountAmount,
-            totalAmount: validatedData.totalAmount,
+            discount: computedDiscount,
+            couponDiscountAmount: computedCouponDiscount,
+            totalAmount: computedTotalAmount,
             deliveryCharge: 0, // Set default delivery charge to 0
-            subtotal: validatedData.subtotal,
+            subtotal: computedSubtotal,
             paymentMethod: 'cod',
             orderNumber: orderNumber,
             status: 'pending'
