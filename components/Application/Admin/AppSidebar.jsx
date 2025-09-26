@@ -41,34 +41,37 @@ const AppSidebar = () => {
                     {adminAppSidebarMenu.map((menu, index) => (
                         <Collapsible key={index} className="group/collapsible">
                             <SidebarMenuItem>
-                                <CollapsibleTrigger asChild>
-                                    <SidebarMenuButton className="font-semibold px-2 py-5">
-                                        <menu.icon />
-                                        {menu.title}
-
-                                        {menu.submenu && menu.submenu.length > 0 &&
-                                            <LuChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                        }
+                                {menu.submenu && menu.submenu.length > 0 ? (
+                                    <>
+                                        <CollapsibleTrigger asChild>
+                                            <SidebarMenuButton className="font-semibold px-2 py-5">
+                                                <menu.icon />
+                                                {menu.title}
+                                                <LuChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                            </SidebarMenuButton>
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent>
+                                            <SidebarMenuSub>
+                                                {menu.submenu.map((submenuItem, subMenuIndex) => (
+                                                    <SidebarMenuSubItem key={subMenuIndex}>
+                                                        <SidebarMenuSubButton asChild className="px-2 py-5">
+                                                            <Link href={submenuItem.url}>
+                                                                {submenuItem.title}
+                                                            </Link>
+                                                        </SidebarMenuSubButton>
+                                                    </SidebarMenuSubItem>
+                                                ))}
+                                            </SidebarMenuSub>
+                                        </CollapsibleContent>
+                                    </>
+                                ) : (
+                                    <SidebarMenuButton asChild className="font-semibold px-2 py-5">
+                                        <Link href={menu.url}>
+                                            <menu.icon />
+                                            {menu.title}
+                                        </Link>
                                     </SidebarMenuButton>
-                                </CollapsibleTrigger>
-
-                                {menu.submenu && menu.submenu.length > 0
-                                    &&
-                                    <CollapsibleContent>
-                                        <SidebarMenuSub>
-                                            {menu.submenu.map((submenuItem, subMenuIndex) => (
-                                                <SidebarMenuSubItem key={subMenuIndex}>
-                                                    <SidebarMenuSubButton asChild className="px-2 py-5">
-                                                        <Link href={submenuItem.url}>
-                                                            {submenuItem.title}
-                                                        </Link>
-                                                    </SidebarMenuSubButton>
-                                                </SidebarMenuSubItem>
-                                            ))}
-                                        </SidebarMenuSub>
-                                    </CollapsibleContent>
-                                }
-
+                                )}
                             </SidebarMenuItem>
                         </Collapsible>
                     ))}
