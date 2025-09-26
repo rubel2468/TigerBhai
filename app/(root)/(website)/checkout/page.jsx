@@ -241,6 +241,7 @@ const Checkout = () => {
                     // TikTok enrichment
                     email: authStore?.auth?.email,
                     phone_number: formData?.phone,
+                    external_id: authStore?.auth?._id,
                     content_type: 'product',
                     content_id: items?.[0]?.item_id,
                     items,
