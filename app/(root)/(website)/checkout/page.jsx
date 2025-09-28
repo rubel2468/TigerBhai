@@ -22,6 +22,7 @@ import { FaShippingFast } from "react-icons/fa";
 import { Textarea } from '@/components/ui/textarea'
 import { useRouter } from 'next/navigation'
 import PathaoChargeTable from '@/components/Application/Website/PathaoChargeTable'
+import WhatsAppSupport from '@/components/Application/Website/WhatsAppSupport'
 import { pushToDataLayer } from '@/lib/gtm'
 
 import loading from '@/public/assets/images/loading.svg'
@@ -524,6 +525,9 @@ const Checkout = () => {
             <div className='my-16'>
                 <PathaoChargeTable />
             </div>
+
+            {/* WhatsApp Support */}
+            <WhatsAppSupport />
 
         </div>
     )
