@@ -67,14 +67,15 @@ const WhatsAppSupport = () => {
             </AnimatePresence>
 
             <motion.button
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className="relative bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition-all duration-300"
+                className="relative bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-full shadow-lg transition-all duration-300 flex items-center gap-3"
             >
-                <FaWhatsapp size={24} />
+                <FaWhatsapp size={24} className="transform scale-x-[-1]" />
+                <span className="font-medium text-sm">Support Chat</span>
                 
                 {/* Pulse animation */}
                 <motion.div

@@ -315,6 +315,14 @@ const AddProduct = () => {
                   <FormMessage></FormMessage>
                 </div>
                 <div className='mb-5 md:col-span-2'>
+                  <FormLabel className="mb-2">Company Details (Optional)</FormLabel>
+                  <Editor onChange={(event, editor) => {
+                    const data = editor.getData()
+                    form.setValue('companyDetails', data)
+                  }} />
+                  <FormMessage></FormMessage>
+                </div>
+                <div className='mb-5 md:col-span-2'>
                   <FormField
                     control={form.control}
                     name="shortDescription"
@@ -338,14 +346,6 @@ const AddProduct = () => {
                   <Editor onChange={(event, editor) => {
                     const data = editor.getData()
                     form.setValue('offer', data)
-                  }} />
-                  <FormMessage></FormMessage>
-                </div>
-                <div className='mb-5 md:col-span-2'>
-                  <FormLabel className="mb-2">Company Details (Optional)</FormLabel>
-                  <Editor onChange={(event, editor) => {
-                    const data = editor.getData()
-                    form.setValue('companyDetails', data)
                   }} />
                   <FormMessage></FormMessage>
                 </div>
