@@ -26,23 +26,27 @@ export async function generateMetadata({ params }) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://tigerbhai.com'
     const productUrl = `${baseUrl}/product/${slug}`
     
+    // Extract product data from the API response structure
+    const productData = product.product || product
+    const variantData = product.variant
+    
     // Get the first product image or a placeholder
-    const productImage = product.variant?.media?.[0]?.filePath || 
-                        product.media?.[0]?.filePath || 
+    const productImage = variantData?.media?.[0]?.filePath || 
+                        productData?.media?.[0]?.filePath || 
                         `${baseUrl}/assets/images/img-placeholder.webp`
     
     // Ensure image URL is absolute
     const imageUrl = productImage.startsWith('http') ? productImage : `${baseUrl}${productImage}`
     
-    const title = `${product.name} - Tiger Bhai`
-    const description = product.shortDescription || 
-                       product.description?.substring(0, 160) || 
-                       `Shop ${product.name} at Tiger Bhai - Your trusted destination for quality products.`
+    const title = `${productData.name} - Tiger Bhai`
+    const description = productData.shortDescription || 
+                       productData.description?.substring(0, 160) || 
+                       `Shop ${productData.name} at Tiger Bhai - Your trusted destination for quality products.`
 
     return {
       title,
       description,
-      keywords: `${product.name}, Tiger Bhai, online shopping, ${product.variant?.color || ''}, ${product.variant?.size || ''}`.trim(),
+      keywords: `${productData.name}, Tiger Bhai, online shopping, ${variantData?.color || ''}, ${variantData?.size || ''}`.trim(),
       openGraph: {
         title,
         description,
@@ -53,7 +57,7 @@ export async function generateMetadata({ params }) {
             url: imageUrl,
             width: 1200,
             height: 630,
-            alt: product.name,
+            alt: productData.name,
           },
         ],
         locale: 'en_US',
