@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { Suspense } from 'react'
-import dynamicImport from 'next/dynamic'
+import dynamic from 'next/dynamic'
 import banner1 from '@/public/assets/images/banner1.webp'
 import banner2 from '@/public/assets/images/banner2.webp'
 import banner3 from '@/public/assets/images/banner3.webp'
@@ -9,32 +9,40 @@ import banner4 from '@/public/assets/images/banner4.webp'
 
 // Client-side rendering for homepage components
 
-// Dynamic imports for better code splitting
-const MainSlider = dynamicImport(() => import('@/components/Application/Website/MainSlider'), {
+// Optimized dynamic imports for better code splitting
+const MainSlider = dynamic(() => import('@/components/Application/Website/MainSlider'), {
     loading: () => <div className="h-[calc(100vh-4rem)] w-full bg-background animate-pulse" />,
     ssr: true
 })
 
-const FeaturedProduct = dynamicImport(() => import('@/components/Application/Website/FeaturedProduct'), {
+const FeaturedProduct = dynamic(() => import('@/components/Application/Website/FeaturedProduct'), {
     loading: () => <div className="h-96 w-full bg-background animate-pulse" />,
     ssr: true
 })
 
-const CustomerReviews = dynamicImport(() => import('@/components/Application/Website/CustomerReviews'), {
+const CustomerReviews = dynamic(() => import('@/components/Application/Website/CustomerReviews'), {
     loading: () => <div className="h-96 w-full bg-background animate-pulse" />,
     ssr: true
 })
 
-const MainCategoryGrid = dynamicImport(() => import('@/components/Application/Website/MainCategoryGrid'), {
+const MainCategoryGrid = dynamic(() => import('@/components/Application/Website/MainCategoryGrid'), {
     loading: () => <div className="h-96 w-full bg-background animate-pulse" />,
     ssr: true
 })
 
-// Optimized icon imports - only import what we need
-import { GiReturnArrow } from "react-icons/gi";
-import { FaShippingFast } from "react-icons/fa";
-import { BiSupport } from "react-icons/bi";
-import { TbRosetteDiscountFilled } from "react-icons/tb";
+// Dynamic icon loading to reduce bundle size - only load what's needed
+const GiReturnArrow = dynamic(() => import("react-icons/gi").then(mod => ({ default: mod.GiReturnArrow })), {
+    loading: () => <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
+})
+const FaShippingFast = dynamic(() => import("react-icons/fa").then(mod => ({ default: mod.FaShippingFast })), {
+    loading: () => <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
+})
+const BiSupport = dynamic(() => import("react-icons/bi").then(mod => ({ default: mod.BiSupport })), {
+    loading: () => <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
+})
+const TbRosetteDiscountFilled = dynamic(() => import("react-icons/tb").then(mod => ({ default: mod.TbRosetteDiscountFilled })), {
+    loading: () => <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
+})
 const Home = () => {
     return (
         <>

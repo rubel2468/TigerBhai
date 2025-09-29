@@ -31,8 +31,10 @@ const nextConfig = {
                 minimize: true,
                 splitChunks: {
                     chunks: 'all',
-                    maxInitialRequests: 30,
-                    maxAsyncRequests: 30,
+                    maxInitialRequests: 25,
+                    maxAsyncRequests: 25,
+                    minSize: 20000,
+                    maxSize: 250000,
                     cacheGroups: {
                         // React and React-DOM
                         react: {
@@ -41,10 +43,28 @@ const nextConfig = {
                             chunks: 'all',
                             priority: 40,
                         },
-                        // React Icons - split by usage
-                        reactIcons: {
-                            test: /[\\/]node_modules[\\/]react-icons[\\/]/,
-                            name: 'react-icons',
+                        // React Icons - split by icon family
+                        reactIconsFa: {
+                            test: /[\\/]node_modules[\\/]react-icons[\\/]fa[\\/]/,
+                            name: 'react-icons-fa',
+                            chunks: 'async',
+                            priority: 40,
+                        },
+                        reactIconsIo: {
+                            test: /[\\/]node_modules[\\/]react-icons[\\/]io[\\/]/,
+                            name: 'react-icons-io',
+                            chunks: 'async',
+                            priority: 40,
+                        },
+                        reactIconsBi: {
+                            test: /[\\/]node_modules[\\/]react-icons[\\/]bi[\\/]/,
+                            name: 'react-icons-bi',
+                            chunks: 'async',
+                            priority: 40,
+                        },
+                        reactIconsOther: {
+                            test: /[\\/]node_modules[\\/]react-icons[\\/](?!fa|io|bi)[\\/]/,
+                            name: 'react-icons-other',
                             chunks: 'async',
                             priority: 35,
                         },
@@ -76,20 +96,39 @@ const nextConfig = {
                             chunks: 'async',
                             priority: 25,
                         },
-                        // Heavy libraries
-                        heavyLibraries: {
-                            test: /[\\/]node_modules[\\/](axios|moment|date-fns|chart\.js|recharts)[\\/]/,
-                            name: 'heavy-libs',
+                        // Heavy libraries - split individually
+                        axios: {
+                            test: /[\\/]node_modules[\\/]axios[\\/]/,
+                            name: 'axios',
+                            chunks: 'async',
+                            priority: 25,
+                        },
+                        dateLibs: {
+                            test: /[\\/]node_modules[\\/](moment|date-fns)[\\/]/,
+                            name: 'date-libs',
                             chunks: 'async',
                             priority: 20,
                         },
-                        // Other vendor libraries
+                        charts: {
+                            test: /[\\/]node_modules[\\/](chart\.js|recharts)[\\/]/,
+                            name: 'chart-libs',
+                            chunks: 'async',
+                            priority: 20,
+                        },
+                        carousel: {
+                            test: /[\\/]node_modules[\\/](react-slick|slick-carousel)[\\/]/,
+                            name: 'carousel-libs',
+                            chunks: 'async',
+                            priority: 15,
+                        },
+                        // Other vendor libraries - smaller chunks
                         vendor: {
                             test: /[\\/]node_modules[\\/]/,
                             name: 'vendors',
-                            chunks: 'all',
+                            chunks: 'async',
                             priority: 10,
                             reuseExistingChunk: true,
+                            maxSize: 200000,
                         },
                         // Common components
                         common: {

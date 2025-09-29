@@ -5,10 +5,19 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import logo from '@/public/assets/images/logo-black.png'
-// Optimized icon imports
-import { IoIosSearch, IoMdClose } from "react-icons/io";
-import { VscAccount } from "react-icons/vsc";
-import { HiMiniBars3 } from "react-icons/hi2";
+// Dynamic icon loading to reduce bundle size
+const IoIosSearch = dynamic(() => import("react-icons/io").then(mod => ({ default: mod.IoIosSearch })), {
+    loading: () => <div className="w-6 h-6 bg-gray-200 rounded animate-pulse" />
+})
+const IoMdClose = dynamic(() => import("react-icons/io").then(mod => ({ default: mod.IoMdClose })), {
+    loading: () => <div className="w-6 h-6 bg-gray-200 rounded animate-pulse" />
+})
+const VscAccount = dynamic(() => import("react-icons/vsc").then(mod => ({ default: mod.VscAccount })), {
+    loading: () => <div className="w-6 h-6 bg-gray-200 rounded animate-pulse" />
+})
+const HiMiniBars3 = dynamic(() => import("react-icons/hi2").then(mod => ({ default: mod.HiMiniBars3 })), {
+    loading: () => <div className="w-6 h-6 bg-gray-200 rounded animate-pulse" />
+})
 import { useSelector } from 'react-redux'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import userIcon from '@/public/assets/images/user.png'
