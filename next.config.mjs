@@ -31,25 +31,79 @@ const nextConfig = {
                 minimize: true,
                 splitChunks: {
                     chunks: 'all',
+                    maxInitialRequests: 30,
+                    maxAsyncRequests: 30,
                     cacheGroups: {
+                        // React and React-DOM
+                        react: {
+                            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+                            name: 'react',
+                            chunks: 'all',
+                            priority: 40,
+                        },
+                        // React Icons - split by usage
+                        reactIcons: {
+                            test: /[\\/]node_modules[\\/]react-icons[\\/]/,
+                            name: 'react-icons',
+                            chunks: 'async',
+                            priority: 35,
+                        },
+                        // Lucide React - admin/vendor only
+                        lucide: {
+                            test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
+                            name: 'lucide',
+                            chunks: 'async',
+                            priority: 35,
+                        },
+                        // UI Components - split by usage
+                        uiComponents: {
+                            test: /[\\/]components[\\/]ui[\\/]/,
+                            name: 'ui-components',
+                            chunks: 'async',
+                            priority: 30,
+                        },
+                        // Admin components - only load when needed
+                        adminComponents: {
+                            test: /[\\/]components[\\/]Application[\\/]Admin[\\/]/,
+                            name: 'admin-components',
+                            chunks: 'async',
+                            priority: 25,
+                        },
+                        // Vendor components - only load when needed
+                        vendorComponents: {
+                            test: /[\\/]app[\\/]\\(root\\)[\\/]\\(vendor\\)[\\/]/,
+                            name: 'vendor-components',
+                            chunks: 'async',
+                            priority: 25,
+                        },
+                        // Heavy libraries
+                        heavyLibraries: {
+                            test: /[\\/]node_modules[\\/](axios|moment|date-fns|chart\.js|recharts)[\\/]/,
+                            name: 'heavy-libs',
+                            chunks: 'async',
+                            priority: 20,
+                        },
+                        // Other vendor libraries
                         vendor: {
                             test: /[\\/]node_modules[\\/]/,
                             name: 'vendors',
                             chunks: 'all',
-                            priority: 20,
+                            priority: 10,
+                            reuseExistingChunk: true,
                         },
+                        // Common components
                         common: {
                             name: 'common',
                             minChunks: 2,
                             chunks: 'all',
-                            priority: 10,
+                            priority: 5,
                             reuseExistingChunk: true,
                         },
                     },
                 },
                 runtimeChunk: 'single',
                 usedExports: true, // tree-shaking
-                sideEffects: true, // safer + smaller bundles
+                sideEffects: false, // Enable tree-shaking for more packages
             };
         }
         

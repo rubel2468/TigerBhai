@@ -9,12 +9,22 @@ import logo from '@/public/assets/images/logo-black.png'
 import { IoIosSearch, IoMdClose } from "react-icons/io";
 import { VscAccount } from "react-icons/vsc";
 import { HiMiniBars3 } from "react-icons/hi2";
-import Cart from './Cart'
 import { useSelector } from 'react-redux'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import userIcon from '@/public/assets/images/user.png'
-import Search from './Search'
 import useFetch from '@/hooks/useFetch'
+import dynamic from 'next/dynamic'
+
+// Dynamically import components to reduce initial bundle size
+const Cart = dynamic(() => import('./Cart'), {
+  loading: () => <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />,
+  ssr: false
+})
+
+const Search = dynamic(() => import('./Search'), {
+  loading: () => <div className="h-10 bg-gray-200 rounded animate-pulse" />,
+  ssr: false
+})
 
 
 const Header = () => {
