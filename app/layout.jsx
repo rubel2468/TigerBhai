@@ -2,12 +2,7 @@ import GlobalProvider from "@/components/Application/GlobalProvider";
 import ServiceWorker from "@/components/Application/ServiceWorker";
 import WebVitals from "@/components/Application/WebVitals";
 import "./globals.css";
-import dynamic from 'next/dynamic';
-
-// Dynamically import ToastContainer to reduce initial bundle
-const ToastContainer = dynamic(() => import('react-toastify').then(mod => ({ default: mod.ToastContainer })), {
-  loading: () => null
-});
+import { ToastContainer } from 'react-toastify';
 
 export const metadata = {
   title: "Tiger Bhai",
@@ -46,14 +41,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Optimized Google Fonts loading - non-render-blocking */}
+        {/* Google Fonts (replace next/font) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Kumbh+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onLoad="this.media='all'" />
-        <noscript>
-          <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Kumbh+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-        </noscript>
-        
+        <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Kumbh+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
         {/* Google Tag Manager */}
         <script dangerouslySetInnerHTML={{ __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -62,8 +53,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-TW7XR5TX');` }} />
         {/* End Google Tag Manager */}
         {/* Facebook and TikTok Pixels are loaded via GTM to avoid duplicate activation */}
-        
-        {/* Enhanced Critical CSS inlined to prevent render blocking */}
+        {/* Critical CSS inlined to prevent render blocking */}
         <style dangerouslySetInnerHTML={{
           __html: `
             /* Critical CSS for above-the-fold content */
@@ -81,32 +71,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             @media (min-width: 768px) { .container { max-width: 768px; } }
             @media (min-width: 1024px) { .container { max-width: 1024px; } }
             @media (min-width: 1280px) { .container { max-width: 1280px; } }
-            
-            /* Font metric overrides to prevent layout shifts */
-            @font-face {
-              font-family: 'Assistant';
-              font-display: swap;
-              src: local('Assistant');
-              ascent-override: 95%;
-              descent-override: 20%;
-              line-gap-override: 0%;
-              size-adjust: 100%;
-            }
-            @font-face {
-              font-family: 'Kumbh Sans';
-              font-display: swap;
-              src: local('Kumbh Sans');
-              ascent-override: 90%;
-              descent-override: 22%;
-              line-gap-override: 0%;
-              size-adjust: 100%;
-            }
           `
         }} />
         
-        {/* Optimized preconnect - only essential domains */}
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Preconnect to external domains for faster loading */}
         <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="preconnect" href="https://img.youtube.com" />
+        <link rel="preconnect" href="https://i.ytimg.com" />
         
         {/* DNS prefetch for additional performance */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />

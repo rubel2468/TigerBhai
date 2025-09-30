@@ -31,118 +31,25 @@ const nextConfig = {
                 minimize: true,
                 splitChunks: {
                     chunks: 'all',
-                    maxInitialRequests: 25,
-                    maxAsyncRequests: 25,
-                    minSize: 20000,
-                    maxSize: 250000,
                     cacheGroups: {
-                        // React and React-DOM
-                        react: {
-                            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-                            name: 'react',
-                            chunks: 'all',
-                            priority: 40,
-                        },
-                        // React Icons - split by icon family
-                        reactIconsFa: {
-                            test: /[\\/]node_modules[\\/]react-icons[\\/]fa[\\/]/,
-                            name: 'react-icons-fa',
-                            chunks: 'async',
-                            priority: 40,
-                        },
-                        reactIconsIo: {
-                            test: /[\\/]node_modules[\\/]react-icons[\\/]io[\\/]/,
-                            name: 'react-icons-io',
-                            chunks: 'async',
-                            priority: 40,
-                        },
-                        reactIconsBi: {
-                            test: /[\\/]node_modules[\\/]react-icons[\\/]bi[\\/]/,
-                            name: 'react-icons-bi',
-                            chunks: 'async',
-                            priority: 40,
-                        },
-                        reactIconsOther: {
-                            test: /[\\/]node_modules[\\/]react-icons[\\/](?!fa|io|bi)[\\/]/,
-                            name: 'react-icons-other',
-                            chunks: 'async',
-                            priority: 35,
-                        },
-                        // Lucide React - admin/vendor only
-                        lucide: {
-                            test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
-                            name: 'lucide',
-                            chunks: 'async',
-                            priority: 35,
-                        },
-                        // UI Components - split by usage
-                        uiComponents: {
-                            test: /[\\/]components[\\/]ui[\\/]/,
-                            name: 'ui-components',
-                            chunks: 'async',
-                            priority: 30,
-                        },
-                        // Admin components - only load when needed
-                        adminComponents: {
-                            test: /[\\/]components[\\/]Application[\\/]Admin[\\/]/,
-                            name: 'admin-components',
-                            chunks: 'async',
-                            priority: 25,
-                        },
-                        // Vendor components - only load when needed
-                        vendorComponents: {
-                            test: /[\\/]app[\\/]\\(root\\)[\\/]\\(vendor\\)[\\/]/,
-                            name: 'vendor-components',
-                            chunks: 'async',
-                            priority: 25,
-                        },
-                        // Heavy libraries - split individually
-                        axios: {
-                            test: /[\\/]node_modules[\\/]axios[\\/]/,
-                            name: 'axios',
-                            chunks: 'async',
-                            priority: 25,
-                        },
-                        dateLibs: {
-                            test: /[\\/]node_modules[\\/](moment|date-fns)[\\/]/,
-                            name: 'date-libs',
-                            chunks: 'async',
-                            priority: 20,
-                        },
-                        charts: {
-                            test: /[\\/]node_modules[\\/](chart\.js|recharts)[\\/]/,
-                            name: 'chart-libs',
-                            chunks: 'async',
-                            priority: 20,
-                        },
-                        carousel: {
-                            test: /[\\/]node_modules[\\/](react-slick|slick-carousel)[\\/]/,
-                            name: 'carousel-libs',
-                            chunks: 'async',
-                            priority: 15,
-                        },
-                        // Other vendor libraries - smaller chunks
                         vendor: {
                             test: /[\\/]node_modules[\\/]/,
                             name: 'vendors',
-                            chunks: 'async',
-                            priority: 10,
-                            reuseExistingChunk: true,
-                            maxSize: 200000,
+                            chunks: 'all',
+                            priority: 20,
                         },
-                        // Common components
                         common: {
                             name: 'common',
                             minChunks: 2,
                             chunks: 'all',
-                            priority: 5,
+                            priority: 10,
                             reuseExistingChunk: true,
                         },
                     },
                 },
                 runtimeChunk: 'single',
                 usedExports: true, // tree-shaking
-                sideEffects: false, // Enable tree-shaking for more packages
+                sideEffects: true, // safer + smaller bundles
             };
         }
         

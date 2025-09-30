@@ -1,25 +1,11 @@
+import AppSidebar from '@/components/Application/Admin/AppSidebar'
+import ThemeProvider from '@/components/Application/Admin/ThemeProvider'
+import Topbar from '@/components/Application/Admin/Topbar'
+import { SidebarProvider } from '@/components/ui/sidebar'
 import React from 'react'
-import dynamicImport from 'next/dynamic'
 
 // Force dynamic rendering for admin pages
 export const dynamic = 'force-dynamic'
-
-// Dynamically import admin components to reduce initial bundle size
-const AppSidebar = dynamicImport(() => import('@/components/Application/Admin/AppSidebar'), {
-  loading: () => <div className="w-64 h-screen bg-gray-100 animate-pulse" />
-})
-
-const ThemeProvider = dynamicImport(() => import('@/components/Application/Admin/ThemeProvider'), {
-  loading: () => null
-})
-
-const Topbar = dynamicImport(() => import('@/components/Application/Admin/Topbar'), {
-  loading: () => <div className="h-16 bg-white border-b animate-pulse" />
-})
-
-const SidebarProvider = dynamicImport(() => import('@/components/ui/sidebar').then(mod => ({ default: mod.SidebarProvider })), {
-  loading: () => null
-})
 
 const layout = ({ children }) => {
     return (

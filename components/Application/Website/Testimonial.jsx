@@ -1,5 +1,7 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { IoStar } from "react-icons/io5";
 import { BsChatQuote } from "react-icons/bs";
@@ -61,23 +63,6 @@ const testimonials = [
 
 
 const Testimonial = () => {
-    const [cssLoaded, setCssLoaded] = useState(false);
-
-    // Dynamically load slick CSS to prevent render blocking
-    useEffect(() => {
-        const loadSlickCSS = async () => {
-            try {
-                await import("slick-carousel/slick/slick.css")
-                await import("slick-carousel/slick/slick-theme.css")
-                setCssLoaded(true)
-            } catch (error) {
-                console.warn('Failed to load slick CSS:', error)
-                setCssLoaded(true) // Still render component even if CSS fails
-            }
-        }
-        
-        loadSlickCSS()
-    }, [])
 
     const settings = {
         dots: true,
@@ -111,8 +96,7 @@ const Testimonial = () => {
     return (
         <div className='lg:px-32 px-4 sm:pt-20 pt-5 pb-10'>
             <h2 className='text-center sm:text-4xl text-2xl mb-5 font-semibold'>Customer Review</h2>
-            {cssLoaded ? (
-                <Slider {...settings}>
+            <Slider {...settings}>
                 {testimonials.map((item, index) => (
                     <div key={index} className="p-5">
                         <div className='border rounded-lg p-5'>
@@ -129,13 +113,7 @@ const Testimonial = () => {
                         </div>
                     </div>
                 ))}
-                </Slider>
-            ) : (
-                <div className="flex justify-center items-center py-8">
-                    <div className="loading"></div>
-                    <span className="ml-2">Loading testimonials...</span>
-                </div>
-            )}
+            </Slider>
         </div>
     )
 }
