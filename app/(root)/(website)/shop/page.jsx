@@ -42,7 +42,7 @@ const ShopPage = () => {
         return getProduct.data
     }
 
-    const { error, data, isFetching, refetch } = useQuery({
+    const { error, data, isFetching } = useQuery({
         queryKey: ['products', limit, sorting, searchParams, currentPage],
         queryFn: fetchProduct,
     })
@@ -51,11 +51,6 @@ const ShopPage = () => {
     React.useEffect(() => {
         setCurrentPage(0)
     }, [searchParams, sorting, limit])
-
-    // Refetch when page changes
-    React.useEffect(() => {
-        refetch()
-    }, [currentPage, refetch])
 
     return (
         <div >
