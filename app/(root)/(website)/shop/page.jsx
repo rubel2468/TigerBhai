@@ -26,7 +26,7 @@ const breadcrumb = {
 }
 const ShopPage = () => {
     const searchParams = useSearchParams().toString()
-    const [limit, setLimit] = useState(9)
+    const [limit, setLimit] = useState(12)
     const [sorting, setSorting] = useState('default_sorting')
     const [currentPage, setCurrentPage] = useState(0)
     const [isMobileFilter, setIsMobileFilter] = useState(false)
@@ -113,13 +113,14 @@ const ShopPage = () => {
                                 {/* Page Numbers */}
                                 {(() => {
                                     const pages = []
-                                    const maxVisiblePages = 5
-                                    let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2))
-                                    let endPage = startPage + maxVisiblePages - 1
+                                    const totalPages = data?.totalPages || 1
+                                    const maxVisiblePages = Math.min(5, totalPages)
                                     
-                                    // Adjust if we're near the end
-                                    if (endPage > currentPage && !data?.nextPage) {
-                                        endPage = currentPage
+                                    let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2))
+                                    let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1)
+                                    
+                                    // Adjust start page if we're near the end
+                                    if (endPage - startPage + 1 < maxVisiblePages) {
                                         startPage = Math.max(0, endPage - maxVisiblePages + 1)
                                     }
                                     

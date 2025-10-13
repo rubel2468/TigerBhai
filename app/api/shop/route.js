@@ -22,7 +22,7 @@ export async function GET(request) {
 
 
         // pagination 
-        const limit = parseInt(searchParams.get('limit')) || 9
+        const limit = parseInt(searchParams.get('limit')) || 12
         const page = parseInt(searchParams.get('page')) || 0
         const skip = page * limit
 
@@ -54,24 +54,31 @@ export async function GET(request) {
         }
 
 
+        // Get total count for pagination calculation
+        const totalProducts = await ProductModel.countDocuments(matchStage)
+        const totalPages = Math.ceil(totalProducts / limit)
+
         // Get products with proper pagination and media population
         const products = await ProductModel.find(matchStage)
             .populate('media')
             .sort(sortquery)
             .skip(skip)
-            .limit(limit + 1)
+            .limit(limit)
             .lean()
-
-
 
         // check if more data exists 
         let nextPage = null
-        if (products.length > limit) {
+        if (page + 1 < totalPages) {
             nextPage = page + 1
-            products.pop() // remove extra item
         }
 
-        return response(true, 200, 'Product data found.', { products, nextPage })
+        return response(true, 200, 'Product data found.', { 
+            products, 
+            nextPage, 
+            totalPages, 
+            totalProducts, 
+            currentPage: page 
+        })
 
     } catch (error) {
         return catchError(error)
