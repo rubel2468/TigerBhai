@@ -33,7 +33,7 @@ const FeaturedProduct = ({ initialData }) => {
         <section className='lg:px-32 px-4 sm:py-10'>
             <div className='flex justify-between items-center mb-5'>
                 <h2 className='sm:text-4xl text-2xl font-semibold'>Featured Products</h2>
-                <Link href="" className='flex items-center gap-2 underline underline-offset-4 hover:text-primary'>
+                <Link href="/shop" className='flex items-center gap-2 underline underline-offset-4 hover:text-primary'>
                     View All
                     <IoIosArrowRoundForward />
                 </Link>
