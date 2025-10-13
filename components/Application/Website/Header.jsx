@@ -24,11 +24,28 @@ const Header = () => {
     const [showSearch, setShowSearch] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
     const [hoveredCategory, setHoveredCategory] = useState(null)
+    const [hoverTimeout, setHoverTimeout] = useState(null)
 
     // categories
     const { data: categoryRes } = useFetch('/api/category/get-category')
     const mainCategories = categoryRes?.data?.mainCategories || []
     const subCategories = categoryRes?.data?.subCategories || []
+
+    // Helper functions for hover delay
+    const handleCategoryMouseEnter = (categoryId) => {
+        if (hoverTimeout) {
+            clearTimeout(hoverTimeout)
+            setHoverTimeout(null)
+        }
+        setHoveredCategory(categoryId)
+    }
+
+    const handleCategoryMouseLeave = () => {
+        const timeout = setTimeout(() => {
+            setHoveredCategory(null)
+        }, 150) // 150ms delay before hiding
+        setHoverTimeout(timeout)
+    }
 
     // Add scroll effect for enhanced glass effect with throttling
     React.useEffect(() => {
@@ -47,6 +64,15 @@ const Header = () => {
         window.addEventListener('scroll', handleScroll, { passive: true })
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+
+    // Cleanup timeout on unmount
+    React.useEffect(() => {
+        return () => {
+            if (hoverTimeout) {
+                clearTimeout(hoverTimeout)
+            }
+        }
+    }, [hoverTimeout])
 
     return (
         <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-primary border-b border-primary/70 shadow-lg shadow-black/10`}>
@@ -151,19 +177,19 @@ const Header = () => {
                                     <li key={`d-m-${mc._id}`} className='relative'>
                                         <span 
                                             className='relative text-white hover:text-white font-medium transition-all duration-300 cursor-pointer'
-                                            onMouseEnter={() => setHoveredCategory(mc._id)}
-                                            onMouseLeave={() => setHoveredCategory(null)}
+                                            onMouseEnter={() => handleCategoryMouseEnter(mc._id)}
+                                            onMouseLeave={handleCategoryMouseLeave}
                                         >
                                             {mc.name}
                                             <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isHovered ? 'w-full' : 'w-0'}`}></span>
                                         </span>
                                         {children.length > 0 && (
                                             <div 
-                                                className={`absolute left-0 mt-3 w-56 bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl rounded-lg transition-all duration-200 ${
+                                                className={`absolute left-0 top-full pt-1 w-56 bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl rounded-lg transition-all duration-200 ${
                                                     isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
                                                 }`}
-                                                onMouseEnter={() => setHoveredCategory(mc._id)}
-                                                onMouseLeave={() => setHoveredCategory(null)}
+                                                onMouseEnter={() => handleCategoryMouseEnter(mc._id)}
+                                                onMouseLeave={handleCategoryMouseLeave}
                                             >
                                                 <ul className='py-2'>
                                                     {children.map(sc => (
