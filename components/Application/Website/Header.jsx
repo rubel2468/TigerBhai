@@ -158,9 +158,13 @@ const Header = () => {
                                             <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isHovered ? 'w-full' : 'w-0'}`}></span>
                                         </span>
                                         {children.length > 0 && (
-                                            <div className={`absolute left-0 mt-3 w-56 bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl rounded-lg transition-all duration-200 ${
-                                                isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
-                                            }`}>
+                                            <div 
+                                                className={`absolute left-0 mt-3 w-56 bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl rounded-lg transition-all duration-200 ${
+                                                    isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+                                                }`}
+                                                onMouseEnter={() => setHoveredCategory(mc._id)}
+                                                onMouseLeave={() => setHoveredCategory(null)}
+                                            >
                                                 <ul className='py-2'>
                                                     {children.map(sc => (
                                                         <li key={`d-sc-${sc._id}`}>
