@@ -90,7 +90,7 @@ const WhatsAppSupport = () => {
                 <button
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="select-none cursor-pointer bg-white text-gray-800 rounded-full px-4 py-2 shadow-md border border-gray-200 relative hover:shadow-lg transition-shadow"
+                    className="select-none cursor-pointer bg-white text-gray-800 rounded-full px-4 py-1 shadow-md border border-gray-200 relative hover:shadow-lg transition-shadow"
                 >
                     <span className="text-sm font-medium">Support Chat</span>
                     {/* Small arrow pointing to the icon */}

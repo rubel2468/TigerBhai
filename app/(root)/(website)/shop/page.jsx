@@ -15,7 +15,7 @@ import {
 import useWindowSize from '@/hooks/useWindowSize'
 import axios from 'axios'
 import { useSearchParams } from 'next/navigation'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import ProductBox from '@/components/Application/Website/ProductBox'
 import ButtonLoading from '@/components/Application/ButtonLoading'
 const breadcrumb = {
@@ -28,11 +28,12 @@ const ShopPage = () => {
     const searchParams = useSearchParams().toString()
     const [limit, setLimit] = useState(9)
     const [sorting, setSorting] = useState('default_sorting')
+    const [currentPage, setCurrentPage] = useState(0)
     const [isMobileFilter, setIsMobileFilter] = useState(false)
     const windowSize = useWindowSize()
 
-    const fetchProduct = async (pageParam) => {
-        const { data: getProduct } = await axios.get(`/api/shop?page=${pageParam}&limit=${limit}&sort=${sorting}&${searchParams}`)
+    const fetchProduct = async () => {
+        const { data: getProduct } = await axios.get(`/api/shop?page=${currentPage}&limit=${limit}&sort=${sorting}&${searchParams}`)
 
         if (!getProduct.success) {
             return
@@ -41,14 +42,20 @@ const ShopPage = () => {
         return getProduct.data
     }
 
-    const { error, data, isFetching, fetchNextPage, hasNextPage } = useInfiniteQuery({
-        queryKey: ['products', limit, sorting, searchParams],
-        queryFn: async ({ pageParam }) => await fetchProduct(pageParam),
-        initialPageParam: 0,
-        getNextPageParam: (lastPage) => {
-            return lastPage.nextPage
-        }
+    const { error, data, isFetching, refetch } = useQuery({
+        queryKey: ['products', limit, sorting, searchParams, currentPage],
+        queryFn: fetchProduct,
     })
+
+    // Reset to first page when filters change
+    React.useEffect(() => {
+        setCurrentPage(0)
+    }, [searchParams, sorting, limit])
+
+    // Refetch when page changes
+    React.useEffect(() => {
+        refetch()
+    }, [currentPage, refetch])
 
     return (
         <div >
@@ -90,25 +97,67 @@ const ShopPage = () => {
                     {isFetching && <div className='p-3 font-semibold text-center'>Loading...</div>}
                     {error && <div className='p-3 font-semibold text-center'>{error.message}</div>}
 
-                    <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 lg:gap-8 md:gap-6 gap-4 mt-10'>
-                        {data && data.pages.map(page => (
-                            page.products.map(product => (
-                                <ProductBox key={product._id} product={product} />
-                            ))
+                    <div className='grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-2 lg:gap-8 md:gap-6 sm:gap-4 gap-2 mt-10'>
+                        {data?.products?.map(product => (
+                            <ProductBox key={product._id} product={product} />
                         ))}
                     </div>
 
-                    {/* load more button  */}
-
-                    <div className='flex justify-center mt-10'>
-                        {hasNextPage ?
-                            <ButtonLoading type="button" loading={isFetching} text="Load More" onClick={fetchNextPage} />
-                            :
-                            <>
-                                {!isFetching && <span>No more data to load.</span>}
-                            </>
-                        }
-                    </div>
+                    {/* Pagination */}
+                    {data?.products?.length > 0 && (
+                        <div className='flex justify-center mt-10'>
+                            <div className='flex items-center gap-1'>
+                                <button
+                                    onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+                                    disabled={currentPage === 0 || isFetching}
+                                    className='px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                                >
+                                    Previous
+                                </button>
+                                
+                                {/* Page Numbers */}
+                                {(() => {
+                                    const pages = []
+                                    const maxVisiblePages = 5
+                                    let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2))
+                                    let endPage = startPage + maxVisiblePages - 1
+                                    
+                                    // Adjust if we're near the end
+                                    if (endPage > currentPage && !data?.nextPage) {
+                                        endPage = currentPage
+                                        startPage = Math.max(0, endPage - maxVisiblePages + 1)
+                                    }
+                                    
+                                    for (let i = startPage; i <= endPage; i++) {
+                                        pages.push(
+                                            <button
+                                                key={i}
+                                                onClick={() => setCurrentPage(i)}
+                                                disabled={isFetching}
+                                                className={`px-3 py-2 text-sm font-medium border transition-colors ${
+                                                    i === currentPage
+                                                        ? 'bg-primary text-white border-primary'
+                                                        : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50'
+                                                } disabled:opacity-50 disabled:cursor-not-allowed rounded-md`}
+                                            >
+                                                {i + 1}
+                                            </button>
+                                        )
+                                    }
+                                    
+                                    return pages
+                                })()}
+                                
+                                <button
+                                    onClick={() => setCurrentPage(currentPage + 1)}
+                                    disabled={!data?.nextPage || isFetching}
+                                    className='px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                 </div>
 

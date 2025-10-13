@@ -33,6 +33,7 @@ const Header = () => {
 
     // Helper functions for hover delay
     const handleCategoryMouseEnter = (categoryId) => {
+        // Clear any existing timeout when entering category or dropdown
         if (hoverTimeout) {
             clearTimeout(hoverTimeout)
             setHoverTimeout(null)
@@ -40,11 +41,18 @@ const Header = () => {
         setHoveredCategory(categoryId)
     }
 
-    const handleCategoryMouseLeave = () => {
-        const timeout = setTimeout(() => {
-            setHoveredCategory(null)
-        }, 150) // 150ms delay before hiding
-        setHoverTimeout(timeout)
+    const handleCategoryMouseLeave = (event) => {
+        // Check if mouse is moving to a related element (dropdown)
+        const relatedTarget = event.relatedTarget
+        const currentCategory = hoveredCategory
+        
+        // Only start timeout if mouse is not moving to dropdown or another category
+        if (!relatedTarget || !relatedTarget.closest('.category-dropdown')) {
+            const timeout = setTimeout(() => {
+                setHoveredCategory(null)
+            }, 150) // 150ms delay before hiding
+            setHoverTimeout(timeout)
+        }
     }
 
     // Add scroll effect for enhanced glass effect with throttling
@@ -178,18 +186,18 @@ const Header = () => {
                                         <span 
                                             className='relative text-white hover:text-white font-medium transition-all duration-300 cursor-pointer'
                                             onMouseEnter={() => handleCategoryMouseEnter(mc._id)}
-                                            onMouseLeave={handleCategoryMouseLeave}
+                                            onMouseLeave={(e) => handleCategoryMouseLeave(e)}
                                         >
                                             {mc.name}
                                             <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isHovered ? 'w-full' : 'w-0'}`}></span>
                                         </span>
                                         {children.length > 0 && (
                                             <div 
-                                                className={`absolute left-0 top-full pt-1 w-56 bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl rounded-lg transition-all duration-200 ${
+                                                className={`category-dropdown absolute left-0 top-full pt-1 w-56 bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl rounded-lg transition-all duration-200 ${
                                                     isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
                                                 }`}
                                                 onMouseEnter={() => handleCategoryMouseEnter(mc._id)}
-                                                onMouseLeave={handleCategoryMouseLeave}
+                                                onMouseLeave={(e) => handleCategoryMouseLeave(e)}
                                             >
                                                 <ul className='py-2'>
                                                     {children.map(sc => (
