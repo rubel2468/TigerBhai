@@ -50,3 +50,9 @@ export const ADMIN_TRASH = '/admin/trash'
 
 // Vendors route
 export const ADMIN_VENDORS = '/admin/vendors'
+
+// Meta Catalog routes
+export const ADMIN_META_CATALOG_SHOW = '/admin/meta-catalog'
+export const ADMIN_META_CATALOG_CATEGORY = (categorySlug) => categorySlug ? `/admin/meta-catalog/category/${categorySlug}` : ''
+export const ADMIN_META_CATALOG_SUBCATEGORY = (categorySlug, subcategorySlug) => 
+    (categorySlug && subcategorySlug) ? `/admin/meta-catalog/category/${categorySlug}/${subcategorySlug}` : ''
