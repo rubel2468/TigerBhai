@@ -66,34 +66,37 @@ const WhatsAppSupport = () => {
                 )}
             </AnimatePresence>
 
-            <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsOpen(!isOpen)}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                className="relative bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-full shadow-lg transition-all duration-300 flex items-center gap-3"
-            >
-                <FaWhatsapp size={24} className="transform scale-x-[-1]" />
-                <span className="font-medium text-sm">Support Chat</span>
-                
-                {/* Pulse animation */}
-                <motion.div
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.7, 0, 0.7] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute inset-0 bg-green-500 rounded-full"
-                />
-                
-                {/* Notification badge */}
-                <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: isHovered ? 1 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold"
+            <div className="flex items-center gap-3">
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsOpen(!isOpen)}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    aria-label="Open WhatsApp Support"
+                    className="relative bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full shadow-lg transition-all duration-300 flex items-center justify-center overflow-visible"
                 >
-                    1
-                </motion.div>
-            </motion.button>
+                    <FaWhatsapp size={24} className="transform scale-x-[-1]" />
+                    {/* Subtle pulse behind the icon */}
+                    <motion.div
+                        aria-hidden
+                        animate={{ scale: [1, 1.25, 1], opacity: [0.35, 0, 0.35] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="pointer-events-none absolute inset-0 rounded-full bg-green-500 -z-10"
+                    />
+                </motion.button>
+
+                {/* External label to the right of the icon */}
+                <button
+                    type="button"
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="select-none cursor-pointer bg-white text-gray-800 rounded-full px-4 py-2 shadow-md border border-gray-200 relative hover:shadow-lg transition-shadow"
+                >
+                    <span className="text-sm font-medium">Support Chat</span>
+                    {/* Small arrow pointing to the icon */}
+                    <span className="absolute left-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-l border-t border-gray-200 rotate-45"></span>
+                </button>
+            </div>
         </div>
     )
 }

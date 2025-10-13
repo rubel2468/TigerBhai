@@ -23,6 +23,7 @@ const Header = () => {
     const [isAccountOpen, setIsAccountOpen] = useState(false)
     const [showSearch, setShowSearch] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
+    const [hoveredCategory, setHoveredCategory] = useState(null)
 
     // categories
     const { data: categoryRes } = useFetch('/api/category/get-category')
@@ -145,14 +146,21 @@ const Header = () => {
 
                             {mainCategories.map(mc => {
                                 const children = subCategories.filter(sc => sc.parent === mc._id)
+                                const isHovered = hoveredCategory === mc._id
                                 return (
-                                    <li key={`d-m-${mc._id}`} className='relative group'>
-                                        <span className='relative text-white hover:text-white font-medium transition-all duration-300 cursor-default'>
+                                    <li key={`d-m-${mc._id}`} className='relative'>
+                                        <span 
+                                            className='relative text-white hover:text-white font-medium transition-all duration-300 cursor-pointer'
+                                            onMouseEnter={() => setHoveredCategory(mc._id)}
+                                            onMouseLeave={() => setHoveredCategory(null)}
+                                        >
                                             {mc.name}
-                                            <span className='absolute -bottom-1 left-0 w-0 h-0.5 bg-white transition-all duration-300 group-hover:w-full'></span>
+                                            <span className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${isHovered ? 'w-full' : 'w-0'}`}></span>
                                         </span>
                                         {children.length > 0 && (
-                                            <div className='absolute left-0 mt-3 w-56 bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl rounded-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200'>
+                                            <div className={`absolute left-0 mt-3 w-56 bg-white/95 backdrop-blur-xl border border-white/20 shadow-xl rounded-lg transition-all duration-200 ${
+                                                isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'
+                                            }`}>
                                                 <ul className='py-2'>
                                                     {children.map(sc => (
                                                         <li key={`d-sc-${sc._id}`}>
