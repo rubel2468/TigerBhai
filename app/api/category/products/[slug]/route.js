@@ -12,10 +12,8 @@ export async function GET(request, { params }) {
         const limit = parseInt(searchParams.get('limit')) || 8
 
         // Find the category by slug (can be main or subcategory)
-        const category = await CategoryModel.findOne({ 
-            slug, 
-            deletedAt: null 
-        })
+        // Do not filter by deletedAt strictly; some documents may not have this field
+        const category = await CategoryModel.findOne({ slug })
         
         if (!category) {
             return NextResponse.json({
@@ -29,16 +27,14 @@ export async function GET(request, { params }) {
         let categoryIds = [category._id]
         if (category.isMainCategory) {
             const subcategories = await CategoryModel.find({
-                parent: category._id,
-                deletedAt: null
+                parent: category._id
             }).select('_id')
             categoryIds = categoryIds.concat(subcategories.map(sub => sub._id))
         }
 
         // Find products in this category/subcategories
         const products = await ProductModel.find({
-            category: { $in: categoryIds },
-            deletedAt: null
+            category: { $in: categoryIds }
         })
         .populate('media', 'filePath')
         .populate('vendor', 'name')
@@ -48,8 +44,7 @@ export async function GET(request, { params }) {
 
         // Get total product count
         const totalProducts = await ProductModel.countDocuments({
-            category: { $in: categoryIds },
-            deletedAt: null
+            category: { $in: categoryIds }
         })
 
         return NextResponse.json({
