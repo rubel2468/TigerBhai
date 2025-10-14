@@ -12,6 +12,7 @@ export default function CategoryPage() {
     const [category, setCategory] = useState(null)
     const [subcategories, setSubcategories] = useState([])
     const [subcategoryProducts, setSubcategoryProducts] = useState({})
+    const [mainCategoryProducts, setMainCategoryProducts] = useState({ products: [], totalProducts: 0 })
     const [loading, setLoading] = useState(true)
 
     // Fetch category details
@@ -26,6 +27,25 @@ export default function CategoryPage() {
                 cat => cat.slug === params.slug
             )
             setCategory(foundCategory)
+            
+            // Fetch main category products
+            if (foundCategory) {
+                const fetchMainCategoryProducts = async () => {
+                    try {
+                        const response = await fetch(`/api/category/products/${foundCategory.slug}?limit=8`)
+                        const data = await response.json()
+                        if (data.success) {
+                            setMainCategoryProducts({
+                                products: data.data.products,
+                                totalProducts: data.data.totalProducts
+                            })
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching main category products:`, error)
+                    }
+                }
+                fetchMainCategoryProducts()
+            }
         }
     }, [categoryData, params.slug])
 
@@ -41,11 +61,17 @@ export default function CategoryPage() {
                         const response = await fetch(`/api/category/products/${subcategory.slug}?limit=4`)
                         const data = await response.json()
                         if (data.success) {
-                            productsMap[subcategory.slug] = data.data.products
+                            productsMap[subcategory.slug] = {
+                                products: data.data.products,
+                                totalProducts: data.data.totalProducts
+                            }
                         }
                     } catch (error) {
                         console.error(`Error fetching products for ${subcategory.slug}:`, error)
-                        productsMap[subcategory.slug] = []
+                        productsMap[subcategory.slug] = {
+                            products: [],
+                            totalProducts: 0
+                        }
                     }
                 }
                 setSubcategoryProducts(productsMap)
@@ -148,6 +174,102 @@ export default function CategoryPage() {
                 </div>
             </section>
 
+            {/* Main Category Products Section */}
+            {mainCategoryProducts.products.length > 0 && (
+                <section className="py-20 px-4 lg:px-8 bg-white">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Section Header */}
+                        <div className="text-center mb-16">
+                            <div className="inline-block px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold mb-4">
+                                All {category.name} Products
+                            </div>
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                                Featured <span className="text-purple-600">{category.name}</span>
+                            </h2>
+                            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                                Discover our complete collection of {category.name.toLowerCase()} products
+                            </p>
+                        </div>
+
+                        {/* Main Category Products */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+                            {mainCategoryProducts.products.map((product) => (
+                                <Link 
+                                    key={product._id} 
+                                    href={`/product/${product.slug}`}
+                                    className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100"
+                                >
+                                    {/* Product Image */}
+                                    <div className="relative aspect-square overflow-hidden">
+                                        {product.media && product.media.length > 0 ? (
+                                            <Image
+                                                src={product.media[0].filePath}
+                                                alt={product.name}
+                                                fill
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                                                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                        )}
+                                        
+                                        {/* Discount Badge */}
+                                        {product.discountPercentage > 0 && (
+                                            <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                                                -{product.discountPercentage}%
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Product Info */}
+                                    <div className="p-3">
+                                        <h4 className="font-semibold text-gray-900 text-sm mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                                            {product.name}
+                                        </h4>
+                                        
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-lg font-bold text-gray-900">
+                                                ₹{product.sellingPrice}
+                                            </span>
+                                            {product.mrp > product.sellingPrice && (
+                                                <span className="text-sm text-gray-500 line-through">
+                                                    ₹{product.mrp}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {product.vendor && (
+                                            <p className="text-xs text-gray-500 truncate">
+                                                by {product.vendor.name}
+                                            </p>
+                                        )}
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+
+                        {/* View All Button */}
+                        {mainCategoryProducts.totalProducts > mainCategoryProducts.products.length && (
+                            <div className="text-center">
+                                <Link 
+                                    href={`/shop?category=${category.slug}`}
+                                    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+                                >
+                                    <span>View All {mainCategoryProducts.totalProducts} Products</span>
+                                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            )}
+
             {/* Subcategory Products Section */}
             {subcategories.length > 0 && (
                 <section className="py-20 px-4 lg:px-8 bg-white">
@@ -167,7 +289,8 @@ export default function CategoryPage() {
 
                         {/* Subcategory Products */}
                         {subcategories.map((subcategory) => {
-                            const products = subcategoryProducts[subcategory.slug] || []
+                            const subcategoryData = subcategoryProducts[subcategory.slug] || { products: [], totalProducts: 0 }
+                            const products = subcategoryData.products
                             if (products.length === 0) return null
 
                             return (
@@ -178,7 +301,7 @@ export default function CategoryPage() {
                                                 {subcategory.name}
                                             </h3>
                                             <p className="text-gray-600">
-                                                {products.length} products available
+                                                {subcategoryData.totalProducts} products available
                                             </p>
                                         </div>
                                         <Link 
@@ -325,7 +448,7 @@ export default function CategoryPage() {
                                             {subcategory.name}
                                         </h3>
                                         <p className="text-xs text-gray-500 text-center">
-                                            {subcategoryProducts[subcategory.slug]?.length || 0} products
+                                            {subcategoryProducts[subcategory.slug]?.totalProducts || 0} products
                                         </p>
                                     </div>
                                 </div>

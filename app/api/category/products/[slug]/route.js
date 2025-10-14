@@ -11,20 +11,33 @@ export async function GET(request, { params }) {
         const searchParams = request.nextUrl.searchParams
         const limit = parseInt(searchParams.get('limit')) || 8
 
-        // Find the subcategory by slug
-        const subcategory = await CategoryModel.findOne({ slug, isMainCategory: { $ne: true } })
+        // Find the category by slug (can be main or subcategory)
+        const category = await CategoryModel.findOne({ 
+            slug, 
+            deletedAt: null 
+        })
         
-        if (!subcategory) {
+        if (!category) {
             return NextResponse.json({
                 success: false,
                 statusCode: 404,
-                message: 'Subcategory not found'
+                message: 'Category not found'
             })
         }
 
-        // Find products in this subcategory
+        // Get all subcategories if this is a main category
+        let categoryIds = [category._id]
+        if (category.isMainCategory) {
+            const subcategories = await CategoryModel.find({
+                parent: category._id,
+                deletedAt: null
+            }).select('_id')
+            categoryIds = categoryIds.concat(subcategories.map(sub => sub._id))
+        }
+
+        // Find products in this category/subcategories
         const products = await ProductModel.find({
-            category: subcategory._id,
+            category: { $in: categoryIds },
             deletedAt: null
         })
         .populate('media', 'filePath')
@@ -33,23 +46,31 @@ export async function GET(request, { params }) {
         .limit(limit)
         .lean()
 
+        // Get total product count
+        const totalProducts = await ProductModel.countDocuments({
+            category: { $in: categoryIds },
+            deletedAt: null
+        })
+
         return NextResponse.json({
             success: true,
             statusCode: 200,
             message: 'Products fetched successfully',
             data: {
-                subcategory: {
-                    _id: subcategory._id,
-                    name: subcategory.name,
-                    slug: subcategory.slug,
-                    image: subcategory.image
+                category: {
+                    _id: category._id,
+                    name: category.name,
+                    slug: category.slug,
+                    image: category.image,
+                    isMainCategory: category.isMainCategory
                 },
-                products
+                products,
+                totalProducts
             }
         })
 
     } catch (error) {
-        console.error('Error fetching subcategory products:', error)
+        console.error('Error fetching category products:', error)
         return NextResponse.json({
             success: false,
             statusCode: 500,
