@@ -34,7 +34,7 @@ const WhatsAppSupport = () => {
                                 </div>
                                 <div>
                                     <h4 className="font-semibold text-gray-800 text-sm">Support Chat</h4>
-                                    <p className="text-xs text-gray-500">We're online now</p>
+                                    <p className="text-xs text-gray-500">Support time 10am to 8pm</p>
                                 </div>
                             </div>
                             <button
