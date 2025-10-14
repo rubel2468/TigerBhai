@@ -47,7 +47,7 @@ const CategoryMetaCatalogPage = ({ params }) => {
             let url = '/api/meta-catalog/public'
             const params = new URLSearchParams()
             params.append('category', categorySlug)
-            if (selectedSubcategory) {
+            if (selectedSubcategory && selectedSubcategory !== 'all') {
                 params.append('subcategory', selectedSubcategory)
             }
             url += `?${params.toString()}`
@@ -72,7 +72,7 @@ const CategoryMetaCatalogPage = ({ params }) => {
         const params = new URLSearchParams()
         
         params.append('category', categorySlug)
-        if (selectedSubcategory) params.append('subcategory', selectedSubcategory)
+        if (selectedSubcategory && selectedSubcategory !== 'all') params.append('subcategory', selectedSubcategory)
         
         url += `?${params.toString()}`
         return url
@@ -84,7 +84,7 @@ const CategoryMetaCatalogPage = ({ params }) => {
         
         params.append('format', 'xml')
         params.append('category', categorySlug)
-        if (selectedSubcategory) params.append('subcategory', selectedSubcategory)
+        if (selectedSubcategory && selectedSubcategory !== 'all') params.append('subcategory', selectedSubcategory)
         
         url += `?${params.toString()}`
         return url
@@ -188,7 +188,7 @@ const CategoryMetaCatalogPage = ({ params }) => {
                                     <SelectValue placeholder="All subcategories" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">All Subcategories</SelectItem>
+                                    <SelectItem value="all">All Subcategories</SelectItem>
                                     {categoryInfo.subcategories?.map((subcategory) => (
                                         <SelectItem key={subcategory._id} value={subcategory.slug}>
                                             {subcategory.name}

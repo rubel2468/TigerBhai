@@ -38,8 +38,8 @@ const MetaCatalogPage = () => {
                 },
                 body: JSON.stringify({
                     action: 'get_products_count',
-                    categorySlug: selectedCategory,
-                    subcategorySlug: selectedSubcategory
+                    categorySlug: selectedCategory !== 'all' ? selectedCategory : null,
+                    subcategorySlug: selectedSubcategory !== 'all' ? selectedSubcategory : null
                 })
             })
 
@@ -58,8 +58,8 @@ const MetaCatalogPage = () => {
         let url = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/meta-catalog/public`
         const params = new URLSearchParams()
         
-        if (selectedCategory) params.append('category', selectedCategory)
-        if (selectedSubcategory) params.append('subcategory', selectedSubcategory)
+        if (selectedCategory && selectedCategory !== 'all') params.append('category', selectedCategory)
+        if (selectedSubcategory && selectedSubcategory !== 'all') params.append('subcategory', selectedSubcategory)
         
         if (params.toString()) {
             url += `?${params.toString()}`
@@ -73,8 +73,8 @@ const MetaCatalogPage = () => {
         const params = new URLSearchParams()
         
         params.append('format', 'xml')
-        if (selectedCategory) params.append('category', selectedCategory)
-        if (selectedSubcategory) params.append('subcategory', selectedSubcategory)
+        if (selectedCategory && selectedCategory !== 'all') params.append('category', selectedCategory)
+        if (selectedSubcategory && selectedSubcategory !== 'all') params.append('subcategory', selectedSubcategory)
         
         url += `?${params.toString()}`
         return url
@@ -159,7 +159,7 @@ const MetaCatalogPage = () => {
                                     <SelectValue placeholder="Select main category" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="">All Categories</SelectItem>
+                                    <SelectItem value="all">All Categories</SelectItem>
                                     {catalogData?.data?.categories?.map((category) => (
                                         <SelectItem key={category._id} value={category.slug}>
                                             {category.name}
@@ -169,7 +169,7 @@ const MetaCatalogPage = () => {
                             </Select>
                         </div>
 
-                        {selectedCategory && (
+                        {selectedCategory && selectedCategory !== 'all' && (
                             <div>
                                 <Label htmlFor="subcategory">Subcategory</Label>
                                 <Select value={selectedSubcategory} onValueChange={setSelectedSubcategory}>
@@ -177,7 +177,7 @@ const MetaCatalogPage = () => {
                                         <SelectValue placeholder="Select subcategory" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="">All Subcategories</SelectItem>
+                                        <SelectItem value="all">All Subcategories</SelectItem>
                                         {catalogData?.data?.categories
                                             ?.find(cat => cat.slug === selectedCategory)
                                             ?.subcategories?.map((subcategory) => (
