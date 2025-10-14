@@ -137,10 +137,10 @@ function generateMetaCatalogXML(products) {
         xml += '      <g:brand>' + escapeXml(product.brand) + '</g:brand>\n'
         xml += '      <g:condition>' + product.condition + '</g:condition>\n'
         xml += '      <g:availability>' + product.availability + '</g:availability>\n'
-        xml += '      <g:price>' + product.price + ' INR</g:price>\n'
+        xml += '      <g:price>' + product.price + ' BDT</g:price>\n'
         xml += '      <g:google_product_category>' + escapeXml(product.category) + '</g:google_product_category>\n'
         if (product.compare_at_price && product.compare_at_price > product.price) {
-            xml += '      <g:sale_price>' + product.price + ' INR</g:sale_price>\n'
+            xml += '      <g:sale_price>' + product.price + ' BDT</g:sale_price>\n'
         }
         xml += '    </item>\n'
     })
