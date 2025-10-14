@@ -303,39 +303,6 @@ const MetaCatalogPage = () => {
                 </Card>
             </div>
 
-            {/* Instructions */}
-            <Card>
-                <CardHeader>
-                    <CardTitle>Meta Catalog Integration Instructions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-4">
-                        <div>
-                            <h4 className="font-semibold mb-2">1. Access Meta Business Manager</h4>
-                            <p className="text-gray-600">Go to your Meta Business Manager and navigate to Catalog Manager.</p>
-                        </div>
-                        
-                        <div>
-                            <h4 className="font-semibold mb-2">2. Add Data Source</h4>
-                            <p className="text-gray-600">Create a new data source and select "Website" as the upload method.</p>
-                        </div>
-                        
-                        <div>
-                            <h4 className="font-semibold mb-2">3. Configure Feed URL</h4>
-                            <p className="text-gray-600">
-                                Use the XML Catalog URL from above: <code className="bg-gray-100 px-2 py-1 rounded text-sm">
-                                    {generateXmlCatalogUrl()}
-                                </code>
-                            </p>
-                        </div>
-                        
-                        <div>
-                            <h4 className="font-semibold mb-2">4. Set Update Schedule</h4>
-                            <p className="text-gray-600">Configure how frequently Meta should check for updates (daily recommended).</p>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
         </div>
     )
 }
