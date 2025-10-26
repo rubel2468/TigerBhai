@@ -1,4 +1,5 @@
 'use client'
+import React from "react";
 import { BsCart2 } from "react-icons/bs";
 import {
     Sheet,
@@ -17,10 +18,10 @@ import { WEBSITE_CART, WEBSITE_CHECKOUT } from "@/routes/WebsiteRoute";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { showToast } from "@/lib/showToast";
-const Cart = () => {
+import { BLUR_DATA_URL, getImageSizes, getImageQuality } from '@/lib/imageUtils';
+const Cart = React.memo(() => {
     const [open, setOpen] = useState(false)
     const [subtotal, setSubTotal] = useState(0)
-    const [discount, setDiscount] = useState(0)
 
 
     const cart = useSelector(store => store.cartStore)
@@ -32,13 +33,7 @@ const Cart = () => {
 
         const totalAmount = cartProducts.reduce((sum, product) => sum + (product.sellingPrice * product.qty), 0)
 
-        const discount = cartProducts.reduce((sum, product) => sum + ((product.mrp - product.sellingPrice) * product.qty), 0)
-
-
         setSubTotal(totalAmount)
-        setDiscount(discount)
-
-
 
     }, [cart])
 
@@ -64,7 +59,7 @@ const Cart = () => {
                         {cart.products?.map(product => (
                             <div key={product.variantId} className="flex justify-between items-center gap-5 mb-4 border-b pb-4">
                                 <div className="flex gap-5 items-center">
-                                    <Image src={product?.media || imgPlaceholder.src} height={100} width={100} alt={product.name} className="w-20 h-20 rounded border" />
+                                    <Image src={product?.media || imgPlaceholder.src} height={100} width={100} alt={product.name} className="w-20 h-20 rounded border" sizes={getImageSizes('thumbnail')} quality={getImageQuality(false)} placeholder="blur" blurDataURL={BLUR_DATA_URL} loading="lazy" />
 
                                     <div >
                                         <h4 className="text-lg mb-1">{product.name}</h4>
@@ -92,7 +87,7 @@ const Cart = () => {
                     </div>
                     <div className="h-32 border-t pt-5 px-2">
                         <h2 className="flex justify-between items-center text-lg font-semibold"><span >Subtotal</span> <span>BDT {subtotal?.toLocaleString()}</span></h2>
-                        <h2 className="flex justify-between items-center text-lg font-semibold"><span >Discount</span> <span>BDT {discount?.toLocaleString()}</span></h2>
+                        <h2 className="flex justify-between items-center text-lg font-semibold"><span >Total</span> <span>BDT {subtotal?.toLocaleString()}</span></h2>
 
                         <div className="flex justify-between mt-3 gap-5">
                             <Button type="button" asChild variant="secondary" className="w-[200px]" onClick={() => setOpen(false)}>
@@ -113,6 +108,6 @@ const Cart = () => {
         </Sheet>
 
     )
-}
+})
 
 export default Cart

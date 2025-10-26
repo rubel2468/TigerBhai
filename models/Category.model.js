@@ -36,6 +36,9 @@ const categorySchema = new mongoose.Schema({
 // Add compound index for unique slug within parent category
 categorySchema.index({ slug: 1, parent: 1 }, { unique: true })
 
+// Add index for filtering by deletedAt and isMainCategory
+categorySchema.index({ deletedAt: 1, isMainCategory: 1 })
+
 
 const CategoryModel = mongoose.models.Category || mongoose.model('Category', categorySchema, 'categories')
 export default CategoryModel

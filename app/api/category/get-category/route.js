@@ -11,15 +11,15 @@ export async function GET() {
 
         await connectDB()
 
-        const getMainCategories = await CategoryModel.find({ 
-            deletedAt: null, 
-            isMainCategory: true 
-        }).select('_id name slug image').lean()
+        const getMainCategories = await CategoryModel.find({
+            deletedAt: null,
+            isMainCategory: true
+        }).select('_id name slug image').lean().maxTimeMS(10000)
 
-        const getSubCategories = await CategoryModel.find({ 
-            deletedAt: null, 
-            isMainCategory: false 
-        }).select('_id name slug image parent').lean()
+        const getSubCategories = await CategoryModel.find({
+            deletedAt: null,
+            isMainCategory: false
+        }).select('_id name slug image parent').lean().maxTimeMS(10000)
 
         if (!getMainCategories) {
             return response(false, 404, 'Category not found.')

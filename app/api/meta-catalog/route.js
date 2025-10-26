@@ -76,9 +76,11 @@ export async function GET(request) {
 
         // Format products for Meta catalog
         const catalogProducts = products.map(product => {
-            const mainImage = product.media && product.media.length > 0 ? product.media[0].filePath : null
-            const categoryName = product.category?.parent ? 
-                `${product.category.parent.name} - ${product.category.name}` : 
+            const rawImage = product.media && product.media.length > 0 ? product.media[0].filePath : null
+            const mainImage = rawImage ?
+                (rawImage.startsWith('http') ? rawImage : `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}${rawImage}`) : null
+            const categoryName = product.category?.parent ?
+                `${product.category.parent.name} - ${product.category.name}` :
                 product.category?.name
 
             return {

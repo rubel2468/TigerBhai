@@ -14,6 +14,8 @@ import { z } from 'zod'
 import { Upload, Building2, User, MapPin, FileText, Eye, EyeOff } from 'lucide-react'
 import axios from 'axios'
 import { showToast } from '@/lib/showToast'
+import Image from 'next/image'
+import { getImageSizes, BLUR_DATA_URL } from '@/lib/imageUtils'
 
 const vendorRegistrationSchema = z.object({
     // Business Information
@@ -429,7 +431,7 @@ export default function VendorRegistration() {
                                                                 <a href={documents.tradeLicense.url} target="_blank" rel="noreferrer" className="underline text-sm">View PDF</a>
                                                             </div>
                                                         ) : (
-                                                            <img src={documents.tradeLicense.url} alt="Trade License" className="mx-auto h-28 object-contain rounded" />
+                                                            <Image src={documents.tradeLicense.url} alt="Trade License" width={112} height={112} className="mx-auto h-28 object-contain rounded" sizes={getImageSizes('thumbnail')} placeholder="blur" blurDataURL={BLUR_DATA_URL} loading="lazy" />
                                                         )}
                                                         <div className="flex items-center justify-center gap-3">
                                                             <input
@@ -476,7 +478,7 @@ export default function VendorRegistration() {
                                                                 <a href={documents.nationalId.url} target="_blank" rel="noreferrer" className="underline text-sm">View PDF</a>
                                                             </div>
                                                         ) : (
-                                                            <img src={documents.nationalId.url} alt="National ID" className="mx-auto h-28 object-contain rounded" />
+                                                            <Image src={documents.nationalId.url} alt="National ID" width={112} height={112} className="mx-auto h-28 object-contain rounded" sizes={getImageSizes('thumbnail')} placeholder="blur" blurDataURL={BLUR_DATA_URL} loading="lazy" />
                                                         )}
                                                         <div className="flex items-center justify-center gap-3">
                                                             <input
@@ -523,7 +525,7 @@ export default function VendorRegistration() {
                                                                 <a href={documents.taxCertificate.url} target="_blank" rel="noreferrer" className="underline text-sm">View PDF</a>
                                                             </div>
                                                         ) : (
-                                                            <img src={documents.taxCertificate.url} alt="Tax Certificate" className="mx-auto h-28 object-contain rounded" />
+                                                            <Image src={documents.taxCertificate.url} alt="Tax Certificate" width={112} height={112} className="mx-auto h-28 object-contain rounded" sizes={getImageSizes('thumbnail')} placeholder="blur" blurDataURL={BLUR_DATA_URL} loading="lazy" />
                                                         )}
                                                         <div className="flex items-center justify-center gap-3">
                                                             <input

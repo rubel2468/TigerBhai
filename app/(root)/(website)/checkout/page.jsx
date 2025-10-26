@@ -42,7 +42,6 @@ const Checkout = () => {
 
     const [isCouponApplied, setIsCouponApplied] = useState(false)
     const [subtotal, setSubTotal] = useState(0)
-    const [discount, setDiscount] = useState(0)
     const [couponDiscountAmount, setCouponDiscountAmount] = useState(0)
     const [totalAmount, setTotalAmount] = useState(0)
     const [couponLoading, setCouponLoading] = useState(false)
@@ -70,10 +69,7 @@ const Checkout = () => {
 
         const subTotalAmount = cartProducts.reduce((sum, product) => sum + (product.sellingPrice * product.qty), 0)
 
-        const discount = cartProducts.reduce((sum, product) => sum + ((product.mrp - product.sellingPrice) * product.qty), 0)
-
         setSubTotal(subTotalAmount)
-        setDiscount(discount)
         setTotalAmount(subTotalAmount - couponDiscountAmount)
 
         couponForm.setValue('minShoppingAmount', subTotalAmount)
@@ -219,7 +215,6 @@ const Checkout = () => {
                 ...formData,
                 products: products,
                 subtotal: subtotal,
-                discount: discount,
                 couponDiscountAmount: couponDiscountAmount,
                 totalAmount: totalAmount
             })
@@ -453,12 +448,6 @@ const Checkout = () => {
                                             <td className='font-medium py-2'>Subtotal</td>
                                             <td className='text-end py-2'>
                                                 BDT {subtotal.toLocaleString()}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className='font-medium py-2'>Discount</td>
-                                            <td className='text-end py-2'>
-                                                - BDT {discount.toLocaleString()}
                                             </td>
                                         </tr>
                                         <tr>

@@ -17,11 +17,10 @@ const nextConfig = {
     
     // Experimental performance features
     experimental: {
-        // Disable optimizeCss due to malformed unicode-range causing CSS parse error in some browsers
-        optimizeCss: false,
-        optimizePackageImports: ['react-icons'],
-        esmExternals: true,
-    },
+         // Disable optimizeCss due to malformed unicode-range causing CSS parse error in some browsers
+         optimizeCss: false,
+         esmExternals: true,
+     },
 
     // Webpack optimization
     webpack: (config, { dev, isServer }) => {

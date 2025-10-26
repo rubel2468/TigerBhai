@@ -7,7 +7,7 @@ const WhatsAppSupport = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [isHovered, setIsHovered] = useState(false)
 
-    const whatsappNumber = '+8801234567890' // Replace with your actual WhatsApp number
+    const whatsappNumber = '+8801624600954' // Updated WhatsApp support number
     const message = 'Hello! I need support with my order.'
 
     const handleWhatsAppClick = () => {
@@ -34,7 +34,7 @@ const WhatsAppSupport = () => {
                                 </div>
                                 <div>
                                     <h4 className="font-semibold text-gray-800 text-sm">Support Chat</h4>
-                                    <p className="text-xs text-gray-500">Support time 10am to 8pm</p>
+                                    <p className="text-xs text-gray-500">Support time: 10 AM - 8 PM</p>
                                 </div>
                             </div>
                             <button

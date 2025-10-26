@@ -25,6 +25,8 @@ import {
 import axios from 'axios'
 import { showToast } from '@/lib/showToast'
 import BreadCrumb from '@/components/Application/Admin/BreadCrumb'
+import Image from 'next/image'
+import { getImageSizes, BLUR_DATA_URL } from '@/lib/imageUtils'
 
 export default function VendorManagement() {
     const [vendors, setVendors] = useState([])
@@ -503,7 +505,7 @@ ${detailsDialog.vendor.businessAddress?.country || 'Bangladesh'}`}
                                                     <a href={doc.url} target="_blank" rel="noreferrer" className="text-blue-600 underline text-sm">View PDF</a>
                                                 ) : (
                                                     <a href={doc.url} target="_blank" rel="noreferrer">
-                                                        <img src={doc.url} alt={docKey} className="mx-auto h-24 object-contain rounded hover:opacity-90 transition" />
+                                                        <Image src={doc.url} alt={docKey} width={96} height={96} className="mx-auto h-24 object-contain rounded hover:opacity-90 transition" sizes={getImageSizes('thumbnail')} placeholder="blur" blurDataURL={BLUR_DATA_URL} loading="lazy" />
                                                     </a>
                                                 )}
                                             </div>

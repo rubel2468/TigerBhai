@@ -1,26 +1,35 @@
 "use client";
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { WEBSITE_SHOP } from "@/routes/WebsiteRoute";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 
 
-const Search = ({ isShow, onClose }) => {
+const Search = React.memo(({ isShow, onClose }) => {
     const router = useRouter()
-    const [query, setQuery] = useState()
+    const [query, setQuery] = useState('')
     const searchRef = useRef(null)
-    
-    const handleSearch = () => {
+
+    const handleSearch = useCallback(() => {
         if (query?.trim()) {
             router.push(`${WEBSITE_SHOP}?q=${query}`)
             onClose?.()
         }
+    }, [query, router, onClose])
+
+    const handleInputChange = (e) => {
+        setQuery(e.target.value)
     }
+
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            handleSearch()
+            if (query?.trim()) {
+                router.push(`${WEBSITE_SHOP}?q=${query}`)
+                onClose?.()
+            }
         }
     }
 
@@ -52,7 +61,7 @@ const Search = ({ isShow, onClose }) => {
                     className="rounded-full md:h-12 ps-5 border-primary/30 focus:border-primary transition-colors duration-200"
                     placeholder="Search products..."
                     value={query || ''}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={handleInputChange}
                     onKeyPress={handleKeyPress}
                     autoFocus={isShow}
                 />
@@ -66,6 +75,6 @@ const Search = ({ isShow, onClose }) => {
             </div>
         </div>
     );
-};
+});
 
 export default Search;

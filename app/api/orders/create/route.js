@@ -75,7 +75,6 @@ export async function POST(request) {
             
             // If no vendor is assigned, we'll handle it in the fallback logic below
             if (!vendorId) {
-                console.warn(`Product ${product.name} does not have a vendor assigned, will be added to admin order item`)
                 continue
             }
             
@@ -117,7 +116,6 @@ export async function POST(request) {
         
         // If no vendors are found, create a default order item for admin
         if (vendorOrderItemsArray.length === 0) {
-            console.log('No vendors found for products, creating default admin order item')
             vendorOrderItemsArray.push({
                 vendor: null, // Admin order
                 products: validatedData.products.map(product => ({
@@ -172,7 +170,7 @@ export async function POST(request) {
                 await sendMail('Order placed successfully.', validatedData.email, orderNotification(mailData))
 
             } catch (error) {
-                console.log('Email sending failed:', error)
+                // Email sending failed, but order was created successfully
             }
         }
 

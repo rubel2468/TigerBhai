@@ -32,7 +32,7 @@ export default function GlobalProvider({ children }) {
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
               {children}
-              <FirebaseSessionBridge />
+              {/* <FirebaseSessionBridge /> */}
             </PersistGate>
           </Provider>
         </SWRProvider>

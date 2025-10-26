@@ -3,6 +3,7 @@ import { catchError, response } from "@/lib/helperFunction"
 import ProductModel from "@/models/Product.model"
 import CategoryModel from "@/models/Category.model"
 import MediaModel from "@/models/Media.model"
+import VendorModel from "@/models/Vendor.model"
 import { NextResponse } from "next/server"
 
 export async function GET(request) {
@@ -48,24 +49,46 @@ export async function GET(request) {
 
         // Get products with populated data for Meta catalog
         const products = await ProductModel.find(query)
+            .populate({
+                path: 'media',
+                select: 'filePath'
+            })
+            .populate({
+                path: 'category',
+                select: 'name slug parent',
+                populate: {
+                    path: 'parent',
+                    select: 'name slug'
+                }
+            })
+            .populate({
+                path: 'vendor',
+                select: 'name'
+            })
             .select('name slug category mrp sellingPrice discountPercentage description shortDescription media vendor')
             .lean()
 
         // Format products for Meta catalog
         const catalogProducts = products.map(product => {
-            // Since we're not populating, we'll use basic product data
+            const rawImage = product.media && product.media.length > 0 ? product.media[0].filePath : null
+            const mainImage = rawImage ?
+                (rawImage.startsWith('http') ? rawImage : `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}${rawImage}`) : null
+            const categoryName = product.category?.parent ?
+                `${product.category.parent.name} - ${product.category.name}` :
+                product.category?.name || 'Product'
+
             return {
                 id: product._id,
                 title: product.name,
                 slug: product.slug,
                 description: product.shortDescription || (product.description ? product.description.substring(0, 200) + '...' : ''),
-                category: 'Product', // Default category name
+                category: categoryName,
                 price: product.sellingPrice,
                 compare_at_price: product.mrp,
                 availability: 'in_stock',
-                image_url: null, // Will be populated later
+                image_url: mainImage,
                 url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/product/${product.slug}`,
-                brand: 'Tiger Bhai',
+                brand: product.vendor?.name || 'Tiger Bhai',
                 condition: 'new'
             }
         })

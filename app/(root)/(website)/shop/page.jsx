@@ -1,6 +1,6 @@
 'use client'
-import Filter from '@/components/Application/Website/Filter'
-import Sorting from '@/components/Application/Website/Sorting'
+const Filter = dynamic(() => import('@/components/Application/Website/Filter'), { loading: () => <div className='bg-gray-200 p-4 rounded animate-pulse'></div> })
+const Sorting = dynamic(() => import('@/components/Application/Website/Sorting'), { loading: () => <div className='bg-gray-200 p-4 rounded animate-pulse'></div> })
 import WebsiteBreadcrumb from '@/components/Application/Website/WebsiteBreadcrumb'
 import { WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import React, { useState, Suspense } from 'react'
@@ -16,8 +16,10 @@ import useWindowSize from '@/hooks/useWindowSize'
 import axios from 'axios'
 import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
-import ProductBox from '@/components/Application/Website/ProductBox'
+import dynamic from 'next/dynamic'
 import ButtonLoading from '@/components/Application/ButtonLoading'
+
+const ProductBox = dynamic(() => import('@/components/Application/Website/ProductBox'), { loading: () => <div className='bg-gray-200 rounded-xl aspect-square animate-pulse'></div> })
 const breadcrumb = {
     title: 'Shop',
     links: [
@@ -25,7 +27,9 @@ const breadcrumb = {
     ]
 }
 const ShopPage = () => {
-    const searchParams = useSearchParams().toString()
+    const searchParams = useSearchParams()
+    const searchParamsString = searchParams.toString()
+    const searchQuery = searchParams.get('q') || ''
     const [limit, setLimit] = useState(12)
     const [sorting, setSorting] = useState('default_sorting')
     const [currentPage, setCurrentPage] = useState(0)
@@ -33,7 +37,7 @@ const ShopPage = () => {
     const windowSize = useWindowSize()
 
     const fetchProduct = async () => {
-        const { data: getProduct } = await axios.get(`/api/shop?page=${currentPage}&limit=${limit}&sort=${sorting}&${searchParams}`)
+        const { data: getProduct } = await axios.get(`/api/shop?page=${currentPage}&limit=${limit}&sort=${sorting}&${searchParamsString}`)
 
         if (!getProduct.success) {
             return
@@ -43,7 +47,7 @@ const ShopPage = () => {
     }
 
     const { error, data, isFetching } = useQuery({
-        queryKey: ['products', limit, sorting, searchParams, currentPage],
+        queryKey: ['products', limit, sorting, searchParamsString, currentPage],
         queryFn: fetchProduct,
     })
 
@@ -98,6 +102,8 @@ const ShopPage = () => {
                         ))}
                     </div>
 
+                    {data?.products?.length === 0 && <div className='p-3 font-semibold text-center'>No products found{searchQuery ? ` for "${searchQuery}"` : '.'}</div>}
+
                     {/* Pagination */}
                     {data?.products?.length > 0 && (
                         <div className='flex justify-center mt-10'>
@@ -114,7 +120,7 @@ const ShopPage = () => {
                                 {(() => {
                                     const pages = []
                                     const totalPages = data?.totalPages || 1
-                                    const maxVisiblePages = Math.min(5, totalPages)
+                                    const maxVisiblePages = 5
                                     
                                     let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2))
                                     let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1)
@@ -122,6 +128,22 @@ const ShopPage = () => {
                                     // Adjust start page if we're near the end
                                     if (endPage - startPage + 1 < maxVisiblePages) {
                                         startPage = Math.max(0, endPage - maxVisiblePages + 1)
+                                    }
+                                    
+                                    // Add first page and ellipsis if needed
+                                    if (startPage > 0) {
+                                        pages.push(
+                                            <button
+                                                key={0}
+                                                onClick={() => setCurrentPage(0)}
+                                                className='px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'
+                                            >
+                                                1
+                                            </button>
+                                        )
+                                        if (startPage > 1) {
+                                            pages.push(<span key="start-ellipsis" className='px-2 text-gray-500'>...</span>)
+                                        }
                                     }
                                     
                                     for (let i = startPage; i <= endPage; i++) {
@@ -137,6 +159,22 @@ const ShopPage = () => {
                                                 } disabled:opacity-50 disabled:cursor-not-allowed rounded-md`}
                                             >
                                                 {i + 1}
+                                            </button>
+                                        )
+                                    }
+                                    
+                                    // Add last page and ellipsis if needed
+                                    if (endPage < totalPages - 1) {
+                                        if (endPage < totalPages - 2) {
+                                            pages.push(<span key="end-ellipsis" className='px-2 text-gray-500'>...</span>)
+                                        }
+                                        pages.push(
+                                            <button
+                                                key={totalPages - 1}
+                                                onClick={() => setCurrentPage(totalPages - 1)}
+                                                className='px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'
+                                            >
+                                                {totalPages}
                                             </button>
                                         )
                                     }

@@ -70,10 +70,8 @@ export async function POST(request) {
                     },
                     (error, result) => {
                         if (error) {
-                            console.error('Cloudinary upload error:', error);
                             reject(error);
                         } else {
-                            console.log('Cloudinary upload success:', result.public_id);
                             resolve(result);
                         }
                     }
@@ -99,12 +97,6 @@ export async function POST(request) {
         return response(true, 200, 'Media uploaded successfully.', uploadedFiles);
 
     } catch (error) {
-        console.error('Cloudinary upload error:', error);
-        console.error('Error details:', {
-            message: error.message,
-            stack: error.stack,
-            name: error.name
-        });
         return response(false, 500, `Upload failed: ${error.message}`);
     }
 }

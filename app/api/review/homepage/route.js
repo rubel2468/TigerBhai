@@ -60,7 +60,7 @@ export async function GET(request) {
             }
         ]
 
-        const reviews = await ReviewModel.aggregate(aggregation)
+        const reviews = await ReviewModel.aggregate(aggregation, { maxTimeMS: 10000 })
 
         // Get review statistics
         const statsAggregation = [
@@ -81,7 +81,7 @@ export async function GET(request) {
             }
         ]
 
-        const statsResult = await ReviewModel.aggregate(statsAggregation)
+        const statsResult = await ReviewModel.aggregate(statsAggregation, { maxTimeMS: 10000 })
         const stats = statsResult[0] || { totalReviews: 0, averageRating: 0, ratingDistribution: [] }
 
         // Calculate rating distribution

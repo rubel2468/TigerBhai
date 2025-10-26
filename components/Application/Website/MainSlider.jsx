@@ -182,17 +182,17 @@ const MainSlider = ({ initialData }) => {
     }
 
     return (
-        <div className="w-full relative">
+        <div className="w-full relative h-[60vh] min-h-[400px]">
             <Slider ref={sliderRef} {...settings}>
                 {carouselData.map((slide, index) => (
-                    <div key={slide._id} className="w-full relative">
-                        <div className="relative">
-                            <Image 
-                                src={slide.image.url} 
+                    <div key={slide._id} className="w-full relative h-full">
+                        <div className="relative w-full h-full">
+                            <Image
+                                src={slide.image.url}
                                 width={1920}
                                 height={1080}
-                                alt={slide.title || 'Tiger Bhai Carousel'} 
-                                className="w-full h-auto object-contain"
+                                alt={slide.title || 'Tiger Bhai Carousel'}
+                                className="w-full h-full object-cover"
                                 priority={index === 0}
                                 fetchPriority={index === 0 ? 'high' : 'auto'}
                                 loading={index === 0 ? 'eager' : 'lazy'}

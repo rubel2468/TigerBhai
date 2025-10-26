@@ -15,6 +15,7 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import userIcon from '@/public/assets/images/user.png'
 import Search from './Search'
 import useFetch from '@/hooks/useFetch'
+import { BLUR_DATA_URL, getImageSizes, getImageQuality } from '@/lib/imageUtils'
 
 
 const Header = () => {
@@ -89,9 +90,14 @@ const Header = () => {
                     <Image
                         src={logo}
                         width={200}
-                        height={60} 
+                        height={60}
                         alt='logo'
                         className='h-10 lg:h-12 w-auto transition-all duration-300 group-hover:scale-105 drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)] object-contain'
+                        sizes={getImageSizes('default')}
+                        quality={getImageQuality(true)}
+                        placeholder="blur"
+                        blurDataURL={BLUR_DATA_URL}
+                        priority={true}
                     />
                 </Link>
 
@@ -115,6 +121,11 @@ const Header = () => {
                                     height={60}
                                     alt='logo'
                                     className='h-8 w-auto'
+                                    sizes={getImageSizes('default')}
+                                    quality={getImageQuality(true)}
+                                    placeholder="blur"
+                                    blurDataURL={BLUR_DATA_URL}
+                                    priority={true}
                                 />
                                 <button 
                                     type='button' 

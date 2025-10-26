@@ -39,5 +39,8 @@ reviewSchema.index({ user: 1 })
 reviewSchema.index({ product: 1, createdAt: -1 })
 reviewSchema.index({ deletedAt: 1 })
 
+// Add compound index for homepage aggregation: deletedAt, rating, createdAt
+reviewSchema.index({ deletedAt: 1, rating: -1, createdAt: -1 })
+
 const ReviewModel = mongoose.models.Review || mongoose.model('Review', reviewSchema, 'reviews')
 export default ReviewModel

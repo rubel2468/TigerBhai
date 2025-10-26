@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { WEBSITE_CHECKOUT, WEBSITE_PRODUCT_DETAILS, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, memo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
 import { HiMinus, HiPlus } from "react-icons/hi2";
@@ -17,22 +17,18 @@ const breadCrumb = {
         { label: "Cart" }
     ]
 }
-const CartPage = () => {
+const CartPage = memo(() => {
     const dispatch = useDispatch()
     const cart = useSelector(store => store.cartStore)
 
     const [subtotal, setSubTotal] = useState(0)
-    const [discount, setDiscount] = useState(0)
 
     useEffect(() => {
         const cartProducts = cart.products
 
         const totalAmount = cartProducts.reduce((sum, product) => sum + (product.sellingPrice * product.qty), 0)
 
-        const discount = cartProducts.reduce((sum, product) => sum + ((product.mrp - product.sellingPrice) * product.qty), 0)
-
         setSubTotal(totalAmount)
-        setDiscount(discount)
 
     }, [cart])
 
@@ -69,7 +65,7 @@ const CartPage = () => {
                                     <tr key={product.variantId} className='md:table-row block border-b'>
                                         <td className='p-3'>
                                             <div className='flex items-center gap-5'>
-                                                <Image src={product.media || imgPlaceholder.src} width={60} height={60} alt={product.name} />
+                                                <Image src={product.media || imgPlaceholder.src} width={60} height={60} alt={product.name} loading="lazy" sizes="60px" />
                                                 <div>
                                                     <h4 className='text-lg font-medium line-clamp-1'>
                                                         <Link href={WEBSITE_PRODUCT_DETAILS(product.url)}>
@@ -139,12 +135,6 @@ const CartPage = () => {
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td className='font-medium py-2'>Discount</td>
-                                            <td className='text-end py-2'>
-                                                -BDT {discount.toLocaleString()}
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <td className='font-medium py-2'>Total</td>
                                             <td className='text-end py-2'>
                                                 BDT {subtotal.toLocaleString()}
@@ -169,6 +159,6 @@ const CartPage = () => {
             }
         </div>
     )
-}
+})
 
 export default CartPage

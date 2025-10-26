@@ -45,26 +45,60 @@ export async function GET(request) {
             categoryId = categoryData.map(category => category._id)
         }
 
-        // match stage  
+        // match stage
         let matchStage = {}
-        if (categoryId.length > 0) matchStage.category = { $in: categoryId }  // filter by category   
+        if (categoryId.length > 0) matchStage.category = { $in: categoryId }  // filter by category
+
+        if (minPrice > 0 || maxPrice < 100000) {
+            matchStage.sellingPrice = { $gte: minPrice, $lte: maxPrice }
+        }
 
         if (search) {
-            matchStage.name = { $regex: search, $options: 'i' }
+            matchStage.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } },
+                { shortDescription: { $regex: search, $options: 'i' } },
+                { $expr: { $regexMatch: { input: { $toString: "$sellingPrice" }, regex: search, options: "i" } } }
+            ]
         }
 
 
         // Get total count for pagination calculation
-        const totalProducts = await ProductModel.countDocuments(matchStage)
+        const totalProducts = await ProductModel.aggregate([
+            { $match: matchStage },
+            { $lookup: {
+                from: 'categories',
+                localField: 'category',
+                foreignField: '_id',
+                as: 'category'
+            }},
+            { $unwind: { path: '$category', preserveNullAndEmptyArrays: true } },
+            ...(search ? [{ $match: { 'category.name': { $regex: search, $options: 'i' } } }] : []),
+            { $count: "total" }
+        ]).then(res => res[0]?.total || 0)
         const totalPages = Math.ceil(totalProducts / limit)
 
         // Get products with proper pagination and media population
-        const products = await ProductModel.find(matchStage)
-            .populate('media')
-            .sort(sortquery)
-            .skip(skip)
-            .limit(limit)
-            .lean()
+        const products = await ProductModel.aggregate([
+            { $match: matchStage },
+            { $lookup: {
+                from: 'categories',
+                localField: 'category',
+                foreignField: '_id',
+                as: 'category'
+            }},
+            { $unwind: { path: '$category', preserveNullAndEmptyArrays: true } },
+            ...(search ? [{ $match: { 'category.name': { $regex: search, $options: 'i' } } }] : []),
+            { $lookup: {
+                from: 'media',
+                localField: 'media',
+                foreignField: '_id',
+                as: 'media'
+            }},
+            { $sort: sortquery },
+            { $skip: skip },
+            { $limit: limit }
+        ])
 
         // check if more data exists 
         let nextPage = null
@@ -72,13 +106,16 @@ export async function GET(request) {
             nextPage = page + 1
         }
 
-        return response(true, 200, 'Product data found.', { 
-            products, 
-            nextPage, 
-            totalPages, 
-            totalProducts, 
-            currentPage: page 
+        const res = response(true, 200, 'Product data found.', {
+            products,
+            nextPage,
+            totalPages,
+            totalProducts,
+            currentPage: page
         })
+        // Add caching for product listings (5 minutes for dynamic content)
+        res.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=1800')
+        return res
 
     } catch (error) {
         return catchError(error)

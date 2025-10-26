@@ -39,7 +39,6 @@ export async function PUT(request) {
             isVendor = true
         }
         const payload = await request.json()
-        console.log('Variant Update API Payload:', payload)
 
         const schema = zSchema.pick({
             _id: true,
@@ -57,7 +56,6 @@ export async function PUT(request) {
 
         const validate = schema.safeParse(payload)
         if (!validate.success) {
-            console.log('Validation Error:', validate.error)
             return response(false, 400, 'Invalid or missing fields.', validate.error)
         }
 

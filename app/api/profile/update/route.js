@@ -74,10 +74,8 @@ export async function PUT(request) {
                     },
                     (error, result) => {
                         if (error) {
-                            console.error('Cloudinary upload error:', error);
                             reject(error);
                         } else {
-                            console.log('Cloudinary upload success:', result.public_id);
                             resolve(result);
                         }
                     }
