@@ -22,11 +22,20 @@ export const metadata = {
     description: "Your trusted destination for quality and convenience",
     type: "website",
     locale: "en_US",
+    images: [
+      {
+        url: "/assets/images/logo-black.png",
+        width: 1200,
+        height: 630,
+        alt: "Tiger Bhai Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Tiger Bhai",
     description: "Your trusted destination for quality and convenience",
+    images: ["/assets/images/logo-black.png"],
   },
   other: {
     'font-display': 'swap',
