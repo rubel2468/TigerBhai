@@ -28,7 +28,7 @@ export async function POST(request) {
         }).extend({
             userId: z.string().optional().or(z.literal("")),
             subtotal: z.number().nonnegative(),
-            discount: z.number().nonnegative(),
+            discount: z.number().nonnegative().optional().default(0),
             couponDiscountAmount: z.number().nonnegative(),
             totalAmount: z.number().nonnegative(),
             products: z.array(productSchema).min(1, 'At least one product is required')
@@ -44,9 +44,9 @@ export async function POST(request) {
 
         // Compute monetary fields on the server to avoid integrity issues
         const computedSubtotal = validatedData.products.reduce((sum, p) => sum + (p.sellingPrice * p.qty), 0)
-        const computedDiscount = validatedData.discount
-        const computedCouponDiscount = validatedData.couponDiscountAmount
-        const computedTotalAmount = Math.max(0, computedSubtotal - computedDiscount - computedCouponDiscount)
+        const computedDiscount = validatedData.couponDiscountAmount  // Use coupon discount as the main discount
+        const computedCouponDiscount = 0  // Set coupon discount to 0 to avoid double deduction
+        const computedTotalAmount = Math.max(0, computedSubtotal - computedDiscount)
 
         if (computedSubtotal <= 0) {
             return response(false, 400, 'Invalid order: subtotal must be greater than 0')

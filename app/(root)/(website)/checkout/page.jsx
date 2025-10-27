@@ -215,6 +215,7 @@ const Checkout = () => {
                 ...formData,
                 products: products,
                 subtotal: subtotal,
+                discount: 0,
                 couponDiscountAmount: couponDiscountAmount,
                 totalAmount: totalAmount
             })
