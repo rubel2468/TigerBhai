@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import useFetch from '@/hooks/useFetch'
 import { showToast } from '@/lib/showToast'
 import { zSchema } from '@/lib/zodSchema'
-import { WEBSITE_ORDER_DETAILS, WEBSITE_PRODUCT_DETAILS, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
+import { WEBSITE_ORDER_DETAILS, WEBSITE_PRODUCT_DETAILS, WEBSITE_SHOP, WEBSITE_THANK_YOU } from '@/routes/WebsiteRoute'
 import { addIntoCart, clearCart } from '@/store/reducer/cartReducer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
@@ -252,7 +252,7 @@ const Checkout = () => {
                 showToast('success', 'Order placed successfully!')
                 dispatch(clearCart())
                 orderForm.reset()
-                router.push(WEBSITE_ORDER_DETAILS(orderResponseData.data.orderNumber))
+                router.push(WEBSITE_THANK_YOU(orderResponseData.data.orderNumber))
             } else {
                 showToast('error', orderResponseData.message)
             }

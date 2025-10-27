@@ -9,7 +9,8 @@ import ButtonLoading from '@/components/Application/ButtonLoading'
 import { zSchema } from '@/lib/zodSchema'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import slugify from 'slugify'
 import { showToast } from '@/lib/showToast'
 import axios from 'axios'
@@ -25,8 +26,9 @@ const breadcrumbData = [
   { href: '', label: 'Edit Product' },
 ]
 
-const EditVendorProduct = ({ params }) => {
-  const { id } = use(params)
+const EditVendorProduct = () => {
+  const params = useParams()
+  const { id } = params
 
   const [loading, setLoading] = useState(false)
   const [categoryOption, setCategoryOption] = useState([])

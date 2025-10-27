@@ -7,7 +7,8 @@ export const dynamic = 'force-dynamic'
 // Generate metadata for social sharing (Open Graph, Twitter Cards)
 export async function generateMetadata({ params }) {
   try {
-    const slug = params?.slug
+    const resolvedParams = await params
+    const slug = resolvedParams?.slug
     if (!slug) {
       return {
         title: 'Product Not Found - Tiger Bhai',
@@ -125,7 +126,8 @@ async function fetchProduct(slug) {
 
 const ProductPage = async ({ params }) => {
   try {
-    const slug = params?.slug
+    const resolvedParams = await params
+    const slug = resolvedParams?.slug
     if (!slug) {
       return (
         <div className="flex justify-center items-center h-64">

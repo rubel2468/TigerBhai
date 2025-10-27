@@ -11,9 +11,10 @@ export const WEBSITE_CART = "/cart"
 export const WEBSITE_CHECKOUT = "/checkout"
 
 export const WEBSITE_ORDER_DETAILS = (order_id) => `/order-details/${order_id}`
+export const WEBSITE_THANK_YOU = (order_id) => `/thank-you/${order_id}`
 
 
-// User routes 
+// User routes
 export const USER_DASHBOARD = "/my-account"
 export const USER_PROFILE = "/profile"
 export const USER_ORDERS = "/orders"

@@ -1,15 +1,17 @@
 'use client'
 import { Card, CardContent } from '@/components/ui/card'
 import axios from 'axios'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import verifiedImg from "@/public/assets/images/verified.gif"
 import verificationFailedImg from "@/public/assets/images/verification-failed.gif"
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { WEBSITE_HOME } from '@/routes/WebsiteRoute'
-const EmailVerification = ({ params }) => {
-    const { token } = use(params)
+const EmailVerification = () => {
+    const params = useParams()
+    const { token } = params
     const [isVerified, setIsVerified] = useState(false)
     useEffect(() => {
         const verify = async () => {
