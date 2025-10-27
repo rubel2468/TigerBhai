@@ -1,6 +1,8 @@
 import { isAuthenticated } from "@/lib/authentication"
 import { connectDB } from "@/lib/databaseConnection"
 import { catchError, response } from "@/lib/helperFunction"
+import ProductModel from "@/models/Product.model"
+import ProductVariantModel from "@/models/ProductVariant.model"
 import CategoryModel from "@/models/Category.model"
 import { NextResponse } from "next/server"
 
@@ -37,8 +39,8 @@ export async function GET(request) {
 
         return response(true, 200, 'Meta catalog settings retrieved successfully.', {
             categories: categoriesWithSubcategories,
-            catalogUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/meta-catalog`,
-            xmlCatalogUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/meta-catalog?format=xml`
+            catalogUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/meta-catalog/public`,
+            xmlCatalogUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/meta-catalog/public?format=xml`
         })
 
     } catch (error) {
@@ -69,28 +71,32 @@ export async function POST(request) {
                 }
 
                 if (subcategorySlug) {
-                    const subcategory = await CategoryModel.findOne({ 
-                        slug: subcategorySlug, 
+                    const subcategory = await CategoryModel.findOne({
+                        slug: subcategorySlug,
                         parent: category._id,
-                        isMainCategory: false 
+                        isMainCategory: false
                     })
                     if (!subcategory) {
                         return response(false, 404, 'Subcategory not found.')
                     }
-                    query.category = subcategory._id
+                    // For variants, query products in the subcategory
+                    const productsInCategory = await ProductModel.find({ category: subcategory._id, deletedAt: null }).select('_id')
+                    const productIds = productsInCategory.map(p => p._id)
+                    query.product = { $in: productIds }
                 } else {
-                    const subcategories = await CategoryModel.find({ 
-                        parent: category._id, 
+                    const subcategories = await CategoryModel.find({
+                        parent: category._id,
                         isMainCategory: false,
-                        deletedAt: null 
+                        deletedAt: null
                     }).select('_id')
                     const subcategoryIds = subcategories.map(sub => sub._id)
-                    query.category = { $in: subcategoryIds }
+                    const productsInCategory = await ProductModel.find({ category: { $in: subcategoryIds }, deletedAt: null }).select('_id')
+                    const productIds = productsInCategory.map(p => p._id)
+                    query.product = { $in: productIds }
                 }
             }
 
-            const ProductModel = (await import("@/models/Product.model")).default
-            const productCount = await ProductModel.countDocuments(query)
+            const productCount = await ProductVariantModel.countDocuments({ ...query, deletedAt: null })
 
             return response(true, 200, 'Product count retrieved successfully.', {
                 count: productCount,

@@ -73,7 +73,7 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1234567890123456');
+fbq('init', '${process.env.NEXT_PUBLIC_META_PIXEL_ID || '1234567890123456'}');
 fbq('track', 'PageView');` }} />
         {/* End Meta Pixel */}
         {/* Critical CSS inlined to prevent render blocking */}
@@ -111,7 +111,7 @@ fbq('track', 'PageView');` }} />
         {/* <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TW7XR5TX" height="0" width="0" style={{display:'none',visibility:'hidden'}}></iframe></noscript> */}
         {/* End Google Tag Manager (noscript) */}
         {/* Meta Pixel (noscript) */}
-        <noscript dangerouslySetInnerHTML={{ __html: `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1234567890123456&ev=PageView&noscript=1" />` }} />
+        <noscript dangerouslySetInnerHTML={{ __html: `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${process.env.NEXT_PUBLIC_META_PIXEL_ID || '1234567890123456'}&ev=PageView&noscript=1" />` }} />
         {/* End Meta Pixel (noscript) */}
 
         <GlobalProvider>

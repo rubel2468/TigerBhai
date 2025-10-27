@@ -2,6 +2,7 @@ import { isAuthenticated } from "@/lib/authentication"
 import { connectDB } from "@/lib/databaseConnection"
 import { catchError, response } from "@/lib/helperFunction"
 import ProductModel from "@/models/Product.model"
+import ProductVariantModel from "@/models/ProductVariant.model"
 import CategoryModel from "@/models/Category.model"
 import MediaModel from "@/models/Media.model"
 import { NextResponse } from "next/server"
@@ -74,30 +75,45 @@ export async function GET(request) {
             .select('name slug category mrp sellingPrice discountPercentage description shortDescription media vendor')
             .lean()
 
-        // Format products for Meta catalog
-        const catalogProducts = products.map(product => {
-            const rawImage = product.media && product.media.length > 0 ? product.media[0].filePath : null
+        // Get variants for these products
+        const productIds = products.map(p => p._id)
+        const variants = await ProductVariantModel.find({ product: { $in: productIds }, deletedAt: null })
+            .populate({
+                path: 'media',
+                select: 'filePath'
+            })
+            .select('product color size mrp sellingPrice stock media')
+            .lean()
+
+        // Format variants for Meta catalog
+        const catalogProducts = variants.map(variant => {
+            const product = products.find(p => p._id.toString() === variant.product.toString())
+            if (!product) return null
+
+            const rawImage = variant.media?.filePath || (product.media && product.media.length > 0 ? product.media[0].filePath : null)
             const mainImage = rawImage ?
                 (rawImage.startsWith('http') ? rawImage : `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}${rawImage}`) : null
             const categoryName = product.category?.parent ?
                 `${product.category.parent.name} - ${product.category.name}` :
-                product.category?.name
+                product.category?.name || 'Product'
+
+            const availability = variant.stock > 0 ? 'in_stock' : 'out_of_stock'
 
             return {
-                id: product._id,
-                title: product.name,
+                id: variant._id,
+                title: `${product.name} - ${variant.color} ${variant.size}`,
                 slug: product.slug,
                 description: product.shortDescription || product.description?.substring(0, 200) + '...',
                 category: categoryName,
-                price: product.sellingPrice,
-                compare_at_price: product.mrp,
-                availability: 'in_stock', // Default to in_stock, can be enhanced later
+                price: variant.sellingPrice,
+                compare_at_price: variant.mrp,
+                availability: availability,
                 image_url: mainImage,
-                url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/product/${product.slug}`,
+                url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/product/${product.slug}?size=${variant.size}&color=${variant.color}`,
                 brand: product.vendor?.name || 'Tiger Bhai',
                 condition: 'new'
             }
-        })
+        }).filter(Boolean)
 
         if (format === 'xml') {
             // Generate XML format for Meta catalog
