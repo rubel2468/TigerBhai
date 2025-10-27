@@ -133,6 +133,7 @@ const Footer = () => {
 
             <div className='py-5 bg-[#757E88]' >
                 <p className='text-center text-white'>© 2025 Tiger Bhai. All Rights Reserved.</p>
+                <p className='text-center text-white'>Powered by Next.js</p>
                 
             </div>
 
