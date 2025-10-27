@@ -9,7 +9,10 @@ const ProductBox = memo(({ product }) => {
     const href = WEBSITE_PRODUCT_DETAILS(product.slug)
     // Calculate discount percentage with memoization
     const discountPercentage = useMemo(() => {
-        return Math.round(((product?.mrp - product?.sellingPrice) / product?.mrp) * 100)
+        if (product?.mrp && product?.sellingPrice && product.mrp > product.sellingPrice) {
+            return Math.round(((product.mrp - product.sellingPrice) / product.mrp) * 100)
+        }
+        return 0
     }, [product?.mrp, product?.sellingPrice])
 
     return (
@@ -61,16 +64,18 @@ const ProductBox = memo(({ product }) => {
                     </h4>
                     
                     {/* Price Section */}
-                    <div className='flex items-center gap-1 md:gap-2'>
-                        <span className='text-sm md:text-lg font-bold text-card-foreground dark:text-white'>
-                            BDT {product?.sellingPrice.toLocaleString()}
-                        </span>
-                        {product?.mrp > product?.sellingPrice && (
-                            <span className='text-xs md:text-sm text-muted-foreground dark:text-gray-400 line-through'>
-                                BDT {product?.mrp.toLocaleString()}
+                    {product?.sellingPrice && (
+                        <div className='flex items-center gap-1 md:gap-2'>
+                            <span className='text-sm md:text-lg font-bold text-card-foreground dark:text-white'>
+                                BDT {product.sellingPrice.toLocaleString()}
                             </span>
-                        )}
-                    </div>
+                            {product?.mrp && product.mrp > product.sellingPrice && (
+                                <span className='text-xs md:text-sm text-muted-foreground dark:text-gray-400 line-through'>
+                                    BDT {product.mrp.toLocaleString()}
+                                </span>
+                            )}
+                        </div>
+                    )}
                     
                     {/* Rating Stars (placeholder for future implementation) */}
                     <div className='flex items-center gap-1'>

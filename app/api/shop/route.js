@@ -90,7 +90,7 @@ export async function GET(request) {
             { $unwind: { path: '$category', preserveNullAndEmptyArrays: true } },
             ...(search ? [{ $match: { 'category.name': { $regex: search, $options: 'i' } } }] : []),
             { $lookup: {
-                from: 'media',
+                from: 'medias',
                 localField: 'media',
                 foreignField: '_id',
                 as: 'media'

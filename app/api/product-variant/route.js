@@ -139,7 +139,7 @@ export async function GET(request) {
             },
             {
                 $lookup: {
-                    from: 'media',
+                    from: 'medias',
                     localField: 'media',
                     foreignField: '_id',
                     as: 'mediaData'
